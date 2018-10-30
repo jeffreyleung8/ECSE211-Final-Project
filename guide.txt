@@ -1,0 +1,55 @@
+-Terminal
+cd desktop
+git clone https://github.com/jeffreyleung8/Playground.git
+
+-Git Desktop
+clone repo on desktop  
+https://github.com/jeffreyleung8/Playground.git
+___________
+
+Open eclipse
+Set Playground as workspace
+Press on 
+-> File
+-> Import
+-> General
+-> Existing Projects into Workspace
+Set root directory -> Project15
+-> Finish
+
+___________
+Mac Menu Bar
+Press on: 
+-> Eclipse
+-> Preferences
+In leJOS EV3:
+-EV3_HOME: Browse for leJOSEV3 plugin 
+(See DPM_Getting_Started.pdf on myCourses to see how to download the plugin)
+- Name : 10.0.1.1 (that is for the bluetooth connection)
+
+___________
+Example to push
+cd Desktop/Playground
+git add . 
+git commit -m "Lab 5"
+git push -u origin master
+
+Useful commands
+git status: 
+-see the local changes
+
+git fetch:
+-Update your local repo from the remote (but don't merge)
+
+git diff master origin/master:
+-See the differences after download the updates
+
+git pull:
+-Update your local repo from the remote and merge
+
+
+
+
+
+
+
