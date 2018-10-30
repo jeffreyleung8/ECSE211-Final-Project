@@ -7,16 +7,16 @@
  * @author Tushar Agarwal
  * @author Babette Smith
  */
-package ca.mcgill.ecse211.localization;
+package ca.mcgill.ecse211.navigation;
 
 import lejos.hardware.Sound;
+
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorMode;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.controller.LightSensorController;
-import ca.mcgill.ecse211.localization.*;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.main.*;
 

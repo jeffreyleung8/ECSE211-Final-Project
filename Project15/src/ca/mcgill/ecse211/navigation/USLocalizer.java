@@ -7,7 +7,7 @@
  * @author Tushar Agarwal
  * @author Babette Smith
  */
-package ca.mcgill.ecse211.localization;
+package ca.mcgill.ecse211.navigation;
 
 import lejos.hardware.Button;
 import lejos.hardware.Sound;

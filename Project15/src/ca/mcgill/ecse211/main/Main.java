@@ -10,7 +10,6 @@
 package ca.mcgill.ecse211.main;
 
 import lejos.hardware.Button;
-
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -19,7 +18,6 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import ca.mcgill.ecse211.odometer.*;
-import ca.mcgill.ecse211.localization.*;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.controller.GyroSensorController;
 import ca.mcgill.ecse211.tester.*;
