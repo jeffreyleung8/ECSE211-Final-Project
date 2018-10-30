@@ -13,6 +13,7 @@ import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.odometer.*;
@@ -25,10 +26,15 @@ public class USLocalizer {
 	private double deltaTheta;
 
 	private Odometer odometer;
-	private float[] usData;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	private boolean isRisingEdge;
+
+	private EV3UltrasonicSensor usSensor;
+	private float[] usData;
 	private SampleProvider usDistance;
+	int filterControl = 0;
+	int dist = 0;
+	private static final int FILTER_OUT = 20;
+
 
 	// Create a navigation
 	public Navigation navigation;
@@ -36,105 +42,59 @@ public class USLocalizer {
 	private double d = 42.00;
 	private double k = 15.00;
 
-	int filterControl = 0;
-	int dist = 0;
-	private static final int FILTER_OUT = 20;
-
-
-	/**
+	/*
 	 * Constructor to initialize variables
 	 * 
 	 * @param Odometer
 	 * @param EV3LargeRegulatedMotor
 	 * @param EV3LargeRegulatedMotor
-	 * @param boolean
-	 * @param SampleProvider
+	 * @param usSensor
 	 */
 	public USLocalizer(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			boolean localizationType, SampleProvider usDistance) {
+			EV3UltrasonicSensor usSensor) {
 		this.odometer = odo;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-		this.isRisingEdge = localizationType;
-		this.usDistance = usDistance;
-		this.usData = new float[usDistance.sampleSize()];
-		navigation = new Navigation(odometer, leftMotor, rightMotor);
-
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
-	}
 
+		navigation = new Navigation(odometer, leftMotor, rightMotor);
+
+
+		//USsensor
+		this.usSensor = usSensor;
+		this.usDistance = this.usSensor.getMode("Distance");
+		this.usData = new float[usDistance.sampleSize()];
+	}
 	/**
-	 * A method to determine which localization method to write
+	 * A method to get the distance from our sensor
 	 * 
+	 * @return
 	 */
-	public void localize() {
-		if (isRisingEdge) {
-			localizeRisingEdge();
+	private int fetchUS() {
+		usDistance.fetchSample(usData, 0);
+		int distance =  (int) (usData[0] * 100.0);
+		// rudimentary filter - toss out invalid samples corresponding to null signal 
+		if (distance >= 255 && filterControl < FILTER_OUT) {
+			// bad value: do not set the distance var, do increment the filter value
+			this.filterControl++;
+		} else if (distance >= 255) {
+			// We have repeated large values, so there must actually be nothing
+			// there: leave the distance alone
+			this.dist = distance;
 		} else {
-			localizeFallingEdge();
+			// distance went below 255: reset filter and leave
+			// distance alone.
+			this.filterControl = 0;
+			this.dist = distance;
 		}
-	}
-
-	/**
-	 * A method to localize position using the rising edge
-	 * 
-	 */
-	public void localizeRisingEdge() {
-
-		double angleA, angleB, turningAngle;
-
-		// Rotate to the wall
-		while (fetchUS() > k ) {
-			leftMotor.backward();
-			rightMotor.forward();
+		if(dist == 2147483647) {
+			return 200;
 		}
-		// Rotate until it sees the open space
-		while (fetchUS() < d ) { //d+k
-			leftMotor.backward();
-			rightMotor.forward();
-		}
+		LCD.drawString(""+ this.dist, 0, 5);
+		LCD.clear(5);
 
-		Sound.playNote(Sound.FLUTE, 880, 250);
-
-		// record angle
-		angleA = odometer.getXYT()[2];
-
-		// rotate the other way all the way until it sees the wall
-		while (fetchUS() > k ) {
-			leftMotor.forward();
-			rightMotor.backward();
-		}
-
-		// rotate until it sees open space
-		while (fetchUS() < d) { //d+k
-			leftMotor.forward();
-			rightMotor.backward();
-		}
-		Sound.playNote(Sound.FLUTE, 880, 250);
-		angleB = odometer.getXYT()[2];
-
-		leftMotor.stop(true);
-		rightMotor.stop();
-
-
-		// calculate angle of rotation
-		if (angleA < angleB) {
-			deltaTheta = 45 - (angleA + angleB) / 2 + 180;
-		} else if (angleA > angleB) {
-			deltaTheta = 225 - (angleA + angleB) / 2 + 180;
-		}
-
-		turningAngle = deltaTheta + odometer.getXYT()[2];
-
-		// rotate robot to the theta = 0.0 using turning angle and we account for small
-		// error
-		leftMotor.setSpeed(100);
-		rightMotor.setSpeed(100);
-		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), true); ///////
-		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), false);///////
-
-		odometer.setXYT(0,0,0);
+		return this.dist;
 	}
 
 	/**
@@ -196,35 +156,64 @@ public class USLocalizer {
 	}
 
 	/**
-	 * A method to get the distance from our sensor
+	 * A method to localize position using the rising edge
 	 * 
-	 * @return
 	 */
-	private int fetchUS() {
-		usDistance.fetchSample(usData, 0);
-		int distance =  (int) (usData[0] * 100.0);
-		// rudimentary filter - toss out invalid samples corresponding to null signal 
-		if (distance >= 255 && filterControl < FILTER_OUT) {
-			// bad value: do not set the distance var, do increment the filter value
-			this.filterControl++;
-		} else if (distance >= 255) {
-			// We have repeated large values, so there must actually be nothing
-			// there: leave the distance alone
-			this.dist = distance;
-		} else {
-			// distance went below 255: reset filter and leave
-			// distance alone.
-			this.filterControl = 0;
-			this.dist = distance;
+	public void localizeRisingEdge() {
+
+		double angleA, angleB, turningAngle;
+
+		// Rotate to the wall
+		while (fetchUS() > k ) {
+			leftMotor.backward();
+			rightMotor.forward();
 		}
-		if(dist == 2147483647) {
-			return 200;
+		// Rotate until it sees the open space
+		while (fetchUS() < d ) { //d+k
+			leftMotor.backward();
+			rightMotor.forward();
 		}
 
-		LCD.drawString(""+ this.dist, 0, 5);
-		LCD.clear(5);
+		Sound.playNote(Sound.FLUTE, 880, 250);
 
-		return this.dist;
+		// record angle
+		angleA = odometer.getXYT()[2];
+
+		// rotate the other way all the way until it sees the wall
+		while (fetchUS() > k ) {
+			leftMotor.forward();
+			rightMotor.backward();
+		}
+
+		// rotate until it sees open space
+		while (fetchUS() < d) { //d+k
+			leftMotor.forward();
+			rightMotor.backward();
+		}
+		Sound.playNote(Sound.FLUTE, 880, 250);
+		angleB = odometer.getXYT()[2];
+
+		leftMotor.stop(true);
+		rightMotor.stop();
+
+
+		// calculate angle of rotation
+		if (angleA < angleB) {
+			deltaTheta = 45 - (angleA + angleB) / 2 + 180;
+		} else if (angleA > angleB) {
+			deltaTheta = 225 - (angleA + angleB) / 2 + 180;
+		}
+
+		turningAngle = deltaTheta + odometer.getXYT()[2];
+
+		// rotate robot to the theta = 0.0 using turning angle and we account for small
+		// error
+		leftMotor.setSpeed(100);
+		rightMotor.setSpeed(100);
+		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), true); ///////
+		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), false);///////
+
+		odometer.setXYT(0,0,0);
 	}
 
 	/**

@@ -30,26 +30,42 @@ public class LightLocalizer {
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	public Navigation navigation;
-	// Instantiate the EV3 Color Sensor
-	private static final EV3ColorSensor lightSensor = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
+	
+	//Light Sensor
+	private EV3ColorSensor lightSensor;
+	private SensorMode idColour;
+	private float[] colorValue;
 	private float sample;
 
-	private SensorMode idColour;
 
 	double[] lineData;
 
 	//Constructor
-	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
+	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3ColorSensor lightSensor) {
 
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
-
-		idColour = lightSensor.getRedMode(); // set the sensor light to red
-		lineData = new double[5];
+		
 		navigation = new Navigation(odometer, leftMotor, rightMotor);
-	}
 
+		//Light sensor init
+		this.lightSensor = lightSensor;
+		idColour = this.lightSensor.getRedMode(); // set the sensor light to red
+		colorValue = new float[idColour.sampleSize()];
+
+		lineData = new double[5];
+	}
+	
+	/**
+	 * This method gets the color value of the light sensor
+	 * 
+	 */
+	private float fetchSample() {
+		idColour.fetchSample(colorValue, 0);
+		return colorValue[0];
+	}
+	
 	/**
 	 * This method localizes the robot using the light sensor to precisely move to
 	 * the right location
@@ -140,8 +156,6 @@ public class LightLocalizer {
 		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, -11), false);///////////
 
 	}
-
-
 	/**
 	 * This method allows the conversion of a distance to the total rotation of each
 	 * wheel need to cover that distance.
@@ -165,16 +179,6 @@ public class LightLocalizer {
 	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
-	}
-
-	/**
-	 * This method gets the color value of the light sensor
-	 * 
-	 */
-	private float fetchSample() {
-		float[] colorValue = new float[idColour.sampleSize()];
-		idColour.fetchSample(colorValue, 0);
-		return colorValue[0];
 	}
 
 }

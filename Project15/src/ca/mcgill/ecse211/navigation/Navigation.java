@@ -1,12 +1,12 @@
 /*Navigation.java 
-* This class is used for navigating the robot (without obstacles)
-* @author Jeffrey Leung
-* @author Douglas So
-* @author Lea Akkary
-* @author Yassine Douida
-* @author Tushar Agarwal
-* @author Babette Smith
-*/
+ * This class is used for navigating the robot (without obstacles)
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.lab5.*;
@@ -32,18 +32,17 @@ public class Navigation extends Thread {
 	// set constants
 	private static final int FORWARD_SPEED = 200;
 	private static final int ROTATE_SPEED = 120;
-	private static final double TILE_SIZE = 30.48;
 
 	private boolean navigate = true;
 
-	// constructor for navigation
+	// Constructor for navigation
 	public Navigation(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.odometer = odo;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 
 	}
-	/**
+	/*
 	 * A method to drive our vehicle to a certain Cartesian coordinate
 	 * 
 	 * @param x
@@ -77,7 +76,7 @@ public class Navigation extends Thread {
 		// stop vehicle
 		leftMotor.stop(true);
 		rightMotor.stop(true);
-		
+
 		Sound.beep();
 	}
 

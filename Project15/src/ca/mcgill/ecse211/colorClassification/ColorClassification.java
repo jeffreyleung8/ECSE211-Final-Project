@@ -22,13 +22,12 @@ import lejos.robotics.SampleProvider;
 public class ColorClassification {
 
 	// Motor objects
-	private static final EV3LargeRegulatedMotor sideMotor = 
-			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-	private EV3ColorSensor colorSensor;
+	private EV3LargeRegulatedMotor sideMotor;
 
+
+	private EV3ColorSensor colorSensor;
 	// Light sensor objects
 	private SampleProvider rgbValue;
-
 	// Float arrays for Color data
 	private float[] rgbData;
 
@@ -41,10 +40,25 @@ public class ColorClassification {
 
 
 	//Constructor
-	public ColorClassification(EV3ColorSensor colorSensor) {
+	public ColorClassification(EV3ColorSensor colorSensor,EV3LargeRegulatedMotor sideMotor ) {
+
+		this.sideMotor = sideMotor;
+
+		//Color sensor init
 		this.colorSensor = colorSensor;
-		rgbValue = colorSensor.getMode("RGB");
+		rgbValue = colorSensor.getRGBMode();
 		rgbData = new float[rgbValue.sampleSize()];
+	}
+
+	// Return RGB values to rgbData
+	/**
+	 * This method allows to collect rgb values
+	 * @return (array containing rgb values) 
+	 */
+
+	public float[] fetch() {
+		rgbValue.fetchSample(rgbData, 0);
+		return rgbData;
 	}
 
 	/**
@@ -74,21 +88,10 @@ public class ColorClassification {
 	public int detect() {
 		int color;
 		do {
-			color = findMatch( fetch() );
+			color = findMatch(fetch());
 			//   System.out.println("stuck in detect()");
 		} while (color == 4);
 		return color;
-	}
-
-	// Return RGB values to rgbData
-	/**
-	 * This method allows to collect rgb values
-	 * @return (array containing rgb values) 
-	 */
-
-	public float[] fetch() {
-		rgbValue.fetchSample(rgbData, 0);
-		return rgbData;
 	}
 
 	/**

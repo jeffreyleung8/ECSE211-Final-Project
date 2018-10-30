@@ -8,6 +8,10 @@
  */
 
 package ca.mcgill.ecse211.odometer;
+import java.text.DecimalFormat;
+
+import ca.mcgill.ecse211.lab5.Lab5;
+import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 public class Odometer extends OdometerData implements Runnable {
@@ -36,9 +40,10 @@ public class Odometer extends OdometerData implements Runnable {
 	private int startingCorner;
 	private int nbXLines;
 	private int nbYLines;
-	private static final double TILE_LENGTH = 30.48;
+	private static final double TILE_SIZE = 30.48;
 
 
+	private TextLCD lcd;
 	private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
 
 	/**
@@ -50,7 +55,7 @@ public class Odometer extends OdometerData implements Runnable {
 	 * @throws OdometerExceptions
 	 */
 	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			final double TRACK, final double WHEEL_RAD,int startingCorner) throws OdometerExceptions {
+			TextLCD lcd,int startingCorner) throws OdometerExceptions {
 		odoData = OdometerData.getOdometerData(); // Allows access to x,y,z
 		// manipulation methods
 		this.leftMotor = leftMotor;
@@ -63,9 +68,10 @@ public class Odometer extends OdometerData implements Runnable {
 		this.rightMotorTachoCount = 0;
 		this.theta = 0;
 
-		this.TRACK = TRACK;
-		this.WHEEL_RAD = WHEEL_RAD;
+		this.TRACK = Lab5.TRACK;
+		this.WHEEL_RAD = Lab5.WHEEL_RAD;
 
+		this.lcd =lcd;
 		this.startingCorner=startingCorner;
 	}
 
@@ -75,10 +81,10 @@ public class Odometer extends OdometerData implements Runnable {
 	 */
 	public void initialize() {
 		switch(startingCorner) {
-		case 0: nbXLines = 1; nbYLines = 1; this.theta = 0.0; odo.setXYT(nbXLines*TILE_LENGTH, nbYLines*TILE_LENGTH, theta); break;
-		case 1: nbXLines = 7; nbYLines = 1; this.theta = 270.0;odo.setXYT(nbXLines*TILE_LENGTH, nbYLines*TILE_LENGTH, theta); break;
-		case 2: nbXLines = 7; nbYLines = 7; this.theta = 180.0;odo.setXYT(nbXLines*TILE_LENGTH, nbYLines*TILE_LENGTH, theta); break;
-		case 3: nbXLines = 1; nbYLines = 7; this.theta = 90.0;odo.setXYT(nbXLines*TILE_LENGTH, nbYLines*TILE_LENGTH, theta); break;
+		case 0: nbXLines = 1; nbYLines = 1; this.theta = 0.0; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+		case 1: nbXLines = 7; nbYLines = 1; this.theta = 270.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+		case 2: nbXLines = 7; nbYLines = 7; this.theta = 180.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+		case 3: nbXLines = 1; nbYLines = 7; this.theta = 90.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
 		}
 	}
 	/**
@@ -97,12 +103,12 @@ public class Odometer extends OdometerData implements Runnable {
 	 * @throws OdometerExceptions
 	 */
 	public synchronized static Odometer getOdometer(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor, final double TRACK, final double WHEEL_RAD,int startingCorner)
+			EV3LargeRegulatedMotor rightMotor, TextLCD lcd,int startingCorner)
 					throws OdometerExceptions {
 		if (odo != null) { // Return existing object
 			return odo;
 		} else { // create object and return it
-			odo = new Odometer(leftMotor, rightMotor, TRACK, WHEEL_RAD,startingCorner);
+			odo = new Odometer(leftMotor, rightMotor, lcd, startingCorner);
 			return odo;
 		}
 	}
@@ -129,8 +135,10 @@ public class Odometer extends OdometerData implements Runnable {
 	// run method (required for Thread)
 	public void run() {
 		long updateStart, updateEnd;
+	    lcd.clear();
 
 		while (true) {
+			
 			updateStart = System.currentTimeMillis();
 
 			leftMotorTachoCount = leftMotor.getTachoCount();
@@ -155,7 +163,16 @@ public class Odometer extends OdometerData implements Runnable {
 
 			// TODO Update odometer values with new calculated values
 			odo.update(dX, dY, dTheta*180/Math.PI);
-
+			
+			// Retrieve x, y and Theta information
+		      position = odo.getXYT();
+		      
+		      // Print x,y, and theta information
+		      DecimalFormat numberFormat = new DecimalFormat("######0.00");
+		      lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);
+		      lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
+		      lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
+		      
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();
 			if (updateEnd - updateStart < ODOMETER_PERIOD) {
