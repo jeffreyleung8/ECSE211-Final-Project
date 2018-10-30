@@ -6,3 +6,4 @@ Oct 30: (Jeffrey)
 -named Lab5.java to Main.java
 -added RingSearcher.java in navigation package (will serve to search ring and grab it)
 -added Tester.java to test sensors
+-moved lightLocalizer and USLocalizer to navigation package
