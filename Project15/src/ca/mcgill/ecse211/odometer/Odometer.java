@@ -10,7 +10,7 @@
 package ca.mcgill.ecse211.odometer;
 import java.text.DecimalFormat;
 
-import ca.mcgill.ecse211.lab5.Lab5;
+import ca.mcgill.ecse211.main.*;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
@@ -68,8 +68,8 @@ public class Odometer extends OdometerData implements Runnable {
 		this.rightMotorTachoCount = 0;
 		this.theta = 0;
 
-		this.TRACK = Lab5.TRACK;
-		this.WHEEL_RAD = Lab5.WHEEL_RAD;
+		this.TRACK = Main.TRACK;
+		this.WHEEL_RAD = Main.WHEEL_RAD;
 
 		this.lcd =lcd;
 		this.startingCorner=startingCorner;
@@ -164,14 +164,14 @@ public class Odometer extends OdometerData implements Runnable {
 			// TODO Update odometer values with new calculated values
 			odo.update(dX, dY, dTheta*180/Math.PI);
 			
-			// Retrieve x, y and Theta information
-		      position = odo.getXYT();
-		      
-		      // Print x,y, and theta information
-		      DecimalFormat numberFormat = new DecimalFormat("######0.00");
-		      lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);
-		      lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
-		      lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
+//			// Retrieve x, y and Theta information
+//		      position = odo.getXYT();
+//		      
+//		      // Print x,y, and theta information
+//		      DecimalFormat numberFormat = new DecimalFormat("######0.00");
+//		      lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);
+//		      lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
+//		      lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
 		      
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();

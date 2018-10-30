@@ -9,7 +9,7 @@
  */
 package ca.mcgill.ecse211.navigation;
 
-import ca.mcgill.ecse211.lab5.*;
+import ca.mcgill.ecse211.main.*;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
@@ -70,8 +70,8 @@ public class Navigation extends Thread {
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
-		leftMotor.rotate(convertDistance(Lab5.WHEEL_RAD, hypot), true);
-		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, hypot), false);
+		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot), true);
+		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot), false);
 
 		// stop vehicle
 		leftMotor.stop(true);
@@ -102,13 +102,13 @@ public class Navigation extends Thread {
 
 		// if angle is negative, turn to the left
 		if (theta < 0) {
-			leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, -(theta * 180) / Math.PI), true);
-			rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, -(theta * 180) / Math.PI), false);
+			leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -(theta * 180) / Math.PI), true);
+			rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, -(theta * 180) / Math.PI), false);
 
 		} else {
 			// angle is positive, turn to the right
-			leftMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, (theta * 180) / Math.PI), true);
-			rightMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, (theta * 180) / Math.PI), false);
+			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), true);
+			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, (theta * 180) / Math.PI), false);
 		}
 	}
 

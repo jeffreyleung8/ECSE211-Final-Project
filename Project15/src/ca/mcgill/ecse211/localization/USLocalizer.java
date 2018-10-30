@@ -17,7 +17,8 @@ import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.odometer.*;
-import ca.mcgill.ecse211.lab5.*;
+import ca.mcgill.ecse211.controller.UltrasonicSensorController;
+import ca.mcgill.ecse211.main.*;
 
 public class USLocalizer {
 
@@ -28,13 +29,13 @@ public class USLocalizer {
 	private Odometer odometer;
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
-	private EV3UltrasonicSensor usSensor;
-	private float[] usData;
-	private SampleProvider usDistance;
-	int filterControl = 0;
-	int dist = 0;
-	private static final int FILTER_OUT = 20;
-
+	private UltrasonicSensorController usSensor;
+//	private EV3UltrasonicSensor usSensor;
+//	private float[] usData;
+//	private SampleProvider usDistance;
+//	int filterControl = 0;
+//	int dist = 0;
+//	private static final int FILTER_OUT = 20;
 
 	// Create a navigation
 	public Navigation navigation;
@@ -51,7 +52,7 @@ public class USLocalizer {
 	 * @param usSensor
 	 */
 	public USLocalizer(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			EV3UltrasonicSensor usSensor) {
+			UltrasonicSensorController usSensor) {
 		this.odometer = odo;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
@@ -60,42 +61,42 @@ public class USLocalizer {
 
 		navigation = new Navigation(odometer, leftMotor, rightMotor);
 
-
-		//USsensor
 		this.usSensor = usSensor;
-		this.usDistance = this.usSensor.getMode("Distance");
-		this.usData = new float[usDistance.sampleSize()];
+		//USsensor
+//		this.usSensor = usSensor;
+//		this.usDistance = this.usSensor.getMode("Distance");
+//		this.usData = new float[usDistance.sampleSize()];
 	}
-	/**
-	 * A method to get the distance from our sensor
-	 * 
-	 * @return
-	 */
-	private int fetchUS() {
-		usDistance.fetchSample(usData, 0);
-		int distance =  (int) (usData[0] * 100.0);
-		// rudimentary filter - toss out invalid samples corresponding to null signal 
-		if (distance >= 255 && filterControl < FILTER_OUT) {
-			// bad value: do not set the distance var, do increment the filter value
-			this.filterControl++;
-		} else if (distance >= 255) {
-			// We have repeated large values, so there must actually be nothing
-			// there: leave the distance alone
-			this.dist = distance;
-		} else {
-			// distance went below 255: reset filter and leave
-			// distance alone.
-			this.filterControl = 0;
-			this.dist = distance;
-		}
-		if(dist == 2147483647) {
-			return 200;
-		}
-		LCD.drawString(""+ this.dist, 0, 5);
-		LCD.clear(5);
-
-		return this.dist;
-	}
+//	/**
+//	 * A method to get the distance from our sensor
+//	 * 
+//	 * @return
+//	 */
+//	private int usSensor.fetch() {
+//		usDistance.fetchSample(usData, 0);
+//		int distance =  (int) (usData[0] * 100.0);
+//		// rudimentary filter - toss out invalid samples corresponding to null signal 
+//		if (distance >= 255 && filterControl < FILTER_OUT) {
+//			// bad value: do not set the distance var, do increment the filter value
+//			this.filterControl++;
+//		} else if (distance >= 255) {
+//			// We have repeated large values, so there must actually be nothing
+//			// there: leave the distance alone
+//			this.dist = distance;
+//		} else {
+//			// distance went below 255: reset filter and leave
+//			// distance alone.
+//			this.filterControl = 0;
+//			this.dist = distance;
+//		}
+//		if(dist == 2147483647) {
+//			return 200;
+//		}
+//		LCD.drawString(""+ this.dist, 0, 5);
+//		LCD.clear(5);
+//
+//		return this.dist;
+//	}
 
 	/**
 	 * A method to localize position using the falling edge
@@ -106,12 +107,12 @@ public class USLocalizer {
 		double angleA, angleB, turningAngle;
 
 		// Rotate to open space
-		while (fetchUS() < k) {
+		while (usSensor.fetch() < k) {
 			leftMotor.backward();
 			rightMotor.forward();
 		}
 		// Rotate to the first wall
-		while (fetchUS() > d) {
+		while (usSensor.fetch() > d) {
 			leftMotor.backward();
 			rightMotor.forward();
 		}
@@ -120,13 +121,13 @@ public class USLocalizer {
 		angleA = odometer.getXYT()[2];
 
 		// rotate out of the wall range
-		while (fetchUS() < k) {
+		while (usSensor.fetch() < k) {
 			leftMotor.forward();
 			rightMotor.backward();
 		}
 
 		// rotate to the second wall
-		while (fetchUS() > d) {
+		while (usSensor.fetch() > d) {
 			leftMotor.forward();
 			rightMotor.backward();
 		}
@@ -147,8 +148,8 @@ public class USLocalizer {
 		turningAngle = deltaTheta + odometer.getXYT()[2];
 
 		// rotate robot to the theta = 0.0 and we account for small error
-		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), true);
-		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), false);
+		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, turningAngle), true);
+		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, turningAngle), false);
 
 		// set odometer to theta = 0
 		odometer.setXYT(0.0, 0.0, 0.0);
@@ -164,12 +165,12 @@ public class USLocalizer {
 		double angleA, angleB, turningAngle;
 
 		// Rotate to the wall
-		while (fetchUS() > k ) {
+		while (usSensor.fetch() > k ) {
 			leftMotor.backward();
 			rightMotor.forward();
 		}
 		// Rotate until it sees the open space
-		while (fetchUS() < d ) { //d+k
+		while (usSensor.fetch() < d ) { //d+k
 			leftMotor.backward();
 			rightMotor.forward();
 		}
@@ -180,13 +181,13 @@ public class USLocalizer {
 		angleA = odometer.getXYT()[2];
 
 		// rotate the other way all the way until it sees the wall
-		while (fetchUS() > k ) {
+		while (usSensor.fetch() > k ) {
 			leftMotor.forward();
 			rightMotor.backward();
 		}
 
 		// rotate until it sees open space
-		while (fetchUS() < d) { //d+k
+		while (usSensor.fetch() < d) { //d+k
 			leftMotor.forward();
 			rightMotor.backward();
 		}
@@ -210,8 +211,8 @@ public class USLocalizer {
 		// error
 		leftMotor.setSpeed(100);
 		rightMotor.setSpeed(100);
-		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), true); ///////
-		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, turningAngle), false);///////
+		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, turningAngle), true); ///////
+		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, turningAngle), false);///////
 
 		odometer.setXYT(0,0,0);
 	}

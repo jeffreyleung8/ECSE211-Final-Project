@@ -1,0 +1,8 @@
+Progress
+
+Oct 30: (Jeffrey)
+-added controller package that contains 4 controllers
+(one for each sensor: gyro,light,color,us)
+-named Lab5.java to Main.java
+-added RingSearcher.java in navigation package (will serve to search ring and grab it)
+-added Tester.java to test sensors

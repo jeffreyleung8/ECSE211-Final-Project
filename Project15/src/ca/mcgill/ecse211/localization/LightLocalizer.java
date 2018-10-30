@@ -15,9 +15,10 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorMode;
 import ca.mcgill.ecse211.odometer.*;
+import ca.mcgill.ecse211.controller.LightSensorController;
 import ca.mcgill.ecse211.localization.*;
 import ca.mcgill.ecse211.navigation.*;
-import ca.mcgill.ecse211.lab5.*;
+import ca.mcgill.ecse211.main.*;
 
 public class LightLocalizer {
 
@@ -31,28 +32,30 @@ public class LightLocalizer {
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 	public Navigation navigation;
 	
-	//Light Sensor
-	private EV3ColorSensor lightSensor;
-	private SensorMode idColour;
-	private float[] colorValue;
+	private LightSensorController lightSensor;
+//	//Light Sensor
+//	private EV3ColorSensor lightSensor;
+//	private SensorMode idColour;
+//	private float[] colorValue;
 	private float sample;
 
 
 	double[] lineData;
 
 	//Constructor
-	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3ColorSensor lightSensor) {
+	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,LightSensorController lightSensor) {
 
 		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		
 		navigation = new Navigation(odometer, leftMotor, rightMotor);
-
-		//Light sensor init
+		
 		this.lightSensor = lightSensor;
-		idColour = this.lightSensor.getRedMode(); // set the sensor light to red
-		colorValue = new float[idColour.sampleSize()];
+		//Light sensor init
+//		this.lightSensor = lightSensor;
+//		idColour = this.lightSensor.getRedMode(); // set the sensor light to red
+//		colorValue = new float[idColour.sampleSize()];
 
 		lineData = new double[5];
 	}
@@ -61,10 +64,10 @@ public class LightLocalizer {
 	 * This method gets the color value of the light sensor
 	 * 
 	 */
-	private float fetchSample() {
-		idColour.fetchSample(colorValue, 0);
-		return colorValue[0];
-	}
+//	private float lightSensor.fetch() {
+//		idColour.lightSensor.fetch(colorValue, 0);
+//		return colorValue[0];
+//	}
 	
 	/**
 	 * This method localizes the robot using the light sensor to precisely move to
@@ -84,7 +87,7 @@ public class LightLocalizer {
 			leftMotor.forward();
 			rightMotor.backward();
 
-			sample = fetchSample();
+			sample = lightSensor.fetch();
 
 			if (sample < 0.20) {
 				lineData[index] = odometer.getXYT()[2];
@@ -115,8 +118,8 @@ public class LightLocalizer {
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
 			Sound.beep();
-			leftMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, -odometer.getXYT()[2]), true);
-			rightMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, -odometer.getXYT()[2]), false);
+			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), true);
+			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), false);
 		}
 
 		leftMotor.stop(true);
@@ -138,12 +141,12 @@ public class LightLocalizer {
 		rightMotor.setSpeed(ROTATION_SPEED+60);
 
 		// get sample
-		sample = fetchSample();
+		sample = lightSensor.fetch();
 
 		// move forward past the origin until light sensor sees the line
 		while (sample > 0.20) {
 
-			sample = fetchSample();
+			sample = lightSensor.fetch();
 			leftMotor.forward();
 			rightMotor.forward();
 		}
@@ -152,8 +155,8 @@ public class LightLocalizer {
 		Sound.beep();
 
 		// Move backwards so our origin is close to origin
-		leftMotor.rotate(convertDistance(Lab5.WHEEL_RAD, -11), true); ////////////
-		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, -11), false);///////////
+		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, -11), true); ////////////
+		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, -11), false);///////////
 
 	}
 	/**

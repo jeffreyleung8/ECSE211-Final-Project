@@ -2,7 +2,7 @@ package ca.mcgill.ecse211.tester;
 
 import java.text.DecimalFormat;
 
-import ca.mcgill.ecse211.lab5.Lab5;
+import ca.mcgill.ecse211.main.Main;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -115,48 +115,48 @@ public class Tester {
 		rightMotor.setSpeed(ROTATE_SPEED);
 
 		// turn 90 degrees to avoid obstacle
-		leftMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), true);
-		rightMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), false);
+		leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+		rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
 
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
 		// move to the left by a tile size
-		leftMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), false);
+		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
+		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
 
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
 
 		// turn again 90 back and move past the block
-		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), true);
-		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), false);
+		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
 
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
-		leftMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), false);
+		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
+		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
 		
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
 
 		// turn again 90 back and move past the block
-		leftMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), true);
-		rightMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), false);
+		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
 
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
-		leftMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Lab5.WHEEL_RAD, 20), false);
+		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
+		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
 		
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
 
 		// turn 90 degrees to avoid obstacle
-		leftMotor.rotate(convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), true);
-		rightMotor.rotate(-convertAngle(Lab5.WHEEL_RAD, Lab5.TRACK, 90), false);
+		leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
+		rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
 
 	}
 	/**
