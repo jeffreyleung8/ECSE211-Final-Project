@@ -1,12 +1,4 @@
-/* This class serves to drive the robot to the 0 degreee axis
- * 
- * @author Jeffrey Leung
- * @author Douglas So
- * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
- */
+
 package ca.mcgill.ecse211.navigation;
 
 import lejos.hardware.Button;
@@ -19,7 +11,15 @@ import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.controller.UltrasonicSensorController;
 import ca.mcgill.ecse211.main.*;
-
+/** This class serves to drive the robot to the 0 degrees axis
+ * 
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 public class USLocalizer {
 
 	// vehicle constants
@@ -43,7 +43,7 @@ public class USLocalizer {
 	private double d = 42.00;
 	private double k = 15.00;
 
-	/*
+	/**
 	 * Constructor to initialize variables
 	 * 
 	 * @param Odometer
@@ -223,7 +223,7 @@ public class USLocalizer {
 	 * 
 	 * @param radius
 	 * @param distance
-	 * @return
+	 * @return distance
 	 */
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
@@ -236,7 +236,7 @@ public class USLocalizer {
 	 * @param radius
 	 * @param distance
 	 * @param angle
-	 * @return
+	 * @return angle
 	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);

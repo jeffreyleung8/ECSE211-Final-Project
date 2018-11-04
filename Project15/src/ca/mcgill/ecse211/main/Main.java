@@ -1,12 +1,4 @@
-/* This class serves to link all the classses together and display a menu when running the code  
- * 
- * @author Jeffrey Leung
- * @author Douglas So
- * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
- */
+
 package ca.mcgill.ecse211.main;
 
 import lejos.hardware.Button;
@@ -23,7 +15,15 @@ import ca.mcgill.ecse211.controller.GyroSensorController;
 import ca.mcgill.ecse211.tester.*;
 import ca.mcgill.ecse211.controller.*;
 
-
+/** This class serves to link all the classses together and display a menu when running the code  
+ * 
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 public class Main {
 
 	// Motor Objects, and Robot related parameters

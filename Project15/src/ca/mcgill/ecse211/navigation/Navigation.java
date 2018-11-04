@@ -1,12 +1,4 @@
-/*Navigation.java 
- * This class is used for navigating the robot (without obstacles)
- * @author Jeffrey Leung
- * @author Douglas So
- * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
- */
+
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.main.*;
@@ -15,6 +7,15 @@ import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
+/**
+ * This class is used for navigating the robot 
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 public class Navigation extends Thread {
 
 	private Odometer odometer;
@@ -42,7 +43,7 @@ public class Navigation extends Thread {
 		this.rightMotor = rightMotor;
 
 	}
-	/*
+	/**
 	 * A method to drive our vehicle to a certain Cartesian coordinate
 	 * 
 	 * @param x
@@ -145,5 +146,13 @@ public class Navigation extends Thread {
 	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
+	}
+	
+	/**
+	 * This method implements obtsacle avoidance
+	 * @param usDistance
+	 */
+	public void avoidObtsacles() {
+		
 	}
 }

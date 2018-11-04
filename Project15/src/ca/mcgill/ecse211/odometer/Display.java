@@ -4,6 +4,11 @@ import java.text.DecimalFormat;
 import ca.mcgill.ecse211.odometer.*;
 import lejos.hardware.lcd.TextLCD;
 
+/**
+ * This class implements the display thread
+ * @author leaakkari
+ *
+ */
 public class Display implements Runnable {
 
   private Odometer odo;

@@ -1,12 +1,4 @@
-/* This class serves to drive the cart to the origin
- * 
- * @author Jeffrey Leung
- * @author Douglas So
- * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
- */
+
 package ca.mcgill.ecse211.navigation;
 
 import lejos.hardware.Sound;
@@ -19,7 +11,15 @@ import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.controller.LightSensorController;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.main.*;
-
+/** This class serves to drive the cart to the origin
+ * 
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 public class LightLocalizer {
 
 	// vehicle constants
@@ -42,7 +42,13 @@ public class LightLocalizer {
 
 	double[] lineData;
 
-	//Constructor
+	/**
+	 * This is a constructor for this class
+	 * @param odometer
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param lightSensor
+	 */
 	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,LightSensorController lightSensor) {
 
 		this.odometer = odometer;

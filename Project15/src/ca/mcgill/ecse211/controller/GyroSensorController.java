@@ -7,6 +7,11 @@ import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * This class implements the gyro sensor controller
+ * @author leaakkari
+ *
+ */
 public class GyroSensorController{
 	private EV3GyroSensor gyroSensor;
 	private SampleProvider gyroAngle;
@@ -15,6 +20,11 @@ public class GyroSensorController{
 	
 	int angle = 0;
 
+	/**
+	 * This method implements the constructor of this class
+	 * @param gyroSensor
+	 * @param lcd
+	 */
 	public GyroSensorController(EV3GyroSensor gyroSensor, TextLCD lcd) {
 		this.gyroSensor = gyroSensor;
 		gyroAngle = this.gyroSensor.getAngleMode();
@@ -22,6 +32,10 @@ public class GyroSensorController{
 		this.lcd = lcd;
 	}
 	
+	/**
+	 * This method fetches samples from the gyro sensor a
+	 * @return an angle (int)
+	 */
 	public int fetch() {
 		gyroAngle.fetchSample(gyroData, 0);
 		//DecimalFormat numberFormat = new DecimalFormat("######0.00");
@@ -30,10 +44,18 @@ public class GyroSensorController{
 		return angle;
 	}
 	
+	/**
+	 * This method sets the angle of the gyro sensor
+	 * @param angle
+	 */
 	public void setAngle(int angle) {
 		this.angle = angle;
 	}
 	
+	/**
+	 * This method gets the angle of the gyro sensor
+	 * @return angle
+	 */
 	public int getAngle() {
 		return angle;
 	}

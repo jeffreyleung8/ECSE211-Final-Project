@@ -1,12 +1,4 @@
-/* This class serves to detect and classify rings colors
- * 
- * @author Jeffrey Leung
- * @author Douglas So
- * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
- */
+
 package ca.mcgill.ecse211.controller;
 
 import java.text.DecimalFormat;
@@ -19,6 +11,15 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 
+/** This class serves to detect and classify rings colors
+ * 
+ * @author Jeffrey Leung
+ * @author Douglas So
+ * @author Lea Akkary
+ * @author Yassine Douida
+ * @author Tushar Agarwal
+ * @author Babette Smith
+ */
 public class ColorSensorController {
 
 	// Motor objects
@@ -38,7 +39,10 @@ public class ColorSensorController {
 			{0.953786617f,0.290982684f,0.074967764f}};
 
 
-	//Constructor
+	/**
+	 * This is a constructor for the ColorSensorController class
+	 * @param colorSensor
+	 */
 	public ColorSensorController(EV3ColorSensor colorSensor) {
 
 		//this.sideMotor = sideMotor;

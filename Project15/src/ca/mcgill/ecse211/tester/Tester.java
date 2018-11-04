@@ -12,6 +12,11 @@ import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
 import lejos.utility.Delay;
 
+/**
+ * This class implements testing for the gyro sensor, light sensor, color sensor, ultrasonic sensor and robot turns and navigation
+ * @author leaakkari
+ *
+ */
 public class Tester {
 	
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
@@ -38,7 +43,16 @@ public class Tester {
 	
 	private TextLCD lcd;
 	
-	
+	/**
+	 * This is a constructor for this class
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param lightSensor
+	 * @param colorSensor
+	 * @param usSensor
+	 * @param gyroSensor
+	 * @param lcd
+	 */
 	public Tester(EV3LargeRegulatedMotor leftMotor,EV3LargeRegulatedMotor rightMotor,EV3ColorSensor lightSensor,EV3ColorSensor colorSensor,
 					EV3UltrasonicSensor usSensor,EV3GyroSensor gyroSensor,TextLCD lcd) {
 		this.leftMotor = leftMotor;
@@ -63,6 +77,9 @@ public class Tester {
 		this.lcd = lcd;
 	}
 	
+	/**
+	 * This method implements a test for the gyro sensor
+	 */
 	public void testGyro() {
 		lcd.clear();
 		while (true) {
@@ -73,6 +90,9 @@ public class Tester {
 			
 		}
 	}
+	/**
+	 * This method implements a test for the ultrasonic sensor
+	 */
 	public void testUS() {
 		lcd.clear();
 		while(true) {
@@ -84,7 +104,9 @@ public class Tester {
 		}
 		
 	}
-	
+	/**
+	 * This method implements a test for the light sensor
+	 */
 	public void testLS() {
 		lcd.clear();
 		while(true) {
@@ -98,6 +120,9 @@ public class Tester {
 
 	}
 	
+	/**
+	 * This method implements a test for the color sensor
+	 */
 	public void testCS() {
 		lcd.clear();
 		while(true) {
@@ -110,6 +135,10 @@ public class Tester {
 		}
 
 	}
+	
+	/**
+	 * This method tests the turns of the robot when it is avoiding obstacles
+	 */
 	public void testTurn() {
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
@@ -165,7 +194,7 @@ public class Tester {
 	 * 
 	 * @param radius
 	 * @param distance
-	 * @return
+	 * @return distance
 	 */
 	private static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
@@ -178,7 +207,7 @@ public class Tester {
 	 * @param radius
 	 * @param distance
 	 * @param angle
-	 * @return
+	 * @return angle
 	 */
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);

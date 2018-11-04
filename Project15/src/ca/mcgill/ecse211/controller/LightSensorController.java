@@ -4,6 +4,11 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorMode;
 
+/**
+ * This class implements the light sensor controller
+ * @author leaakkari
+ *
+ */
 public class LightSensorController{
 	
 	private EV3ColorSensor lightSensor;
@@ -13,6 +18,11 @@ public class LightSensorController{
 	private float colorIntensity;
 	private TextLCD lcd;
 	
+	/**
+	 * This method is a constructor for this class
+	 * @param lightSensor
+	 * @param lcd
+	 */
 	public LightSensorController(EV3ColorSensor lightSensor, TextLCD lcd) {
 		this.lightSensor = lightSensor;
 		idColour = this.lightSensor.getRedMode();
@@ -20,6 +30,10 @@ public class LightSensorController{
 		this.lcd = lcd;
 	}
 	
+	/**
+	 * This method fetches samples from the light sensor 
+	 * @return float color intensity
+	 */
 	public float fetch() {
 		idColour.fetchSample(colorValue, 0);
 		colorIntensity = colorValue[0];
