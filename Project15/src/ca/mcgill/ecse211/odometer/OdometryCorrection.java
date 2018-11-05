@@ -1,4 +1,3 @@
-
 package ca.mcgill.ecse211.odometer;
 
 import lejos.hardware.Sound;
@@ -7,11 +6,14 @@ import lejos.hardware.port.Port;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
+
 /**
  * This class is implemented for odometer correction
+ * @author Jeffrey Leung
  * @author leaakkari
  *
  */
+
 public class OdometryCorrection implements Runnable {
 	private static final long CORRECTION_PERIOD = 10;
 	private static final double TILE_LENGTH = 30.48;

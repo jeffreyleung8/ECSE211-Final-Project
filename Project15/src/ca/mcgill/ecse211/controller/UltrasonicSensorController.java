@@ -1,12 +1,12 @@
 package ca.mcgill.ecse211.controller;
 
-
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
 
 /**
  * This class implements the ultrasonic sensor controller
+ * @author Jeffrey Leung
  * @author leaakkari
  *
  */

@@ -1,4 +1,3 @@
-
 package ca.mcgill.ecse211.navigation;
 
 import lejos.hardware.Button;
@@ -11,14 +10,11 @@ import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.controller.UltrasonicSensorController;
 import ca.mcgill.ecse211.main.*;
+
 /** This class serves to drive the robot to the 0 degrees axis
  * 
  * @author Jeffrey Leung
- * @author Douglas So
  * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
  */
 public class USLocalizer {
 
@@ -30,12 +26,6 @@ public class USLocalizer {
 	private EV3LargeRegulatedMotor leftMotor, rightMotor;
 
 	private UltrasonicSensorController usSensor;
-//	private EV3UltrasonicSensor usSensor;
-//	private float[] usData;
-//	private SampleProvider usDistance;
-//	int filterControl = 0;
-//	int dist = 0;
-//	private static final int FILTER_OUT = 20;
 
 	// Create a navigation
 	public Navigation navigation;
@@ -59,44 +49,10 @@ public class USLocalizer {
 		leftMotor.setSpeed(ROTATION_SPEED);
 		rightMotor.setSpeed(ROTATION_SPEED);
 
-		navigation = new Navigation(odometer, leftMotor, rightMotor);
+		//navigation = new Navigation(odometer, leftMotor, rightMotor);
 
 		this.usSensor = usSensor;
-		//USsensor
-//		this.usSensor = usSensor;
-//		this.usDistance = this.usSensor.getMode("Distance");
-//		this.usData = new float[usDistance.sampleSize()];
 	}
-//	/**
-//	 * A method to get the distance from our sensor
-//	 * 
-//	 * @return
-//	 */
-//	private int usSensor.fetch() {
-//		usDistance.fetchSample(usData, 0);
-//		int distance =  (int) (usData[0] * 100.0);
-//		// rudimentary filter - toss out invalid samples corresponding to null signal 
-//		if (distance >= 255 && filterControl < FILTER_OUT) {
-//			// bad value: do not set the distance var, do increment the filter value
-//			this.filterControl++;
-//		} else if (distance >= 255) {
-//			// We have repeated large values, so there must actually be nothing
-//			// there: leave the distance alone
-//			this.dist = distance;
-//		} else {
-//			// distance went below 255: reset filter and leave
-//			// distance alone.
-//			this.filterControl = 0;
-//			this.dist = distance;
-//		}
-//		if(dist == 2147483647) {
-//			return 200;
-//		}
-//		LCD.drawString(""+ this.dist, 0, 5);
-//		LCD.clear(5);
-//
-//		return this.dist;
-//	}
 
 	/**
 	 * A method to localize position using the falling edge

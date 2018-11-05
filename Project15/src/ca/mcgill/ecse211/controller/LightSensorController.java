@@ -6,6 +6,7 @@ import lejos.hardware.sensor.SensorMode;
 
 /**
  * This class implements the light sensor controller
+ * @author Jeffrey Leung
  * @author leaakkari
  *
  */

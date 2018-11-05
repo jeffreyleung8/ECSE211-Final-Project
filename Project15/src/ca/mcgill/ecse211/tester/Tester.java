@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.tester;
 import java.text.DecimalFormat;
 
 import ca.mcgill.ecse211.main.Main;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -14,6 +15,7 @@ import lejos.utility.Delay;
 
 /**
  * This class implements testing for the gyro sensor, light sensor, color sensor, ultrasonic sensor and robot turns and navigation
+ * @author Jeffrey Leung
  * @author leaakkari
  *
  */
@@ -140,52 +142,56 @@ public class Tester {
 	 * This method tests the turns of the robot when it is avoiding obstacles
 	 */
 	public void testTurn() {
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
 
-		// turn 90 degrees to avoid obstacle
-		leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
-		rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
+		int angle =0;
+		for (int i = 1; i < 5; i++) {
+			// drive forward two tiles
+			leftMotor.setSpeed(200);
+			rightMotor.setSpeed(200);
 
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
+			leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 1 * Main.TILE_SIZE), true);
+			rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 1 * Main.TILE_SIZE), false);
 
-		// move to the left by a tile size
-		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
+			//turn 90 degrees clockwise
+			leftMotor.setSpeed(140);
+			rightMotor.setSpeed(140);
 
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90.0), true);
+			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90.0), false);
 
-		// turn again 90 back and move past the block
-		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
-		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
+			angle -= 90;
 
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
+			leftMotor.stop();
+			rightMotor.stop();
 
-		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
-		
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.setSpeed(50);
+			rightMotor.setSpeed(50);
 
-		// turn again 90 back and move past the block
-		leftMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
-		rightMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
 
-		leftMotor.setSpeed(FORWARD_SPEED);
-		rightMotor.setSpeed(FORWARD_SPEED);
+//			if(gyroSensor.getAngle() > angle) {
+//				while(gyroSensor.fetch() >= angle) {
+//					leftMotor.forward();
+//					rightMotor.backward();
+//				}
+//			}
+//			if(gyroSensor.getAngle() < angle) {
+//				while(gyroSensor.fetch() <= angle) {
+//					leftMotor.backward();
+//					rightMotor.forward(); 
+//				}
+//			}
 
-		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), true);
-		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 20), false);
-		
-		leftMotor.setSpeed(ROTATE_SPEED);
-		rightMotor.setSpeed(ROTATE_SPEED);
+			leftMotor.stop();
+			rightMotor.stop();
+			Sound.beep();
 
-		// turn 90 degrees to avoid obstacle
-		leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), true);
-		rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90), false);
+			try {
+				Thread.sleep(3000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 	}
 	/**

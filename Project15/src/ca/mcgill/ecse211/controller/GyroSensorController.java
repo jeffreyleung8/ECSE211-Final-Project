@@ -9,10 +9,11 @@ import lejos.utility.Delay;
 
 /**
  * This class implements the gyro sensor controller
+ * @author Jeffrey Leung
  * @author leaakkari
  *
  */
-public class GyroSensorController{
+public class GyroSensorController {
 	private EV3GyroSensor gyroSensor;
 	private SampleProvider gyroAngle;
 	private float[] gyroData;
@@ -59,5 +60,6 @@ public class GyroSensorController{
 	public int getAngle() {
 		return angle;
 	}
+
 	
 }

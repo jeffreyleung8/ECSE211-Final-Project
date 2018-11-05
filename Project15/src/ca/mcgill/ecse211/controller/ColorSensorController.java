@@ -1,4 +1,3 @@
-
 package ca.mcgill.ecse211.controller;
 
 import java.text.DecimalFormat;
@@ -14,11 +13,7 @@ import lejos.robotics.SampleProvider;
 /** This class serves to detect and classify rings colors
  * 
  * @author Jeffrey Leung
- * @author Douglas So
  * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
  */
 public class ColorSensorController {
 

@@ -1,6 +1,6 @@
-
 package ca.mcgill.ecse211.navigation;
 
+import ca.mcgill.ecse211.controller.GyroSensorController;
 import ca.mcgill.ecse211.main.*;
 import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
@@ -10,18 +10,18 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 /**
  * This class is used for navigating the robot 
  * @author Jeffrey Leung
- * @author Douglas So
  * @author Lea Akkary
- * @author Yassine Douida
- * @author Tushar Agarwal
- * @author Babette Smith
  */
 public class Navigation extends Thread {
 
-	private Odometer odometer;
+	//Motors
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
 
+	//Sensor
+	private GyroSensorController gyroSensor;
+
+	//Change in x ,y
 	private double deltax;
 	private double deltay;
 
@@ -30,19 +30,91 @@ public class Navigation extends Thread {
 	private double curry;
 	private double currTheta;
 
-	// set constants
+	//Constants
 	private static final int FORWARD_SPEED = 200;
 	private static final int ROTATE_SPEED = 120;
 
 	private boolean navigate = true;
 
-	// Constructor for navigation
-	public Navigation(Odometer odo, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
-		this.odometer = odo;
+	//Odometer class
+	private Odometer odometer;
+
+	//RingSearcher class
+	private RingSearcher ringSearcher;
+
+	//Wifi class
+	//private Wifi wifi;
+
+	//Starting corner
+	//int startingCorner;
+
+	//Tunnel coordinates
+	//private int[][] tunnelZone;
+
+	//Search zone
+	//private int[][] searchZone;
+
+	/**
+	 * This is a constructor for the RobotController class
+	 * @param odometer
+	 * @param leftMotor
+	 * @param rightMotor
+	 * @param ringSearcher
+	 * @param gyroSensor
+	 */
+	public Navigation(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, RingSearcher ringSearcher,GyroSensorController gyroSensor) {
+		this.odometer = odometer;
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
+		this.ringSearcher = ringSearcher;
+		this.gyroSensor = gyroSensor;
+		//this.wifi = wifi;
+		//this.startingCorner = wifi.getStartingCorner();
+		//this.tunnelZone = wifi.getTunnelZone();
+		//this.searchZone = wifi.getSearchZone();
+
 
 	}
+	
+	/**
+	 * A method to drive our vehicle to the tunnel
+	 */
+	public void travelToTunnel() {
+		//determine coordinates depending on team color
+		//use travelTo
+	}
+
+	/**
+	 * A method to drive our vehicle pass the tunnel
+	 */
+	public void travelThroughTunnel() {
+		//determine coordinates depending on team color
+		//use travelTo
+	}
+
+	/**
+	 * A method to drive our vehicle to the search zone
+	 */
+	public void travelToSearchZone() {
+		//determine coordinates depending on team color
+		//use travelTo
+	}
+
+	/**
+	 * A method to drive our vehicle to the search zone
+	 */
+	public void searchRing() {
+		//Thread RingSearcher
+	}
+
+	/**
+	 * A method to drive our vehicle to the search zone
+	 */
+	public void travelToStartingPoint() {
+		//determine coordinates depending on team color
+		//use travelTo
+	}
+
 	/**
 	 * A method to drive our vehicle to a certain Cartesian coordinate
 	 * 
@@ -80,7 +152,7 @@ public class Navigation extends Thread {
 
 		Sound.beep();
 	}
-
+	
 	/**
 	 * A method to turn our vehicle to a certain angle
 	 * 
@@ -117,7 +189,7 @@ public class Navigation extends Thread {
 	 * A method to determine whether another thread has called travelTo and turnTo
 	 * methods or not
 	 * 
-	 * @return
+	 * @return boolean
 	 */
 	boolean isNavigating() throws OdometerExceptions {
 		return navigate;
@@ -147,12 +219,9 @@ public class Navigation extends Thread {
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
-	
-	/**
-	 * This method implements obtsacle avoidance
-	 * @param usDistance
-	 */
-	public void avoidObtsacles() {
-		
+
+	private static void adjustTurn(int supposedAngle){
+		//adjust turn with gyroscope
 	}
+
 }

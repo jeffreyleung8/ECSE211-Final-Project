@@ -1,11 +1,10 @@
-
-
 package ca.mcgill.ecse211.odometer;
-import java.text.DecimalFormat;
 
+import java.text.DecimalFormat;
 import ca.mcgill.ecse211.main.*;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+
 /** 
  * This class is meant as a skeleton for the odometer class to be used.
  * 
@@ -39,7 +38,6 @@ public class Odometer extends OdometerData implements Runnable {
 	private int nbYLines;
 	private static final double TILE_SIZE = 30.48;
 
-
 	private TextLCD lcd;
 	private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
 
@@ -51,8 +49,7 @@ public class Odometer extends OdometerData implements Runnable {
 	 * @param rightMotor
 	 * @throws OdometerExceptions
 	 */
-	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,
-			TextLCD lcd,int startingCorner) throws OdometerExceptions {
+	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, TextLCD lcd, int startingCorner) throws OdometerExceptions {
 		odoData = OdometerData.getOdometerData(); // Allows access to x,y,z
 		// manipulation methods
 		this.leftMotor = leftMotor;
@@ -69,6 +66,7 @@ public class Odometer extends OdometerData implements Runnable {
 		this.WHEEL_RAD = Main.WHEEL_RAD;
 
 		this.lcd =lcd;
+		
 		this.startingCorner=startingCorner;
 	}
 
@@ -161,14 +159,6 @@ public class Odometer extends OdometerData implements Runnable {
 			// TODO Update odometer values with new calculated values
 			odo.update(dX, dY, dTheta*180/Math.PI);
 			
-//			// Retrieve x, y and Theta information
-//		      position = odo.getXYT();
-//		      
-//		      // Print x,y, and theta information
-//		      DecimalFormat numberFormat = new DecimalFormat("######0.00");
-//		      lcd.drawString("X: " + numberFormat.format(position[0]), 0, 0);
-//		      lcd.drawString("Y: " + numberFormat.format(position[1]), 0, 1);
-//		      lcd.drawString("T: " + numberFormat.format(position[2]), 0, 2);
 		      
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();

@@ -1,5 +1,11 @@
-Progress
+TO-DO:
 
+-Implement methods in Navigation
+-Implement methods in RingSearcher
+-Implement and link odometerCorrection to other classes
+
+
+Progress
 Oct 30: (Jeffrey)
 -added controller package that contains 4 controllers
 (one for each sensor: gyro,light,color,us)
@@ -7,3 +13,9 @@ Oct 30: (Jeffrey)
 -added RingSearcher.java in navigation package (will serve to search ring and grab it)
 -added Tester.java to test sensors
 -moved lightLocalizer and USLocalizer to navigation package
+
+Nov 5: (Jeffrey)
+-rearranged code
+-added methods to RingSearcher class
+-added methods to Navigation class
+-added sequence of method calls in Main class
