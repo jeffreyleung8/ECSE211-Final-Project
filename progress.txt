@@ -6,6 +6,7 @@ TO-DO:
 
 
 Progress
+
 Oct 30: (Jeffrey)
 -added controller package that contains 4 controllers
 (one for each sensor: gyro,light,color,us)
@@ -19,3 +20,9 @@ Nov 5: (Jeffrey)
 -added methods to RingSearcher class
 -added methods to Navigation class
 -added sequence of method calls in Main class
+
+Nov 8: (Jeffrey)
+-added robotController(everything related to the motors)
+-integrated robotController to code
+-added Wifi class
+-added enum Team, SearchState

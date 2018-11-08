@@ -13,7 +13,6 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.navigation.*;
-import ca.mcgill.ecse211.controller.GyroSensorController;
 import ca.mcgill.ecse211.tester.*;
 import java.text.DecimalFormat;
 import ca.mcgill.ecse211.controller.*;
@@ -25,39 +24,45 @@ import ca.mcgill.ecse211.controller.*;
  */
 public class Main {
 
+	//Constants
+	public static final double WHEEL_RAD = 2.1;
+	public static final double TRACK = 14.35; 
+	public static final double TILE_SIZE = 30.48;
+	public static final double SENSOR_LENGTH = 10;
+	static int startingCorner = 0;
+
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-  //private static final EV3LargeRegulatedMotor sideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	//private static final EV3LargeRegulatedMotor sideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
 	//Sensor Object
 	private static final EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S1);
-	//	private static final EV3UltrasonicSensor us = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
-	//	private static final EV3ColorSensor light = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
-	//	private static final EV3ColorSensor color = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+	private static final EV3UltrasonicSensor us = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
+	private static final EV3ColorSensor light = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
+	private static final EV3ColorSensor color = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+
+	//Odometer
+	private static final Odometer odometer = Odometer.getOdometer(leftMotor,rightMotor);
 
 	//Controllers
-	GyroSensorController gyroSensor = new GyroSensorController(gyro,lcd);
-	// ColorSensorController colorSensor = new ColorSensorController(color);
-	// UltrasonicSensorController usSensor = new UltrasonicSensorController(us,lcd);
-	// LightSensorController lightSensor = new LightSensorController(light,lcd);
+	private static GyroSensorController gyroSensor = new GyroSensorController(gyro,lcd);
+	private static ColorSensorController colorSensor = new ColorSensorController(color);
+	private static UltrasonicSensorController usSensor = new UltrasonicSensorController(us,lcd);
+	private static LightSensorController lightSensor = new LightSensorController(light,lcd);
+	private static RobotController robot = new RobotController(odometer,leftMotor,rightMotor, gyroSensor);
 
-	//Constants
-	public static final double WHEEL_RAD = 2.1;
-	public static final double TRACK = 14.35; 
-	public static final double TILE_SIZE = 30.48;
-
-	static int startingCorner = 0;
-
-
+	// WiFi class
+	private static WiFi wifi = new WiFi();
+	
 	//Navigation
-	// USLocalizer USLocalizer = new USLocalizer(odometer, leftMotor, rightMotor, true, usSensor);
-	// LightLocalizer lightLocalizer = new LightLocalizer(odometer, leftMotor, rightMotor,lightSensor);
-	// RingSearcher ringSearcher = new RingSearcher(colorSensor, usSensor,gyroSensor, leftMotor,rightMotor, sideMotor);
-	// Navigation navigation = new Navigation(odometer, leftMotor, rightMotor,ringSearcher,gyroSensor);
+//	USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
+//	LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
+//	RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
+//	Navigation navigation = new Navigation(odometer,robot,ringSearcher,gyroSensor,wifi);
 
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -76,13 +81,11 @@ public class Main {
 			//			//Turns
 			//			test.testTurn();
 			/*--------------END---------------*/
-			
-			//Odometer
-			Odometer odometer = Odometer.getOdometer(leftMotor, rightMotor,lcd,startingCorner);
-			
+
+
 			//Display
 			Display odometryDisplay = new Display(lcd); 
-			
+
 			//Odometer thread
 			Thread odoThread = new Thread(odometer);
 			odoThread.start();
@@ -91,16 +94,17 @@ public class Main {
 			Thread odoDisplayThread = new Thread(odometryDisplay);
 			odoDisplayThread.start();
 
-			//Center to 0 axis with USLocalizer (true: Rising edge / false: Falling edge) 
-			//USLocalizer.localizeRisingEdge();
+			//Center to 0 axis with USLocalize
+			//USLocalizer.usLocalize(); 
+			//USLocalizer.usLocalize1(); //try both
 
 			//Localize robot to origin with LightLocalizer
 			//lightLocalizer.initialLocalize(1*TILE_SIZE,1*TILE_SIZE); //TO CHANGE ARGUMENTS
 			//odometer.initialize(); //initialize odometer to startingCorner
-			
+
 			//Navigation to tunnel entrance
 			//navigation.travelToTunnel(); 
-			
+
 			//Navigation through tunnel 
 			//navigation.travelThroughTunnel(); 
 

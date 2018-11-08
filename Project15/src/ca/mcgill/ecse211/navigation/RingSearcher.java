@@ -2,7 +2,10 @@ package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.controller.ColorSensorController;
 import ca.mcgill.ecse211.controller.GyroSensorController;
+import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.controller.UltrasonicSensorController;
+import ca.mcgill.ecse211.enumeration.SearchState;
+import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 /**
  * This class implements the ring searcher
@@ -12,10 +15,9 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  */
 public class RingSearcher implements Runnable {
 
-	//Motors
-	private EV3LargeRegulatedMotor leftMotor,rightMotor;
-	private EV3LargeRegulatedMotor sideMotor; 
-
+	//Robot
+	private RobotController robot;
+	
 	//Sensors
 	private ColorSensorController colorSensor;
 	private UltrasonicSensorController usSensor;
@@ -25,8 +27,14 @@ public class RingSearcher implements Runnable {
 	//private Wifi wifi = new Wifi();
 
 	//Odometer
-	//private Odometer odometer;
-
+	private Odometer odometer;
+	
+	//Search state
+	private SearchState searchState;
+	
+	//Constants
+	private long START_TIME;
+	
 	/**
 	 *  Constructor for ring searcher
 	 * @param colorSensor
@@ -35,14 +43,12 @@ public class RingSearcher implements Runnable {
 	 * @param leftMotor
 	 * @param rightMotor
 	 */
-	public RingSearcher(ColorSensorController colorSensor, 	UltrasonicSensorController usSensor,GyroSensorController gyroSensor,EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,EV3LargeRegulatedMotor sideMotor) {
+	public RingSearcher(Odometer odometer,ColorSensorController colorSensor, 	UltrasonicSensorController usSensor,GyroSensorController gyroSensor, RobotController robot) {
 		this.colorSensor = colorSensor;
 		this.usSensor = usSensor;
 		this.gyroSensor = gyroSensor;
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
-		this.sideMotor = sideMotor;
-
+		this.robot = robot;
+		this.odometer = odometer;
 	}
 
 	@Override 
@@ -83,12 +89,6 @@ public class RingSearcher implements Runnable {
 		
 	}
 
-	/**
-	 * This method adjusts turns
-	 */
-	private static void adjustTurn(int supposedAngle){
-		//adjust turn with gyroscope
-	}
 
 	
 	

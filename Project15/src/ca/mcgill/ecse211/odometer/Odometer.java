@@ -38,7 +38,6 @@ public class Odometer extends OdometerData implements Runnable {
 	private int nbYLines;
 	private static final double TILE_SIZE = 30.48;
 
-	private TextLCD lcd;
 	private static final long ODOMETER_PERIOD = 25; // odometer update period in ms
 
 	/**
@@ -49,7 +48,7 @@ public class Odometer extends OdometerData implements Runnable {
 	 * @param rightMotor
 	 * @throws OdometerExceptions
 	 */
-	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor, TextLCD lcd, int startingCorner) throws OdometerExceptions {
+	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) throws OdometerExceptions {
 		odoData = OdometerData.getOdometerData(); // Allows access to x,y,z
 		// manipulation methods
 		this.leftMotor = leftMotor;
@@ -65,23 +64,20 @@ public class Odometer extends OdometerData implements Runnable {
 		this.TRACK = Main.TRACK;
 		this.WHEEL_RAD = Main.WHEEL_RAD;
 
-		this.lcd =lcd;
-		
-		this.startingCorner=startingCorner;
 	}
 
-	/**
-	 * This method initializes the odometer depending its starting Position
-	 * 
-	 */
-	public void initialize() {
-		switch(startingCorner) {
-		case 0: nbXLines = 1; nbYLines = 1; this.theta = 0.0; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 1: nbXLines = 7; nbYLines = 1; this.theta = 270.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 2: nbXLines = 7; nbYLines = 7; this.theta = 180.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 3: nbXLines = 1; nbYLines = 7; this.theta = 90.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		}
-	}
+//	/**
+//	 * This method initializes the odometer depending its starting Position
+//	 * 
+//	 */
+//	public void initialize() {
+//		switch(startingCorner) {
+//		case 0: nbXLines = 1; nbYLines = 1; this.theta = 0.0; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+//		case 1: nbXLines = 7; nbYLines = 1; this.theta = 270.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+//		case 2: nbXLines = 7; nbYLines = 7; this.theta = 180.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+//		case 3: nbXLines = 1; nbYLines = 7; this.theta = 90.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+//		}
+//	}
 	/**
 	 * This method resets the theta in the odometer
 	 * 
@@ -98,12 +94,16 @@ public class Odometer extends OdometerData implements Runnable {
 	 * @throws OdometerExceptions
 	 */
 	public synchronized static Odometer getOdometer(EV3LargeRegulatedMotor leftMotor,
-			EV3LargeRegulatedMotor rightMotor, TextLCD lcd,int startingCorner)
-					throws OdometerExceptions {
+			EV3LargeRegulatedMotor rightMotor) {
 		if (odo != null) { // Return existing object
 			return odo;
 		} else { // create object and return it
-			odo = new Odometer(leftMotor, rightMotor, lcd, startingCorner);
+			try {
+				odo = new Odometer(leftMotor, rightMotor);
+			} catch (OdometerExceptions e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return odo;
 		}
 	}
@@ -130,7 +130,7 @@ public class Odometer extends OdometerData implements Runnable {
 	// run method (required for Thread)
 	public void run() {
 		long updateStart, updateEnd;
-	    lcd.clear();
+
 
 		while (true) {
 			

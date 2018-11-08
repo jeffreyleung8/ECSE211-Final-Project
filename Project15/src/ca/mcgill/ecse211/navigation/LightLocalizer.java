@@ -7,6 +7,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.SensorMode;
 import ca.mcgill.ecse211.odometer.*;
 import ca.mcgill.ecse211.controller.LightSensorController;
+import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.main.*;
 
@@ -17,19 +18,19 @@ import ca.mcgill.ecse211.main.*;
  */
 public class LightLocalizer {
 
-	// vehicle constants
-	public static int ROTATION_SPEED = 130;
-
-	//TO CHANGE
-	private double SENSOR_LENGTH = 12.5;
+	//Constants
+	private final int FORWARD_SPEED;
+	private final int ROTATE_SPEED;
+	private final double TILE_SIZE;
+	private final double SENSOR_LENGTH;
+	
 
 	private Odometer odometer;
-	private EV3LargeRegulatedMotor leftMotor, rightMotor;
-	public Navigation navigation;
+
+	private RobotController robot;
 	
 	private LightSensorController lightSensor;
 
-	private float sample;
 
 	double[] lineData;
 
@@ -40,13 +41,13 @@ public class LightLocalizer {
 	 * @param rightMotor
 	 * @param lightSensor
 	 */
-	public LightLocalizer(Odometer odometer, EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor,LightSensorController lightSensor) {
-
+	public LightLocalizer(Odometer odometer,RobotController robot,LightSensorController lightSensor) {
 		this.odometer = odometer;
-		this.leftMotor = leftMotor;
-		this.rightMotor = rightMotor;
-		
-		//navigation = new Navigation(odometer, leftMotor, rightMotor);
+		this.robot = robot;
+		this.FORWARD_SPEED = robot.FORWARD_SPEED;
+		this.ROTATE_SPEED = robot.ROTATE_SPEED;
+		this.TILE_SIZE = Main.TILE_SIZE;
+		this.SENSOR_LENGTH = Main.SENSOR_LENGTH;
 		
 		this.lightSensor = lightSensor;
 		lineData = new double[5];
@@ -62,16 +63,13 @@ public class LightLocalizer {
 		moveToOrigin();
 		
 		int index = 0;
-		leftMotor.setSpeed(ROTATION_SPEED);
-		rightMotor.setSpeed(ROTATION_SPEED);
+		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 
 		//Detect the four lines and record the angle at which it is seen
 		while (index < 4) {
+			robot.rotate(true);
 
-			leftMotor.forward();
-			rightMotor.backward();
-
-			sample = lightSensor.fetch();
+			float sample = lightSensor.fetch();
 
 			if (sample < 0.20) {
 				lineData[index] = odometer.getXYT()[2];
@@ -79,9 +77,7 @@ public class LightLocalizer {
 				index++;
 			}
 		}
-
-		leftMotor.stop(true);
-		rightMotor.stop();
+		robot.stopMoving();
 
 		double deltax, deltay, thetax, thetay;
 
@@ -94,20 +90,17 @@ public class LightLocalizer {
 
 		// travel to origin to correct position
 		odometer.setXYT(deltax, deltay, odometer.getXYT()[2]);
-		navigation.travelTo(0,0);
-
-		leftMotor.setSpeed(ROTATION_SPEED / 2);
-		rightMotor.setSpeed(ROTATION_SPEED / 2);
+		robot.travelTo(0,0);
+		
+		robot.setSpeeds(ROTATE_SPEED/2 , ROTATE_SPEED/2);
 
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
 			Sound.beep();
-			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), true);
-			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), false);
+			robot.turnBy(-odometer.getXYT()[2]);
 		}
-
-		leftMotor.stop(true);
-		rightMotor.stop();
+		
+		robot.stopMoving();
 		odometer.setXYT(x, y, 0.0);
 	}
 
@@ -121,24 +114,20 @@ public class LightLocalizer {
 		
 		//Turn until the robot is not on a black line
 		while(lightSensor.fetch() < 20) {
-			leftMotor.setSpeed(100);
-			rightMotor.setSpeed(100);
-			leftMotor.backward();
-			rightMotor.forward();
+			robot.setSpeeds(100, 100);
+			robot.rotate(false);
 		}
 		
 		//Start localization
 		int index = 0;
-		leftMotor.setSpeed(ROTATION_SPEED);
-		rightMotor.setSpeed(ROTATION_SPEED);
+		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 
 		//Detect the four lines and record the angle at which it is seen
 		while (index < 4) {
+			robot.rotate(true);
 
-			leftMotor.forward();
-			rightMotor.backward();
 
-			sample = lightSensor.fetch();
+			float sample = lightSensor.fetch();
 
 			if (sample < 0.20) {
 				lineData[index] = odometer.getXYT()[2];
@@ -146,9 +135,7 @@ public class LightLocalizer {
 				index++;
 			}
 		}
-
-		leftMotor.stop(true);
-		rightMotor.stop();
+		robot.stopMoving();
 
 		double deltax, deltay, thetax, thetay;
 
@@ -161,20 +148,18 @@ public class LightLocalizer {
 
 		// travel to origin to correct position
 		odometer.setXYT(deltax, deltay, odometer.getXYT()[2]);
-		navigation.travelTo(0,0);
+		robot.travelTo(0,0);
 
-		leftMotor.setSpeed(ROTATION_SPEED / 2);
-		rightMotor.setSpeed(ROTATION_SPEED / 2);
+		robot.setSpeeds(ROTATE_SPEED/2 , ROTATE_SPEED/2);
 
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
 			Sound.beep();
-			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), true);
-			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, -odometer.getXYT()[2]), false);
+			robot.turnBy(-odometer.getXYT()[2]);
 		}
+		
+		robot.stopMoving();
 
-		leftMotor.stop(true);
-		rightMotor.stop();
 		odometer.setXYT(x, y, 0.0);
 	}
 
@@ -183,56 +168,30 @@ public class LightLocalizer {
 	 */
 	public void moveToOrigin() {
 
+		robot.turnTo(Math.PI /4);
+		
+//		if(odometer.getXYT()[2] <= 10.00 || odometer.getXYT()[2] >=350) {
+//			robot.turnTo(Math.PI /4);
+//		}
+		
+		robot.setSpeeds(ROTATE_SPEED+60, ROTATE_SPEED+60);
 
-		if(odometer.getXYT()[2] <= 10.00 || odometer.getXYT()[2] >=350) {
-			navigation.turnTo(Math.PI /4);
-		}
-
-		leftMotor.setSpeed(ROTATION_SPEED+60);
-		rightMotor.setSpeed(ROTATION_SPEED+60);
 
 		// get sample
-		sample = lightSensor.fetch();
+		float sample = lightSensor.fetch();
 
 		// move forward past the origin until light sensor sees the line
 		while (sample > 0.20) {
 
 			sample = lightSensor.fetch();
-			leftMotor.forward();
-			rightMotor.forward();
+			robot.moveForward();
+
 		}
-		leftMotor.stop(true);
-		rightMotor.stop();
+		robot.stopMoving();
 		Sound.beep();
 
 		// Move backwards so our origin is close to origin
-		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, -11), true); ////////////
-		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, -11), false);///////////
+		robot.travelDist(-11);
 
 	}
-	/**
-	 * This method allows the conversion of a distance to the total rotation of each
-	 * wheel need to cover that distance.
-	 * 
-	 * @param radius
-	 * @param distance
-	 * @return
-	 */
-	private static int convertDistance(double radius, double distance) {
-		return (int) ((180.0 * distance) / (Math.PI * radius));
-	}
-
-	/**
-	 * This method allows the conversion of a angle to the total rotation of each
-	 * wheel need to cover that distance.
-	 * 
-	 * @param radius
-	 * @param distance
-	 * @param angle
-	 * @return
-	 */
-	private static int convertAngle(double radius, double width, double angle) {
-		return convertDistance(radius, Math.PI * width * angle / 360.0);
-	}
-
 }
