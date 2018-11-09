@@ -217,7 +217,7 @@ public class RobotController {
 	 * @param distance
 	 * @return 
 	 */
-	private static int convertDistance(double radius, double distance) {
+	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
@@ -230,7 +230,7 @@ public class RobotController {
 	 * @param angle
 	 * @return the angle the robot needs to turn each wheel to rotate
 	 */
-	private static int convertAngle(double radius, double width, double angle) {
+	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
