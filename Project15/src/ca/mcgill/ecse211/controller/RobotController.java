@@ -69,8 +69,8 @@ public class RobotController {
 		double currx = odometer.getXYT()[0];
 		double curry = odometer.getXYT()[1];
 
-		double deltax = x - currx;
-		double deltay = y - curry;
+		double deltax = x*TILE_SIZE - currx;
+		double deltay = y*TILE_SIZE - curry;
 
 		// Calculate the angle to turn around
 		double currTheta = (odometer.getXYT()[2]) * Math.PI / 180;
@@ -84,8 +84,8 @@ public class RobotController {
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
-		leftMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot), true);
-		rightMotor.rotate(convertDistance(Main.WHEEL_RAD, hypot), false);
+		leftMotor.rotate(convertDistance(WHEEL_RAD, hypot), true);
+		rightMotor.rotate(convertDistance(WHEEL_RAD, hypot), false);
 
 		// stop vehicle
 		leftMotor.stop(true);

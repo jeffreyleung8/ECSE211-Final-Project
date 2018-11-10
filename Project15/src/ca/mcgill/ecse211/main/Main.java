@@ -62,7 +62,7 @@ public class Main {
 //	USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
 //	LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
 //	RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
-//	Navigation navigation = new Navigation(odometer,robot,ringSearcher,gyroSensor,wifi);
+//	Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
 
 
 	public static void main(String[] args) throws OdometerExceptions {

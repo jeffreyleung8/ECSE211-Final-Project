@@ -47,7 +47,7 @@ public class RingSearcher implements Runnable {
 			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 	
 	//usdistance
-	int usDistance = usSensor.fetch();
+//	int usDistance = usSensor.fetch();
 	 
 	/**
 	 *  Constructor for ring searcher
@@ -68,12 +68,6 @@ public class RingSearcher implements Runnable {
 	@Override 
 	public void run(){
 		
-		
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-				
-			}
 		if(detectRing()) {
 			grabRing();
 			}
@@ -119,12 +113,12 @@ public class RingSearcher implements Runnable {
 	 * This method searches the ring set
 	 */
 	public void searchRingSet() {
-		if(usDistance<10) {
+		if(usSensor.fetch()<10) {
 			robot.stopMoving();
 			robot.turnBy(-45);
 			robot.travelDist(20);
 			robot.turnBy(45);
-			while(usDistance>7) {
+			while(usSensor.fetch()>7) {
 				robot.moveForward();
 			}
 		}
@@ -173,7 +167,7 @@ public class RingSearcher implements Runnable {
 		rightSideMotor.rotate(50);
 		leftSideMotor.rotate(50);
 		
-		while(usDistance > 4){
+		while(usSensor.fetch() > 4){
 			robot.moveForward();
 		}
 		
@@ -190,7 +184,7 @@ public class RingSearcher implements Runnable {
 		leftSideMotor.rotate(-90);
 		
 		//ring grabbed, move back from tree
-		while(usDistance<10) {
+		while(usSensor.fetch()<10) {
 			robot.moveBackward();
 		}
 			
