@@ -26,3 +26,8 @@ Nov 8: (Jeffrey)
 -integrated robotController to code
 -added Wifi class
 -added enum Team, SearchState
+
+Nov 11 : (Jeffrey)
+-modified navigation and wifi class to support beta demo
+-implemented method to adjust turn with gyroscope
+-minor code changes

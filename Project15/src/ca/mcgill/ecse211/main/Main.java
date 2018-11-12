@@ -29,13 +29,14 @@ public class Main {
 	public static final double TRACK = 14.35; 
 	public static final double TILE_SIZE = 30.48;
 	public static final double SENSOR_LENGTH = 10;
-	static int startingCorner = 0;
+	public static int[] startingCorner;
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	//private static final EV3LargeRegulatedMotor sideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-
+	//private static final EV3LargeRegulatedMotor sideLeftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	//private static final EV3LargeRegulatedMotor sideRightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+	
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
@@ -99,17 +100,14 @@ public class Main {
 			//USLocalizer.usLocalize1(); //try both
 
 			//Localize robot to origin with LightLocalizer
-			//lightLocalizer.initialLocalize(1*TILE_SIZE,1*TILE_SIZE); //TO CHANGE ARGUMENTS
-			//odometer.initialize(); //initialize odometer to startingCorner
+			//startingCorner = wifi.getStartingCornerCoords();
+			//lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
 
 			//Navigation to tunnel entrance
 			//navigation.travelToTunnel(); 
 
 			//Navigation through tunnel 
 			//navigation.travelThroughTunnel(); 
-
-			//Navigaton to search zone(TR_LL)
-			//navigation.travelToSearchZone();
 
 			//Localize on (TR_LL)
 			//lightLocalizer.localize();

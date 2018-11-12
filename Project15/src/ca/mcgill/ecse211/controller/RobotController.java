@@ -16,8 +16,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class RobotController {
 
 	// Motor objects
-	private EV3LargeRegulatedMotor leftMotor;
-	private EV3LargeRegulatedMotor rightMotor;
+	private static EV3LargeRegulatedMotor leftMotor;
+	private static EV3LargeRegulatedMotor rightMotor;
 
 	//Constants
 	public final int FORWARD_SPEED = 200;
@@ -25,13 +25,13 @@ public class RobotController {
 	public final double TRACK = Main.TRACK;
 	public final double WHEEL_RAD = Main.WHEEL_RAD;
 	public final double TILE_SIZE = Main.TILE_SIZE;
-	public final double SENSOR_LENGTH = 10;
+	public final double SENSOR_LENGTH = Main.SENSOR_LENGTH;
 
 	//Odometer
 	private Odometer odometer;
-	
+
 	//Sensor
-	private GyroSensorController gyroSensor;
+	private static GyroSensorController gyroSensor;
 	/**
 	 * This is a constructor for the RobotController class
 	 * @param odometer
@@ -48,14 +48,14 @@ public class RobotController {
 	 * Get left motor
 	 */
 	public EV3LargeRegulatedMotor getLeftMotor() {
-		return this.leftMotor;
+		return leftMotor;
 	}
-	
+
 	/*
 	 * Get right motor
 	 */
 	public EV3LargeRegulatedMotor getRightMotor() {
-		return this.rightMotor;
+		return rightMotor;
 	}
 
 	/**
@@ -118,11 +118,13 @@ public class RobotController {
 		if (theta < 0) {
 			leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, -(theta * 180) / Math.PI), true);
 			rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, -(theta * 180) / Math.PI), false);
+			//adjustTurn((theta * 180) / Math.PI);
 
 		} else {
 			// angle is positive, turn to the right
 			leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, (theta * 180) / Math.PI), true);
 			rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, (theta * 180) / Math.PI), false);
+			//adjustTurn((theta * 180) / Math.PI);
 		}
 	}
 
@@ -162,7 +164,7 @@ public class RobotController {
 		rightMotor.stop();
 
 	}
-	
+
 	/**
 	 * Turns the robot by the specified angle
 	 * 
@@ -171,8 +173,9 @@ public class RobotController {
 	public void turnBy(double dTheta) {
 		leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, dTheta), true);
 		rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, dTheta), false);
+		adjustTurn((dTheta * 180) / Math.PI);
 	}
-	
+
 	/**
 	 * Moves the robot forward by the specified distance 
 	 * 
@@ -182,7 +185,7 @@ public class RobotController {
 		leftMotor.rotate(convertDistance(WHEEL_RAD, distance), true);
 		rightMotor.rotate(convertDistance(WHEEL_RAD, distance), false);
 	}
-	
+
 	/**
 	 * Rotate the robot clockwise or counterclockwise.
 	 * 
@@ -234,8 +237,25 @@ public class RobotController {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
-	private static void adjustTurn(int supposedAngle){
-		//adjust turn with gyroscope
+	/**
+	 * Adjust the turn of the robot using the gyroscope
+	 * 
+	 * @param angle  
+	 */
+	private static void adjustTurn(double angle){
+
+		if(gyroSensor.getAngle() > (int) angle) {
+			while(gyroSensor.fetch() >= (int)angle) {
+				leftMotor.forward();
+				rightMotor.backward();
+			}
+		}
+		if(gyroSensor.getAngle() <(int) angle) {
+			while(gyroSensor.fetch() <=(int) angle) {
+				leftMotor.backward();
+				rightMotor.forward(); 
+			}
+		}
 	}
 
 }

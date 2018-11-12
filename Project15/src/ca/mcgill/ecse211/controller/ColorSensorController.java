@@ -39,10 +39,7 @@ public class ColorSensorController {
 	 * @param colorSensor
 	 */
 	public ColorSensorController(EV3ColorSensor colorSensor) {
-
 		//this.sideMotor = sideMotor;
-
-		//Color sensor init
 		this.colorSensor = colorSensor;
 		rgbValue = colorSensor.getRGBMode();
 		rgbData = new float[rgbValue.sampleSize()];
@@ -61,6 +58,7 @@ public class ColorSensorController {
 
 	/**
 	 * This method allows to detect the color of the ring
+	 * 0-blue 1-green 2-yellow 3-orange 4-None
 	 * @return (integer representing the color)
 	 */
 	public int detect() {

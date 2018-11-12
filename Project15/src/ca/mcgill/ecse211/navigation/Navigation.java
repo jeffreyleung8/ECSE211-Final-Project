@@ -129,7 +129,10 @@ public class Navigation extends Thread {
 		}
 		robot.travelDist(-SENSOR_LENGTH);	
 	}
-
+	/**
+	 * A method to travel to the ringSet
+	 * 
+	 */
 	public void travelToRingSet() {
 		int ulx = tunnelZone[2][0];
 		int urx = tunnelZone[3][0];
