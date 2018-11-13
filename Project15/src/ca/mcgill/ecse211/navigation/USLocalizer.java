@@ -34,9 +34,8 @@ public class USLocalizer {
 
 
 	//Constant
-	private double w = 40.00;
-	private double d = 35.00;
-	private double k = 2.00;
+	private int OPEN_SPACE = 120;
+	private int WALL = 30;
 
 	/**
 	 * Constructor to initialize variables
@@ -64,11 +63,11 @@ public class USLocalizer {
 		double angleA, angleB, turningAngle;
 		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 		// Rotate to open space
-		while (usSensor.fetch() < 120) {
+		while (usSensor.fetch() < OPEN_SPACE) {
 			robot.rotate(false);
 		}
 		// Rotate to the first wall
-		while (usSensor.fetch() > 30) {
+		while (usSensor.fetch() > WALL) {
 			robot.rotate(false);
 		}
 		Sound.beep();
@@ -76,12 +75,12 @@ public class USLocalizer {
 		angleA = odometer.getXYT()[2];
 
 		// rotate out of the wall range
-		while (usSensor.fetch() < 120 ) {
+		while (usSensor.fetch() < OPEN_SPACE ) {
 			robot.rotate(true);
 		}
 
 		// rotate to the second wall
-		while (usSensor.fetch() > 30) {
+		while (usSensor.fetch() > WALL) {
 			robot.rotate(true);
 		}
 		

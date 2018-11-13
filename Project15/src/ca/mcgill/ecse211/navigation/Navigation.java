@@ -107,10 +107,19 @@ public class Navigation extends Thread {
 	 * A method to drive our vehicle pass the tunnel
 	 */
 	public void travelThroughTunnel() {
-		//assure that the robot is pointing 0 axis
-		while(odometer.getXYT()[2] >= 350 || odometer.getXYT()[2]<=10) {
-			robot.rotate(true);
+		if(wifi.isTunnelVertical()) {
+			//assure that the robot is pointing 0 axis
+			while(odometer.getXYT()[2] >= 350 || odometer.getXYT()[2]<=10) {
+				robot.rotate(true);
+			}
 		}
+		//assure that the robot is pointing 270
+		else {
+			while(odometer.getXYT()[2] >= 260 || odometer.getXYT()[2]<=280) {
+				robot.rotate(true);
+			}
+		}
+		
 		//turn 45 to the left
 		robot.turnBy(45,false); 
 		

@@ -17,11 +17,15 @@ import ca.mcgill.ecse211.tester.*;
 import java.text.DecimalFormat;
 import ca.mcgill.ecse211.controller.*;
 
-/** This class serves to link all the classses together and display a menu when running the code  
+/** This is the main class of the project. It is at the top level of the layered hierarchy.
+ *  It serves to link all the classses together and make a sequence of methods classes from 
+ *  the middle layer (navigation package) in order to execute the tasks of the game. 
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
  */
+
+
 public class Main {
 
 	//Constants
@@ -66,6 +70,15 @@ public class Main {
 	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
 
 
+	
+	/**
+	 * This is the central method in which it sequentically calls methods from the navigation package.
+	 * It first localizes with the ultrasonic sensor, then localizes on the starting corner with the light 
+	 * sensor. Then it navigates to and through the tunnel. Then it searches for the ring set and grabs a ring.
+	 * Then it returns back to the starting corner by passing through the tunnel. 
+	 * 
+	 * @param args 
+	 */
 	public static void main(String[] args) throws OdometerExceptions {
 
 		do {
@@ -104,7 +117,7 @@ public class Main {
 			startingCorner[0]=7;
 			startingCorner[1]=1;
 			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
-			
+			odometer.initialize();
 
 			//Navigation to tunnel entrance
 			navigation.travelToTunnel(); 

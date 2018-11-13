@@ -5,8 +5,8 @@ import java.util.Map;
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import ca.mcgill.ecse211.enumeration.Team;
 
-/** This class serves to fetch all data from the server JAR
- * FOR BETA DEMO
+/** This class serves to fetch all data from the dpmServer.jar
+ * (Beta demo version)
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
