@@ -31,3 +31,9 @@ Nov 11 : (Jeffrey)
 -modified navigation and wifi class to support beta demo
 -implemented method to adjust turn with gyroscope
 -minor code changes
+
+Nov 13 : (Jeffrey)
+-US localization and light localization should be working(tested in the lab)
+-code changes in lightLocalizer, USLocalizer, navigation
+-succeed to get game parameters to robot from server using wifi class
+(in betaDemosetup folder)

@@ -1,0 +1,18 @@
+How to run:
+
+1- Press on DPMServer.jar. A window will pop out.
+2- Run project like usual(it will run EV3WifiClient)
+3- Enter the values in the window created by DPMServer.jar 
+(you'll see something like Team 15 is connected)
+4-Press Start when all data is entered
+5- Data will be displayed on the EV3 block screen
+5- The robot will run the Main (like usual)
+
+I put 3 example paths
+
+The robot goes to the point below the lower right corner of the tunnel(vertical placed)
+			    beside the upper right corner of the tunnel(horizontal placed)
+
+**BETA DEMO**
+Only add values for Green Team
+Can add 0 to Red team

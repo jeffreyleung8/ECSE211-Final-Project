@@ -50,7 +50,7 @@ public class LightLocalizer {
 		this.SENSOR_LENGTH = Main.SENSOR_LENGTH;
 		
 		this.lightSensor = lightSensor;
-		lineData = new double[5];
+		lineData = new double[4];
 	}
 	
 	/**
@@ -71,7 +71,7 @@ public class LightLocalizer {
 
 			float sample = lightSensor.fetch();
 
-			if (sample < 0.20) {
+			if (sample < 0.30) {
 				lineData[index] = odometer.getXYT()[2];
 				Sound.playNote(Sound.FLUTE, 880, 250);
 				index++;
@@ -83,7 +83,7 @@ public class LightLocalizer {
 
 		// calculate our location from 0 using the calculated angles
 		thetay = lineData[3] - lineData[1];
-		thetax = lineData[2] - lineData[4];
+		thetax = lineData[2] - lineData[0];
 
 		deltax = -1 * SENSOR_LENGTH * Math.cos(Math.toRadians(thetay / 2));
 		deltay = -1 * SENSOR_LENGTH * Math.cos(Math.toRadians(thetax / 2));
@@ -96,8 +96,8 @@ public class LightLocalizer {
 
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
+			robot.turnBy(-odometer.getXYT()[2],true);
 			Sound.beep();
-			robot.turnBy(-odometer.getXYT()[2]);
 		}
 		
 		robot.stopMoving();
@@ -129,7 +129,7 @@ public class LightLocalizer {
 
 			float sample = lightSensor.fetch();
 
-			if (sample < 0.20) {
+			if (sample < 0.30) {
 				lineData[index] = odometer.getXYT()[2];
 				Sound.playNote(Sound.FLUTE, 880, 250);
 				index++;
@@ -155,7 +155,7 @@ public class LightLocalizer {
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {
 			Sound.beep();
-			robot.turnBy(-odometer.getXYT()[2]);
+			robot.turnBy(-odometer.getXYT()[2],true);
 		}
 		
 		robot.stopMoving();
@@ -181,7 +181,7 @@ public class LightLocalizer {
 		float sample = lightSensor.fetch();
 
 		// move forward past the origin until light sensor sees the line
-		while (sample > 0.20) {
+		while (sample > 0.30) {
 
 			sample = lightSensor.fetch();
 			robot.moveForward();
@@ -191,7 +191,7 @@ public class LightLocalizer {
 		Sound.beep();
 
 		// Move backwards so our origin is close to origin
-		robot.travelDist(-11);
+		robot.travelDist(-12.5);
 
 	}
 }

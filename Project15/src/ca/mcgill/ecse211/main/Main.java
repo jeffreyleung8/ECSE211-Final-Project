@@ -28,7 +28,7 @@ public class Main {
 	public static final double WHEEL_RAD = 2.1;
 	public static final double TRACK = 14.35; 
 	public static final double TILE_SIZE = 30.48;
-	public static final double SENSOR_LENGTH = 10;
+	public static final double SENSOR_LENGTH = 13.3;
 	public static int[] startingCorner;
 
 	// Motor Objects, and Robot related parameters
@@ -60,10 +60,10 @@ public class Main {
 	private static WiFi wifi = new WiFi();
 	
 	//Navigation
-//	USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
-//	LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
-//	RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
-//	Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
+	private static USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
+	private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
+	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
+	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
 
 
 	public static void main(String[] args) throws OdometerExceptions {
@@ -72,13 +72,13 @@ public class Main {
 			/*----------Test sensors----------*/	
 			//			Tester test = new Tester(leftMotor, rightMotor,light,color,us,gyro,lcd);
 			//			//Gyro
-			//			//test.testGyro();
+			//			test.testGyro();
 			//			//Color Sensor
 			//			//test.testCS();
 			//			///Light Sensor
-			//			//test.testLS();
+			//			test.testLS();
 			//			//Ultrasonic sensor
-			//			//test.testUS();
+			//			test.testUS();
 			//			//Turns
 			//			test.testTurn();
 			/*--------------END---------------*/
@@ -97,14 +97,17 @@ public class Main {
 
 			//Center to 0 axis with USLocalize
 			//USLocalizer.usLocalize(); 
-			//USLocalizer.usLocalize1(); //try both
 
 			//Localize robot to origin with LightLocalizer
 			//startingCorner = wifi.getStartingCornerCoords();
-			//lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
+			startingCorner = new int[2];
+			startingCorner[0]=7;
+			startingCorner[1]=1;
+			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
+			
 
 			//Navigation to tunnel entrance
-			//navigation.travelToTunnel(); 
+			navigation.travelToTunnel(); 
 
 			//Navigation through tunnel 
 			//navigation.travelThroughTunnel(); 

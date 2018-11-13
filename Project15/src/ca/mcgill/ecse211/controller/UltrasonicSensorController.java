@@ -16,10 +16,13 @@ public class UltrasonicSensorController{
 	private SampleProvider usDistance;
 	private float[] usData;
 	
-	private int distance = 0;
+	private int dist = 0;
 	
 	private TextLCD lcd;
-
+	
+	private int filterControl;
+	private static final int FILTER_OUT = 20;
+	
 	/**
 	 * This is a constructor for this class
 	 * @param usSensor
@@ -38,10 +41,26 @@ public class UltrasonicSensorController{
 	 */
 	public int fetch() {
 		usDistance.fetchSample(usData, 0);
-		distance =  (int) (usData[0] * 100.0);
-		lcd.drawString("Distance: " + distance, 0, 5);
-
-		return distance;
+		int distance =  (int) (usData[0] * 100.0);
+		if(distance == 2147483647) {
+			distance = 100;
+		}
+		if (distance >= 255 && filterControl < FILTER_OUT) {
+			// bad value: do not set the distance var, do increment the filter value
+			this.filterControl++;
+		} else if (distance >= 255) {
+			// We have repeated large values, so there must actually be nothing
+			// there: leave the distance alone
+			dist = distance;
+		} else {
+			// distance went below 255: reset filter and leave
+			// distance alone.
+			this.filterControl = 0;
+			dist = distance;
+		}
+		
+		lcd.drawString("Distance: " + dist, 0, 5);
+		return dist;
 	}
 	
 	

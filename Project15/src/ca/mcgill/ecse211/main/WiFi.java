@@ -14,17 +14,16 @@ import ca.mcgill.ecse211.enumeration.Team;
 
 public class WiFi {
 
+	private static final String SERVER_IP = "192.168.2.50";
 
-	private static final String SERVER_IP = "192.168.2.3";
+	//private static final String SERVER_IP = "192.168.2.3";
 
 	private static final int TEAM_NUMBER = 15 ;
 
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
-	// Create Map variable
 	private Map data;
-	
 	@SuppressWarnings("rawtypes")
 	public WiFi() {
 		// Store the data
@@ -60,6 +59,14 @@ public class WiFi {
 			 * specified and getData() will throw an exception letting you know.
 			 */
 			data = conn.getData();
+
+			// Example 1: Print out all received data
+			System.out.println("Map:\n" + data);
+
+			// Example 2 : Print out specific values
+			int greenTeam = ((Long) data.get("GreenTeam")).intValue();
+			System.out.println("Green Team: " + greenTeam);
+
 
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
@@ -154,12 +161,12 @@ public class WiFi {
 		// [0] = Lower Left    [1] = Lower Right
 		// [2] = Upper Right   [3] = Upper Left
 		// [x][y] - 0 <= x <= 3 , 0 <= y <= 1
-		
+
 		int[][] greenSearchZone = { { llx, lly }, { urx, lly },{ urx, ury }, { llx, ury } };
 
 		return greenSearchZone;
 	}
-	
+
 	/**
 	 * Gets the ring set coordinates
 	 * 
@@ -176,17 +183,17 @@ public class WiFi {
 		return ringSet;
 
 	}
-	
+
 	/**
 	 * Determines the orientation of the tunnel
 	 * vertical(along y axis) horizontal(along x-axis)
 	 * @return boolean true for vertical, false for horizontal
 	 */
 	public boolean isTunnelVertical() {
-		
+
 		int llx = ((Long) data.get("TNG_LL_x")).intValue();
 		int urx = ((Long) data.get("TNG_UR_x")).intValue();
-		
+
 		if(urx-llx == 1) {
 			return true;
 		}

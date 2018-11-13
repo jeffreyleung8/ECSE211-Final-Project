@@ -20,7 +20,7 @@ import ca.mcgill.ecse211.main.*;
 public class USLocalizer {
 
 	// vehicle constants
-	public static int ROTATE_SPEED;
+	public int ROTATE_SPEED;
 	private double deltaTheta;
 
 	//Odometer
@@ -34,8 +34,9 @@ public class USLocalizer {
 
 
 	//Constant
-	private double d = 42.00;
-	private double k = 15.00;
+	private double w = 40.00;
+	private double d = 35.00;
+	private double k = 2.00;
 
 	/**
 	 * Constructor to initialize variables
@@ -53,111 +54,39 @@ public class USLocalizer {
 
 	}
 
-	public void usLocalize() {
-		//Choose when not facing a wall at first 
-		double angleA=0.0, angleB=0.0, turningAngle=0.0;
-
-		//Turn clockwise
-		robot.setSpeeds(ROTATE_SPEED,ROTATE_SPEED);
-		robot.rotate(true);
-		int prevAvgDistance = usSensor.fetch();
-		int deltaDistance;
-
-		// If starting in front of wall
-		while(usSensor.fetch() < d) {
-			// Keep moving
-		}
-
-		// Check for wall 1
-		while(robot.isMoving()) {
-			int currAvgDistance = usSensor.fetch();
-
-			deltaDistance = currAvgDistance - prevAvgDistance;
-			if(deltaDistance < 0 && currAvgDistance < d) {
-				robot.setSpeeds(0,0);
-				angleA = odometer.getXYT()[2];
-			}
-		}
-
-		Sound.buzz();
-
-		// Turn the other way (counterclockwise)
-		robot.setSpeeds(ROTATE_SPEED,ROTATE_SPEED);
-		robot.rotate(false);
-
-		// Sleep for 2 seconds
-		try {
-			Thread.sleep(2000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		while(usSensor.fetch() < 30) {
-			// Keep moving
-		}
-
-		// Check for wall 2
-		while(robot.isMoving()) {
-			int currAvgDistance = usSensor.fetch();
-
-			deltaDistance = currAvgDistance - prevAvgDistance;
-			if(deltaDistance < 0 && currAvgDistance < d) {
-				robot.setSpeeds(0,0);
-				angleB = odometer.getXYT()[2];
-
-			}
-		}
-		
-		Sound.buzz();
-
-		//calculate angle of rotation
-		if (angleA < angleB) {
-			deltaTheta = 45 - (angleA + angleB) / 2;
-
-		} else if (angleA > angleB) {
-			deltaTheta = 225 - (angleA + angleB) / 2;
-		}
-
-		turningAngle = deltaTheta + odometer.getXYT()[2];
-
-		// rotate robot to the theta = 0.0 and we account for small error
-		robot.turnBy(turningAngle);
-
-		// set odometer to theta = 0
-		odometer.setXYT(0.0, 0.0, 0.0);
-
-	}
+	
 	/**
 	 * A method to localize position using the falling edge
 	 * 
 	 */
-	public void usLocalize1() {
+	public void usLocalize() {
 
 		double angleA, angleB, turningAngle;
-
+		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 		// Rotate to open space
-		while (usSensor.fetch() < k) {
+		while (usSensor.fetch() < 120) {
 			robot.rotate(false);
 		}
 		// Rotate to the first wall
-		while (usSensor.fetch() > d) {
+		while (usSensor.fetch() > 30) {
 			robot.rotate(false);
 		}
-		Sound.buzz();
+		Sound.beep();
 		// record angle
 		angleA = odometer.getXYT()[2];
 
 		// rotate out of the wall range
-		while (usSensor.fetch() < k) {
+		while (usSensor.fetch() < 120 ) {
 			robot.rotate(true);
 		}
 
 		// rotate to the second wall
-		while (usSensor.fetch() > d) {
+		while (usSensor.fetch() > 30) {
 			robot.rotate(true);
 		}
-		Sound.buzz();
+		
+		
+		Sound.beep();
 		angleB = odometer.getXYT()[2];
 
 		robot.stopMoving();
@@ -172,7 +101,7 @@ public class USLocalizer {
 
 		turningAngle = deltaTheta + odometer.getXYT()[2];
 
-		robot.turnBy(turningAngle);
+		robot.turnBy(turningAngle,false);
 
 		// set odometer to theta = 0
 		odometer.setXYT(0.0, 0.0, 0.0);

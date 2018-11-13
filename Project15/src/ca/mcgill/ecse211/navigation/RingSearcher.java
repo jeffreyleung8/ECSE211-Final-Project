@@ -115,9 +115,9 @@ public class RingSearcher implements Runnable {
 	public void searchRingSet() {
 		if(usSensor.fetch()<10) {
 			robot.stopMoving();
-			robot.turnBy(-45);
+			robot.turnBy(-45,true);
 			robot.travelDist(20);
-			robot.turnBy(45);
+			robot.turnBy(45,true);
 			while(usSensor.fetch()>7) {
 				robot.moveForward();
 			}
@@ -136,7 +136,7 @@ public class RingSearcher implements Runnable {
 		robot.travelDist(25);
 		
 		//turn 90 degrees
-		robot.turnBy(90);
+		robot.turnBy(90,true);
 		
 		//increment count
 		count ++;
@@ -159,7 +159,7 @@ public class RingSearcher implements Runnable {
 		
 			
 /*---------- TODO : Needs Testing and tweaking the values --------------------------- */			
-		robot.turnBy(90);
+		robot.turnBy(90,true);
 		
 		//move up a little
 		rightSideMotor.setSpeed(0);

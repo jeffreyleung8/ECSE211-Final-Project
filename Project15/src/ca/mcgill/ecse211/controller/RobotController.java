@@ -16,8 +16,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 public class RobotController {
 
 	// Motor objects
-	private static EV3LargeRegulatedMotor leftMotor;
-	private static EV3LargeRegulatedMotor rightMotor;
+	private  static EV3LargeRegulatedMotor leftMotor;
+	private  static EV3LargeRegulatedMotor rightMotor;
 
 	//Constants
 	public final int FORWARD_SPEED = 200;
@@ -31,7 +31,7 @@ public class RobotController {
 	private Odometer odometer;
 
 	//Sensor
-	private static GyroSensorController gyroSensor;
+	private  static GyroSensorController gyroSensor;
 	/**
 	 * This is a constructor for the RobotController class
 	 * @param odometer
@@ -170,10 +170,17 @@ public class RobotController {
 	 * 
 	 * @param dTheta 
 	 */
-	public void turnBy(double dTheta) {
-		leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, dTheta), true);
-		rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, dTheta), false);
-		adjustTurn((dTheta * 180) / Math.PI);
+	public void turnBy(double dTheta, boolean clockwise) {
+		if(clockwise) {
+			leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, dTheta), true);
+			rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, dTheta), false);
+			//adjustTurn((dTheta * 180) / Math.PI);
+		}
+		else {
+			leftMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, dTheta), true);
+			rightMotor.rotate(convertAngle(WHEEL_RAD, TRACK, dTheta), false);
+			//adjustTurn((dTheta * 180) / Math.PI);
+		}
 	}
 
 	/**

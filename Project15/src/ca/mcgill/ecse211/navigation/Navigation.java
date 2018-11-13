@@ -107,19 +107,31 @@ public class Navigation extends Thread {
 	 * A method to drive our vehicle pass the tunnel
 	 */
 	public void travelThroughTunnel() {
-		robot.turnBy(-Math.PI/4); //turn 45 to the left
-		robot.travelDist(21.55); //hypothenus of tile
-		robot.turnBy(Math.PI/4); //turn 45 to the right
+		//assure that the robot is pointing 0 axis
+		while(odometer.getXYT()[2] >= 350 || odometer.getXYT()[2]<=10) {
+			robot.rotate(true);
+		}
+		//turn 45 to the left
+		robot.turnBy(45,false); 
+		
+		//hypothenus of tile
+		robot.travelDist(21.55);
+		//turn 45 to the right
+		robot.turnBy(45,true); 
+		//Increase speed to pass over bump
 		robot.setSpeeds(280, 280);
+		
 		robot.travelDist(3*TILE_SIZE);
 		//Move to first black line
+		
 		float sample = lightSensor.fetch();
-		while (sample > 0.20) {
+		while (sample > 0.30) {
 			sample = lightSensor.fetch();
 			robot.moveForward();	
 		}
 		robot.stopMoving();
 		robot.setSpeeds(200, 200);
+		//Update odometer
 		if(wifi.isTunnelVertical()) {
 			odometer.setY((tunnelZone[3][1]+1)*TILE_SIZE);
 
