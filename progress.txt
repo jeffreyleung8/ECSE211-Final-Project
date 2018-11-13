@@ -15,6 +15,9 @@ Oct 30: (Jeffrey)
 -added Tester.java to test sensors
 -moved lightLocalizer and USLocalizer to navigation package
 
+Oct 31: (Lea)
+-added complete java doc 
+
 Nov 5: (Jeffrey)
 -rearranged code
 -added methods to RingSearcher class
@@ -26,6 +29,11 @@ Nov 8: (Jeffrey)
 -integrated robotController to code
 -added Wifi class
 -added enum Team, SearchState
+
+Nov 9: (Lea)
+-implemented code for ringSeacher class
+-tested ringSearcher
+-wifi class not working
 
 Nov 11 : (Jeffrey)
 -modified navigation and wifi class to support beta demo
