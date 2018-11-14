@@ -96,7 +96,6 @@ public class Main {
 			//			test.testTurn();
 			/*--------------END---------------*/
 
-
 			//Display
 			Display odometryDisplay = new Display(lcd); 
 
@@ -109,22 +108,25 @@ public class Main {
 			odoDisplayThread.start();
 
 			//Center to 0 axis with USLocalize
-			//USLocalizer.usLocalize(); 
-
+			USLocalizer.usLocalize(); 
+			lcd.clear();
 			//Localize robot to origin with LightLocalizer
-			//startingCorner = wifi.getStartingCornerCoords();
-			startingCorner = new int[2];
-			startingCorner[0]=7;
-			startingCorner[1]=1;
+			startingCorner = wifi.getStartingCornerCoords();
+			//startingCorner = new int[2];
+			//startingCorner[0]=7;
+			//startingCorner[1]=1;
 			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
-			odometer.initialize();
+			odometer.initialize(wifi.getStartingCorner());
 
 			//Navigation to tunnel entrance
 			navigation.travelToTunnel(); 
 
 			//Navigation through tunnel 
-			//navigation.travelThroughTunnel(); 
+			navigation.travelThroughTunnel(); 
+			
+			navigation.travelToRingSet();
 
+			ringSearcher.detectRing();
 			//Localize on (TR_LL)
 			//lightLocalizer.localize();
 

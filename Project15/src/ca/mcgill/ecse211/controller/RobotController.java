@@ -69,8 +69,8 @@ public class RobotController {
 		double currx = odometer.getXYT()[0];
 		double curry = odometer.getXYT()[1];
 
-		double deltax = x*TILE_SIZE - currx;
-		double deltay = y*TILE_SIZE - curry;
+		double deltax = (x*TILE_SIZE) - currx;
+		double deltay = (y*TILE_SIZE) - curry;
 
 		// Calculate the angle to turn around
 		double currTheta = (odometer.getXYT()[2]) * Math.PI / 180;
@@ -106,6 +106,9 @@ public class RobotController {
 			theta -= 2 * Math.PI;
 		} else if (theta < -Math.PI) {
 			theta += 2 * Math.PI;
+		}
+		if(theta == Math.PI || theta == - Math.PI){
+			theta = Math.PI;
 		}
 
 		// set Speed
@@ -164,7 +167,16 @@ public class RobotController {
 		rightMotor.stop();
 
 	}
-
+	/**
+	 * Set the acceleration of the motors.
+	 * 
+	 * @param acceleration the acceleration to set the left and right motor to
+	 */
+	public void setAcceleration(int acceleration) {
+		leftMotor.setAcceleration(acceleration);
+		rightMotor.setAcceleration(acceleration);
+	}
+	
 	/**
 	 * Turns the robot by the specified angle
 	 * 

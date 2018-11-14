@@ -107,6 +107,8 @@ public class Navigation extends Thread {
 	 * A method to drive our vehicle pass the tunnel
 	 */
 	public void travelThroughTunnel() {
+		robot.setSpeeds(200, 200);
+		robot.setAcceleration(200);
 		if(wifi.isTunnelVertical()) {
 			//assure that the robot is pointing 0 axis
 			while(odometer.getXYT()[2] >= 350 || odometer.getXYT()[2]<=10) {
@@ -119,30 +121,38 @@ public class Navigation extends Thread {
 				robot.rotate(true);
 			}
 		}
-		
 		//turn 45 to the left
+		robot.setSpeeds(200, 200);
+		robot.setAcceleration(200);
 		robot.turnBy(45,false); 
 		
 		//hypothenus of tile
-		robot.travelDist(21.55);
+		robot.travelDist(24.55);
 		//turn 45 to the right
-		robot.turnBy(45,true); 
+		robot.setSpeeds(200, 200);
+		robot.setAcceleration(200);
+		robot.turnBy(43,true); 
 		//Increase speed to pass over bump
-		robot.setSpeeds(280, 280);
+		//robot.setSpeeds(280, 280);
 		
-		robot.travelDist(3*TILE_SIZE);
+		robot.setAcceleration(280);
+		
+		robot.travelDist(3.5*TILE_SIZE);
 		//Move to first black line
 		
 		float sample = lightSensor.fetch();
 		while (sample > 0.30) {
 			sample = lightSensor.fetch();
-			robot.moveForward();	
+			robot.moveForward();
+
 		}
 		robot.stopMoving();
 		robot.setSpeeds(200, 200);
 		//Update odometer
 		if(wifi.isTunnelVertical()) {
+			//odometer.setX((tunnelZone[2][0]+tunnelZone[3][0])/2);
 			odometer.setY((tunnelZone[3][1]+1)*TILE_SIZE);
+			//odometer.setTheta(90);
 
 		}
 		else {
@@ -168,6 +178,8 @@ public class Navigation extends Thread {
 		else {
 			robot.travelTo(ringSet[0]-1,ringSet[1]);
 		}	
+		
+		
 	}
 //	/**
 //	 * A method to drive our vehicle to the search zone

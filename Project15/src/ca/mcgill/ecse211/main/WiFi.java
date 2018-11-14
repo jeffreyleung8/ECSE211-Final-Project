@@ -14,7 +14,7 @@ import ca.mcgill.ecse211.enumeration.Team;
 
 public class WiFi {
 
-	private static final String SERVER_IP = "192.168.2.50";
+	private static final String SERVER_IP = "192.168.2.16";
 
 	//private static final String SERVER_IP = "192.168.2.3";
 
@@ -37,7 +37,8 @@ public class WiFi {
 	 * Stores all the data sent by the server JAR file into a Map object.
 	 */
 	public void getData() {
-		System.out.println("Running..");
+		//System.out.println("Running..");
+		
 		// Initialize WifiConnection class
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
@@ -60,12 +61,7 @@ public class WiFi {
 			 */
 			data = conn.getData();
 
-			// Example 1: Print out all received data
-			System.out.println("Map:\n" + data);
-
-			// Example 2 : Print out specific values
-			int greenTeam = ((Long) data.get("GreenTeam")).intValue();
-			System.out.println("Green Team: " + greenTeam);
+			
 
 
 		} catch (Exception e) {
@@ -175,8 +171,8 @@ public class WiFi {
 	public int[] getRingSet() {
 		int x,y;
 		//Get coords of ringSet
-		x = ((Long) data.get("Island_LL_x")).intValue();
-		y = ((Long) data.get("Island_LL_y")).intValue();
+		x = ((Long) data.get("TG_x")).intValue();
+		y = ((Long) data.get("TG_y")).intValue();
 
 		int[] ringSet = {x,y};
 
