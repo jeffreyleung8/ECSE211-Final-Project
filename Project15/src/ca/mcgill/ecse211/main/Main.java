@@ -127,6 +127,7 @@ public class Main {
 //			navigation.travelToRingSet();
 
 			ringSearcher.detectRing();
+			
 			//Localize on (TR_LL)
 			//lightLocalizer.localize();
 

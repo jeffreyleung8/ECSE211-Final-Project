@@ -35,7 +35,7 @@ public class RingSearcher implements Runnable {
 	private SearchState searchState;
 
 	//Constants
-	private long START_TIME;
+	private long START_TIME = 0;
 
 	//Tree Sides
 	int count = 1;
@@ -69,14 +69,14 @@ public class RingSearcher implements Runnable {
 	@Override 
 	public void run(){
 
-		
-//		if(detectRing()) {
-//			grabRing();
-//		}
-//		else if(!detectRing()) {
-//			moveToNextRing();
-//			searchRingSet();
-//		}
+
+		//		if(detectRing()) {
+		//			grabRing();
+		//		}
+		//		else if(!detectRing()) {
+		//			moveToNextRing();
+		//			searchRingSet();
+		//		}
 	}
 
 
@@ -85,21 +85,70 @@ public class RingSearcher implements Runnable {
 	 * @return true if the ring is found
 	 */
 	public boolean detectRing() {
-
-		while(usSensor.fetch()>17) {
+		int color = 4;
+		while(usSensor.fetch() > 17) {
 			robot.setSpeeds(50, 50);
 			robot.moveForward();
 		}
-		robot.stopMoving();
-		
-		for(int j = 0; j < 2000; j++) {
 
-			int x = colorSensor.detect();
-			if (x >= 0 && x < 4) {
+		robot.stopMoving();
+
+		color = ColorSensorController.findMatch(colorSensor.fetch()) ;
+		while(color == 4) {
+			long timeElapsed = System.currentTimeMillis() - START_TIME;
+			//exceed 30 seconds
+			if(timeElapsed > 30000) {
 				break;
 			}
+			if(usSensor.fetch() > 14) {
+				robot.moveForward();
+			}
+			if(usSensor.fetch() < 19) {
+				robot.moveBackward();
+			}
+			color = ColorSensorController.findMatch(colorSensor.fetch()) ;	
+		}
+		
+		robot.stopMoving();
+		int x = color;
+		//int x = colorSensor.detect();
+		for (int i =0; i < (x+1); i++) {
+			Sound.beep();
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
-			System.out.println(x);
+		while(usSensor.fetch() > 8) {
+
+			robot.setSpeeds(50, 50);
+			robot.moveForward();
+		}
+		robot.travelDist(-robot.SENSOR_LENGTH);
+
+
+		return true;
+	}
+
+	public boolean detectRing1() {
+		int color = 4;
+		while(usSensor.fetch() > 17) {
+			robot.setSpeeds(50, 50);
+			robot.moveForward();
+		}
+
+		robot.stopMoving();
+
+		while(true) {
+			long timeElapsed = System.currentTimeMillis() - START_TIME;
+			//exceed 30 seconds
+			if(timeElapsed > 30000) {
+				break;
+			}
+			int x = colorSensor.detect();
 			for (int i =0; i < (x+1); i++) {
 				Sound.beep();
 				try {
@@ -109,9 +158,11 @@ public class RingSearcher implements Runnable {
 					e.printStackTrace();
 				}
 			}
-		}
-		while(usSensor.fetch() > 8) {
 			
+		}
+		
+		while(usSensor.fetch() > 8) {
+
 			robot.setSpeeds(50, 50);
 			robot.moveForward();
 		}
@@ -120,6 +171,7 @@ public class RingSearcher implements Runnable {
 
 		return true;
 	}
+	
 
 	/*
 	 * 

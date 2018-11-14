@@ -140,6 +140,11 @@ public class Navigation extends Thread {
 		robot.travelDist(3.5*TILE_SIZE);
 		//Move to first black line
 		
+		////////////////////////
+		robot.setAcceleration(0);
+		robot.setSpeeds(200, 200);
+		robot.moveForward();
+		////////////////////////
 		
 		float sample = lightSensor.fetch();
 		while (sample > 0.30) {
@@ -154,8 +159,6 @@ public class Navigation extends Thread {
 		robot.travelDist(-16);
 		
 		if(wifi.isTunnelVertical()) {
-			//odometer.setX((tunnelZone[2][0]+tunnelZone[3][0])/2);
-			//odometer.setY((tunnelZone[3][1]+1)*TILE_SIZE);
 			odometer.setTheta(0);
 
 		}
@@ -177,14 +180,12 @@ public class Navigation extends Thread {
 		//travel to the right side of the ringset
 		if((ulx+urx)/2 > ringSet[0]) {
 			robot.travelTo(odometer.getXYT()[0]/TILE_SIZE, ringSet[1]);
-			//robot.travelDist((ringSet[1]-(ury+1))*TILE_SIZE);
 			robot.travelTo(ringSet[0]+1,ringSet[1]);
 			
 		}
 		//if the ringset is at the right of the tunnel
 		//travel to the left side of the ringset
 		else {
-			//robot.travelDist((ringSet[1]-(ury+1))*TILE_SIZE);
 			robot.travelTo(odometer.getXYT()[0]/TILE_SIZE, ringSet[1]);
 			robot.travelTo(ringSet[0]-1,ringSet[1]);		}	
 		
