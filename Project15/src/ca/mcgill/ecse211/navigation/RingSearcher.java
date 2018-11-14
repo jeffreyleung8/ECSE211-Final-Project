@@ -86,21 +86,28 @@ public class RingSearcher implements Runnable {
 	 */
 	public boolean detectRing() {
 
-		while(usSensor.fetch()>15) {
+		while(usSensor.fetch()>17) {
 			robot.setSpeeds(50, 50);
 			robot.moveForward();
 		}
 		robot.stopMoving();
 		
-		int x = colorSensor.detect();
-		System.out.println(x);
-		for (int i =0; i < (x+1); i++) {
-			Sound.beep();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		for(int j = 0; j < 2000; j++) {
+
+			int x = colorSensor.detect();
+			if (x >= 0 && x < 4) {
+				break;
+			}
+
+			System.out.println(x);
+			for (int i =0; i < (x+1); i++) {
+				Sound.beep();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 		while(usSensor.fetch() > 8) {

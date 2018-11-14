@@ -63,7 +63,7 @@ public class LightLocalizer {
 		moveToOrigin();
 		
 		int index = 0;
-		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
+		robot.setSpeeds(ROTATE_SPEED+50, ROTATE_SPEED+50);
 
 		//Detect the four lines and record the angle at which it is seen
 		while (index < 4) {
@@ -92,7 +92,7 @@ public class LightLocalizer {
 		odometer.setXYT(deltax, deltay, odometer.getXYT()[2]);
 		robot.travelTo(0,0);
 		
-		robot.setSpeeds(ROTATE_SPEED/2 , ROTATE_SPEED/2);
+		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 
 		// if we are not facing 0.0 then turn ourselves so that we are
 		if (odometer.getXYT()[2] <= 350 && odometer.getXYT()[2] >= 10.0) {

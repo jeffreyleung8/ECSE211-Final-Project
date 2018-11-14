@@ -61,13 +61,13 @@ public class Main {
 	private static RobotController robot = new RobotController(odometer,leftMotor,rightMotor, gyroSensor);
 
 	// WiFi class
-	private static WiFi wifi = new WiFi();
+//	private static WiFi wifi = new WiFi();
 	
 	//Navigation
 	private static USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
 	private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
 	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
-	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
+//	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
 
 
 	
@@ -97,34 +97,34 @@ public class Main {
 			/*--------------END---------------*/
 
 			//Display
-			Display odometryDisplay = new Display(lcd); 
-
-			//Odometer thread
-			Thread odoThread = new Thread(odometer);
-			odoThread.start();
-
-			//Odometer display thread
-			Thread odoDisplayThread = new Thread(odometryDisplay);
-			odoDisplayThread.start();
-
-			//Center to 0 axis with USLocalize
-			USLocalizer.usLocalize(); 
-			lcd.clear();
-			//Localize robot to origin with LightLocalizer
-			startingCorner = wifi.getStartingCornerCoords();
-			//startingCorner = new int[2];
-			//startingCorner[0]=7;
-			//startingCorner[1]=1;
-			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
-			odometer.initialize(wifi.getStartingCorner());
-
-			//Navigation to tunnel entrance
-			navigation.travelToTunnel(); 
-
-			//Navigation through tunnel 
-			navigation.travelThroughTunnel(); 
-			
-			navigation.travelToRingSet();
+//			Display odometryDisplay = new Display(lcd); 
+//
+//			//Odometer thread
+//			Thread odoThread = new Thread(odometer);
+//			odoThread.start();
+//
+//			//Odometer display thread
+//			Thread odoDisplayThread = new Thread(odometryDisplay);
+//			odoDisplayThread.start();
+//
+//			//Center to 0 axis with USLocalize
+//			USLocalizer.usLocalize(); 
+//			lcd.clear();
+//			//Localize robot to origin with LightLocalizer
+//			startingCorner = wifi.getStartingCornerCoords();
+//			//startingCorner = new int[2];
+//			//startingCorner[0]=7;
+//			//startingCorner[1]=1;
+//			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
+//			odometer.initialize(wifi.getStartingCorner());
+//
+//			//Navigation to tunnel entrance
+//			navigation.travelToTunnel(); 
+//
+//			//Navigation through tunnel 
+//			navigation.travelThroughTunnel(); 
+//			
+//			navigation.travelToRingSet();
 
 			ringSearcher.detectRing();
 			//Localize on (TR_LL)
