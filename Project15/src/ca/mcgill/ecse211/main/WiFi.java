@@ -5,8 +5,7 @@ import java.util.Map;
 import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import ca.mcgill.ecse211.enumeration.Team;
 
-/** This class serves to fetch all data from the dpmServer.jar
- * (Beta demo version)
+/** This class serves to fetch all data from the server JAR
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
@@ -14,16 +13,17 @@ import ca.mcgill.ecse211.enumeration.Team;
 
 public class WiFi {
 
-	private static final String SERVER_IP = "192.168.2.16";
 
-	//private static final String SERVER_IP = "192.168.2.3";
+	private static final String SERVER_IP = "192.168.2.22";
 
 	private static final int TEAM_NUMBER = 15 ;
 
 	// Enable/disable printing of debug info from the WiFi class
 	private static final boolean ENABLE_DEBUG_WIFI_PRINT = false;
 
+	// Create Map variable
 	private Map data;
+
 	@SuppressWarnings("rawtypes")
 	public WiFi() {
 		// Store the data
@@ -37,8 +37,7 @@ public class WiFi {
 	 * Stores all the data sent by the server JAR file into a Map object.
 	 */
 	public void getData() {
-		//System.out.println("Running..");
-		
+		System.out.println("Running..");
 		// Initialize WifiConnection class
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
@@ -61,9 +60,6 @@ public class WiFi {
 			 */
 			data = conn.getData();
 
-			
-
-
 		} catch (Exception e) {
 			System.err.println("Error: " + e.getMessage());
 		}
@@ -75,7 +71,14 @@ public class WiFi {
 	 * @return Team color enumeration for the team you are in
 	 */
 	public Team getTeam() {
-		return Team.GREEN;
+		// Return the corresponding team colour for the team number (8)
+		if (((Long) data.get("RedTeam")).intValue() == TEAM_NUMBER) {
+			return Team.RED;
+		} else if (((Long) data.get("GreenTeam")).intValue() == TEAM_NUMBER) {
+			return Team.GREEN;
+		} else {
+			return null;
+		}
 	}
 
 	/**
@@ -83,8 +86,16 @@ public class WiFi {
 	 * 
 	 * @return an int representing the starting corner of the team.
 	 */
-	public int getStartingCorner() {
-		return 1;
+	public int getStartingCorner(Team team) {
+		// Check which team we are
+		if (team == Team.RED) {
+			// Return the corresponding starting corner for our team
+			return ((Long) data.get("RedCorner")).intValue();
+		} else if (team == Team.GREEN) {
+			// Repeat for green team
+			return ((Long) data.get("GreenCorner")).intValue();
+		}
+		return -1;
 	}
 
 	/**
@@ -93,13 +104,56 @@ public class WiFi {
 	 * @return starting corner coordinates
 	 */
 	public int[] getStartingCornerCoords() {
-		int[] coords = { 7, 1 };
+		int[] coords = { 0, 0 };
+		switch (getStartingCorner(this.getTeam())) {
+		case 0:
+			coords[0] = 1;
+			coords[1] = 1;
+			break;
+		case 1:
+
+			coords[0] = 14;
+			coords[1] = 1;
+			break;
+		case 2:
+			coords[0] = 14;
+			coords[1] = 8;
+			break;
+		case 3:
+			coords[0] = 1;
+			coords[1] = 8;
+			break;
+		}
 		return coords;
 	}
+
+	/**
+	 * Gets the coordinates of the red zone.
+	 * 
+	 * @return two dimensional int array containing the four corners of the red zone as (x, y) pairs
+	 */
+	public int[][] getRedZone() {
+		// Get coords of red zone
+		int lowerLeftX = ((Long) data.get("Red_LL_x")).intValue();
+		int lowerLeftY = ((Long) data.get("Red_LL_y")).intValue();
+		int upperRightX = ((Long) data.get("Red_UR_x")).intValue();
+		int upperRightY = ((Long) data.get("Red_UR_y")).intValue();
+
+		// Corner convention:
+		// [0] = Lower Left
+		// [1] = Lower Right
+		// [2] = Upper Right
+		// [3] = Upper Left
+		int[][] redZone = { { lowerLeftX, lowerLeftY }, { upperRightX, lowerLeftY }, { upperRightX, upperRightY },
+				{ lowerLeftX, upperRightY } };
+
+		return redZone;
+	}
+
 	/**
 	 * Gets the coordinates of the green zone.
 	 * 
-	 * @return 2-D array containing coordinates of each corner of the green zone
+	 * @return two dimensional int array containing the four corners of the green zone as (x, y) pairs
 	 */
 	public int[][] getGreenZone() {
 		// Get coords of green zone
@@ -109,75 +163,57 @@ public class WiFi {
 		int ury = ((Long) data.get("Green_UR_y")).intValue();
 
 		// Corner convention:
-		// [0] = Lower Left    [1] = Lower Right
-		// [2] = Upper Right   [3] = Upper Left
-		// [x][y] - 0 <= x <= 3 , 0 <= y <= 1
+		// [0] = Lower Left
+		// [1] = Lower Right
+		// [2] = Upper Right
+		// [3] = Upper Left
 		int[][] greenZone = { { llx, lly }, { urx, lly }, { urx, ury },{ llx, ury } };
 
 		return greenZone;
 	}
 
 	/**
-	 * Gets the coordinates of the tunnel
+	 * Gets the coordinates of the tunnel.
 	 * 
-	 * @return 2-D array containing coordinates of each corner of the tunnel
+	 * @return two dimensional int array containing the four corners of the tunnel as (x, y) pairs
 	 */
-	public int[][] getTunnelZone() {
+	public int[][] getTunnelZone(Team team) {
 		int llx, lly, urx, ury;
+		switch (team) {
+		case RED:
+			// Get coords of red search zone
+			llx = ((Long) data.get("BRR_LL_x")).intValue();
+			lly = ((Long) data.get("BRR_LL_y")).intValue();
+			urx = ((Long) data.get("BRR_UR_x")).intValue();
+			ury = ((Long) data.get("BRR_UR_y")).intValue();
 
-		// Get coords of red search zone
-		llx = ((Long) data.get("TNG_LL_x")).intValue();
-		lly = ((Long) data.get("TNG_LL_y")).intValue();
-		urx = ((Long) data.get("TNG_UR_x")).intValue();
-		ury = ((Long) data.get("TNG_UR_y")).intValue();
+			// Corner convention:
+			// [0] = Lower Left
+			// [1] = Lower Right
+			// [2] = Upper Right
+			// [3] = Upper Left
+			int[][] redTunnelZone = { { llx, lly }, { urx, lly },{ urx, ury }, { llx, ury } };
 
-		// Corner convention:
-		// [0] = Lower Left    [1] = Lower Right
-		// [2] = Upper Right   [3] = Upper Left
-		// [x][y] - 0 <= x <= 3 , 0 <= y <= 1
-		int[][] greenTunnelZone = { { llx, lly }, { urx, lly },{ urx, ury }, { llx, ury } };
+			return redTunnelZone;
 
-		return greenTunnelZone;
-	}
+		case GREEN:
+			// Get coords of red search zone
+			llx = ((Long) data.get("BRG_LL_x")).intValue();
+			lly = ((Long) data.get("BRG_LL_y")).intValue();
+			urx = ((Long) data.get("BRG_UR_x")).intValue();
+			ury = ((Long) data.get("BRG_UR_y")).intValue();
 
-	/**
-	 * Gets the search zone of the specified team
-	 *  
-	 * @return 2-D array containing coordinates of each corner of the search zone
-	 */
-	public int[][] getSearchZone() {
-		int llx, lly, urx, ury;
-		// Get coords of red search zone
-		llx = ((Long) data.get("Island_LL_x")).intValue();
-		lly = ((Long) data.get("Island_LL_y")).intValue();
-		urx = ((Long) data.get("Island_UR_x")).intValue();
-		ury = ((Long) data.get("Island_UR_y")).intValue();
+			// Corner convention:
+			// [0] = Lower Left
+			// [1] = Lower Right
+			// [2] = Upper Right
+			// [3] = Upper Left
+			int[][] greenTunnelZone = { { llx, lly }, { urx, lly },{ urx, ury }, { llx, ury } };
 
-		// Corner convention:
-		// [0] = Lower Left    [1] = Lower Right
-		// [2] = Upper Right   [3] = Upper Left
-		// [x][y] - 0 <= x <= 3 , 0 <= y <= 1
-
-		int[][] greenSearchZone = { { llx, lly }, { urx, lly },{ urx, ury }, { llx, ury } };
-
-		return greenSearchZone;
-	}
-
-	/**
-	 * Gets the ring set coordinates
-	 * 
-	 * @return 1-D array of coordinates of the ring set
-	 */
-	public int[] getRingSet() {
-		int x,y;
-		//Get coords of ringSet
-		x = ((Long) data.get("TG_x")).intValue();
-		y = ((Long) data.get("TG_y")).intValue();
-
-		int[] ringSet = {x,y};
-
-		return ringSet;
-
+			return greenTunnelZone;
+		default:
+			return null;
+		}
 	}
 
 	/**
@@ -185,16 +221,77 @@ public class WiFi {
 	 * vertical(along y axis) horizontal(along x-axis)
 	 * @return boolean true for vertical, false for horizontal
 	 */
-	public boolean isTunnelVertical() {
+	public boolean isTunnelVertical(Team team) {
+		int llx, urx;
+		switch (team) {
+		case RED:
+			llx = ((Long) data.get("BRR_LL_x")).intValue();
+			urx = ((Long) data.get("BRR_UR_x")).intValue();
 
-		int llx = ((Long) data.get("TNG_LL_x")).intValue();
-		int urx = ((Long) data.get("TNG_UR_x")).intValue();
+			if(urx-llx == 1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		case GREEN:
+			llx = ((Long) data.get("BRG_LL_x")).intValue();
+			urx = ((Long) data.get("BRG_UR_x")).intValue();
 
-		if(urx-llx == 1) {
-			return true;
+			if(urx-llx == 1) {
+				return true;
+			}
+			else {
+				return false;
+			}
+		default: return false;
+
 		}
-		else {
-			return false;
-		}	
 	}
+
+	/**
+	 * Gets the search zone of the specified team
+	 * 
+	 * @param team the team of the search zone wanted
+	 * @return two dimensional int array containing the four corners of the search zone as (x, y) pairs
+	 */
+	public int[] getRingSet(Team team) {
+		int tr_x,tr_y,tg_x,tg_y;
+
+		switch (team) {
+		case RED:
+			// Get coords of red search zone
+			tr_x = ((Long) data.get("TR_x")).intValue();
+			tr_y = ((Long) data.get("TR_y")).intValue();
+
+
+			// Corner convention:
+			// [0] = location of the red player ring set
+			// TR_x corresponds to the x coordinate of the red team's tree.
+			// TR_y corresponds to the y coordinate of the red team's tree.
+
+			int[] redRingSet = {tr_x, tr_y};
+
+			return redRingSet;
+
+		case GREEN:
+			// Get coords of red search zone
+			tg_x = ((Long) data.get("TG_x")).intValue();
+			tg_y = ((Long) data.get("TG_y")).intValue();
+
+			// Corner convention:
+			// [0] = location of the green player ring set
+			// TG_x corresponds to the x coordinate of the green team's tree.
+			// TG_y corresponds to the y coordinate of the green team's tree.
+			
+			int[]greenRingSet = {tg_x,tg_y};
+
+			return greenRingSet;
+
+		default:
+			return null;
+		}
+	}
+
+
 }

@@ -20,7 +20,6 @@ public class Odometer extends OdometerData implements Runnable {
 	private int rightMotorTachoCount;
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
-	private double theta;
 
 	private double displacementL;
 	private double displacementR;
@@ -69,11 +68,12 @@ public class Odometer extends OdometerData implements Runnable {
 	 */
 	public void initialize(int startingCorner) {
 		switch(startingCorner) {
-		case 0: nbXLines = 1; nbYLines = 1; this.theta = 0.0; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 1: nbXLines = 7; nbYLines = 1; this.theta = 270.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 2: nbXLines = 7; nbYLines = 7; this.theta = 180.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
-		case 3: nbXLines = 1; nbYLines = 7; this.theta = 90.0;odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, theta); break;
+		case 0: nbXLines = 1; nbYLines = 1; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 0); break;
+		case 1: nbXLines = 7; nbYLines = 1; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 270); break;
+		case 2: nbXLines = 7; nbYLines = 7; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 180); break;
+		case 3: nbXLines = 1; nbYLines = 7; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 90); break;
 		}
+		
 	}
 	/**
 	 * This method is meant to ensure only one instance of the odometer is used throughout the code.

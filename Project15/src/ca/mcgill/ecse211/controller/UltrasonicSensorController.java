@@ -3,6 +3,7 @@ package ca.mcgill.ecse211.controller;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MeanFilter;
 
 /**
  * This class implements the ultrasonic sensor controller
@@ -14,6 +15,7 @@ public class UltrasonicSensorController{
 	
 	private EV3UltrasonicSensor usSensor;
 	private SampleProvider usDistance;
+	private SampleProvider average;
 	private float[] usData;
 	
 	private int dist = 0;
@@ -32,6 +34,7 @@ public class UltrasonicSensorController{
 		this.usSensor = usSensor;
 		usDistance = this.usSensor.getMode("Distance");
 		usData = new float[usDistance.sampleSize()];
+		//average = new MeanFilter(usDistance,8);
 		this.lcd = lcd;
 	}
 	
@@ -41,26 +44,15 @@ public class UltrasonicSensorController{
 	 */
 	public int fetch() {
 		usDistance.fetchSample(usData, 0);
+		//average.fetchSample(usData, 0);
 		int distance =  (int) (usData[0] * 100.0);
-		if(distance == 2147483647) {
-			distance = 100;
-		}
-		if (distance >= 255 && filterControl < FILTER_OUT) {
-			// bad value: do not set the distance var, do increment the filter value
-			this.filterControl++;
-		} else if (distance >= 255) {
-			// We have repeated large values, so there must actually be nothing
-			// there: leave the distance alone
-			dist = distance;
-		} else {
-			// distance went below 255: reset filter and leave
-			// distance alone.
-			this.filterControl = 0;
-			dist = distance;
-		}
 		
-		lcd.drawString("Distance: " + dist, 0, 5);
-		return dist;
+		if (distance > 50) {
+			distance = 255;
+		}
+		lcd.clear();
+		lcd.drawString("Distance: " + distance, 0, 5);
+		return distance;
 	}
 	
 	

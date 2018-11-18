@@ -1,109 +1,177 @@
+/*
+ * OdometryCorrection.java
+ */
 package ca.mcgill.ecse211.odometer;
 
+import ca.mcgill.ecse211.controller.LightSensorController;
+import ca.mcgill.ecse211.controller.RobotController;
 import lejos.hardware.Sound;
-import lejos.hardware.ev3.LocalEV3;
-import lejos.hardware.port.Port;
-import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.SensorModes;
-import lejos.robotics.SampleProvider;
+import lejos.hardware.lcd.LCD;
 
 /**
- * This class is implemented for odometer correction
- * @author Jeffrey Leung
- * @author leaakkari
+ * This class allows the robot to correct itself by using
+ * the two rear sensors. When either sensor detects a perpendicular
+ * line on the path of the robot, that side's motor stops until
+ * the other sensor also detects the line, effectively straightening
+ * the robot.
+ * 
+ * @author Bijan Sadeghi
+ * @author Esa Khan
  *
  */
+public class OdometryCorrection {
 
-public class OdometryCorrection implements Runnable {
-	private static final long CORRECTION_PERIOD = 10;
-	private static final double TILE_LENGTH = 30.48;
-	private static int nbXLines; // counter for black line in x-axis
-	private static int nbYLines; // counter for black line in y-axis
+	// Constants
+	private final int FORWARD_SPEED;
+	private final int ROTATE_SPEED;
+	private final double TILE_SIZE;
+	private final double SENSOR_LENGTH;
+
+	// Robot controller
+	private RobotController robot;
+
+	// Left and right light sensors
+	private LightSensorController leftLS;
+	private LightSensorController rightLS;
+
+	// Odometer
 	private Odometer odometer;
-	private float[] lsData;
-	private static Port lsPort = LocalEV3.get().getPort("S1");
-	private SampleProvider color;
-	private SensorModes lightSensor;
-	private double correctionInX;
-	private double correctionInY;
+
+	private double color = 0.25;
 
 	/**
-	 * This is the default class constructor. An existing instance of the odometer
-	 * is used. This is to ensure thread safety.  
-	 * 
-	 * @throws OdometerExceptions
+	 * @param odometer
+	 * @param robot
+	 * @param leftLS
+	 * @param rightLS
 	 */
-	public OdometryCorrection() throws OdometerExceptions {
-
-		this.odometer = Odometer.getOdometer();
-		this.lightSensor = new EV3ColorSensor(lsPort);
-		this.color = lightSensor.getMode("Red");
-		this.lsData = new float[lightSensor.sampleSize()];
-		nbXLines = 0; 
-		nbYLines = 0;
-		correctionInX = 0.0;
-		correctionInY = 0.0;
+	public OdometryCorrection(Odometer odometer,RobotController robot,LightSensorController leftLS, LightSensorController rightLS) {
+		this.odometer = odometer;
+		this.FORWARD_SPEED = robot.FORWARD_SPEED;
+		this.ROTATE_SPEED = robot.ROTATE_SPEED;
+		this.TILE_SIZE = robot.TILE_SIZE;
+		this.SENSOR_LENGTH = robot.SENSOR_LENGTH;
+		this.robot = robot;
+		this.leftLS = leftLS;
+		this.rightLS = rightLS;
 	}
 
 	/**
-	 * Here is where the odometer correction code should be run.  
-	 * 
-	 * @throws OdometerExceptions
+	 * Correct position and odometer
 	 */
-	// run method (required for Thread)
-	public void run() {
-		long correctionStart, correctionEnd;
-		float colorIntensity;
-
-		while (true) {
-
-			correctionStart = System.currentTimeMillis();
-
-			// TODO Trigger correction (When do I have information to correct?)
-			// TODO Calculate new (accurate) robot position
-			// TODO Update odometer with new calculated (and more accurate) values
-
-			color.fetchSample(lsData, 0);
-			colorIntensity = lsData[0];
-
-			double[] odoData = odometer.getXYT(); // using get method from OdometerData
-			double theta = odoData[2];
-
-			if (colorIntensity < 0.25) { // black lines reflect low intensity light
-				Sound.playNote(Sound.FLUTE, 880, 250);
-				
-				if (theta < 20 || theta > 340) { // theta around 0 degrees; moving in positive y direction
-					odometer.setY(nbYLines * TILE_LENGTH - correctionInY); // calculating and updating odometer with more
-					// accurate values
-					nbYLines ++; 
+	public void correct(double corrTheta) {
+		robot.setSpeeds(150, 150);
+		robot.moveForward();
+		boolean rightLineDetected = false;
+		boolean leftLineDetected = false;
+		
+		// Move the robot until one of the sensors detects a line
+		while (!leftLineDetected && !rightLineDetected) {
+			if(rightLS.fetch() < color || leftLS.fetch() < color) {
+				robot.stopMoving();
+				if(rightLS.fetch() < color) {
+					rightLineDetected = true;
 				}
-				if (theta < 110 && theta >= 70) { // theta around 90degrees; moving in positive x direction
-					odometer.setX(nbXLines * TILE_LENGTH - correctionInX);
-					nbXLines ++;
-				}
-
-				if (theta < 200 && theta >= 160) { // theta around 180 degrees; moving in negative y direction
-					odometer.setY((nbYLines - 1) * TILE_LENGTH + correctionInY);
-					nbYLines = nbYLines - 1; 
-
-				}
-
-				if (theta < 285 && theta >= 255) { // theta around 270 degrees; moving in negative x direction
-					odometer.setX((nbXLines - 1) * TILE_LENGTH + correctionInX);
-					nbXLines = nbXLines - 1; 
-				}
-
-				// this ensure the odometry correction occurs only once every period
-				correctionEnd = System.currentTimeMillis();
-				if (correctionEnd - correctionStart < CORRECTION_PERIOD) {
-					try {
-						Thread.sleep(CORRECTION_PERIOD - (correctionEnd - correctionStart));
-					} catch (InterruptedException e) {
-						// there is nothing to be done here
-					}
+				if(leftLS.fetch() < color) {
+					leftLineDetected = true;
 				}
 			}
 		}
+		if(!rightLineDetected || !leftLineDetected) {
+			if(rightLineDetected) {
+				robot.setSpeeds(70, 70);
+				robot.startMoving(true, false);
+			}
+			else {
+				robot.setSpeeds(70, 70);
+				robot.startMoving(false, true);
+			}
+		}
+		// Keep moving the left/right motor until both lines have been detected
+		while ((!leftLineDetected || !rightLineDetected)) {
+			// If the other line detected, stop the motors
+			if (rightLineDetected && leftLS.fetch() < color) {
+				leftLineDetected = true;
+				robot.stopMoving();
+			} 
+			else if (leftLineDetected && rightLS.fetch() < color) {
+				rightLineDetected = true;
+				robot.stopMoving();
+			}
+		}
+
+		correctOdo(corrTheta);
+
+	}
+	/**
+	 * Correct odometer
+	 */
+	private void correctOdo(double corrTheta) {
+		//Correction variables
+		double corrX = 0;
+		double corrY = 0;
+
+		//Correction in X
+		if (corrTheta == 90 || corrTheta == 270) {
+
+			if (corrTheta == 90) {
+				// Compute the sensors' X position in cm's
+				double pos = odometer.getXYT()[0] - SENSOR_LENGTH;
+
+				// Find the X-coordinate of the nearest waypoint to sensorX.
+				int corrPos = (int) Math.round(pos / TILE_SIZE);
+
+				// Get the correct X
+				corrX = TILE_SIZE * corrPos + SENSOR_LENGTH;
+
+			} else {
+				// Compute the sensors' X position in cm's
+				double pos = odometer.getXYT()[0] + SENSOR_LENGTH;
+
+				// Find the X-coordinate of the nearest waypoint to sensorX.
+				int corrPos = (int) Math.round(pos / TILE_SIZE);
+
+				// Get the correct X
+				corrX = TILE_SIZE * corrPos - SENSOR_LENGTH;
+
+			}
+			odometer.setX(corrX);
+
+			//Correction in Y
+		} else {
+
+			if (corrTheta == 0) {
+				// Compute the sensors' Y position in cm's
+				double pos = odometer.getXYT()[1] - SENSOR_LENGTH;
+
+				// Find the X-coordinate of the nearest waypoint to sensorX.
+				int corrPos = (int) Math.round(pos / TILE_SIZE);
+
+				// Get the correct Y
+				corrY = TILE_SIZE * corrPos + SENSOR_LENGTH;
+
+				// Get the correct X
+				//corrX = intermediateOdo[0] - (dTheta / Math.abs(dTheta) * offset);
+
+			} else {
+				// Compute the sensors' Y position in cm's
+				double pos = odometer.getXYT()[1] + SENSOR_LENGTH;
+
+				// Find the X-coordinate of the nearest waypoint to sensorX.
+				int corrPos = (int) Math.round(pos / TILE_SIZE);
+
+				// Get the correct Y
+				corrY = TILE_SIZE * corrPos - SENSOR_LENGTH;
+
+				// Get the correct X
+				//corrX = intermediateOdo[0] + (dTheta / Math.abs(dTheta) * offset);
+			}
+			odometer.setY(corrY);
+		}
+
+		odometer.setTheta(corrTheta);
+
+		robot.setSpeeds(150, 150);
+
 	}
 }
-

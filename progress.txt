@@ -45,3 +45,11 @@ Nov 13 : (Jeffrey)
 -code changes in lightLocalizer, USLocalizer, navigation
 -succeed to get game parameters to robot from server using wifi class
 (in betaDemosetup folder)
+
+Nov 18 : (Jeffrey)
+*Replaced one gyroscope by a light sensor put at the back)
+-removed gyroSensorController
+-added new usLocalization and lightLocalization (working)
+-implemented odometryCorrection (working but needs improvements)
+-added wifi class for competition
+-rearranged code

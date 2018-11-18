@@ -7,10 +7,10 @@ import lejos.hardware.Sound;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.sensor.EV3ColorSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.hardware.sensor.SensorMode;
 import lejos.robotics.SampleProvider;
+import lejos.robotics.filter.MeanFilter;
 import lejos.utility.Delay;
 
 /**
@@ -37,14 +37,12 @@ public class Tester {
 
 	private EV3UltrasonicSensor usSensor;
 	private SampleProvider usDistance;
+	private SampleProvider average;
 	private float[] usData;
 	private int dist=0;
 	private int filterControl;
 	private static final int FILTER_OUT = 20;
 	
-	private EV3GyroSensor gyroSensor;
-	private SampleProvider gyroAngle;
-	private float[] gyroData;
 	
 	private TextLCD lcd;
 	
@@ -59,12 +57,13 @@ public class Tester {
 	 * @param lcd
 	 */
 	public Tester(EV3LargeRegulatedMotor leftMotor,EV3LargeRegulatedMotor rightMotor,EV3ColorSensor lightSensor,EV3ColorSensor colorSensor,
-					EV3UltrasonicSensor usSensor,EV3GyroSensor gyroSensor,TextLCD lcd) {
+					EV3UltrasonicSensor usSensor,TextLCD lcd) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		
 		this.lightSensor = lightSensor;
 		idColour = this.lightSensor.getRedMode();
+		//idColour = this.lightSensor.getColorIDMode();
 		colorValue = new float[idColour.sampleSize()];
 		
 		this.colorSensor = colorSensor;
@@ -74,29 +73,13 @@ public class Tester {
 		this.usSensor = usSensor;
 		usDistance = usSensor.getMode("Distance");
 		usData = new float[usDistance.sampleSize()];
+		//average = new MeanFilter(usDistance,8);
+		//usData = new float[average.sampleSize()];
 
-		this.gyroSensor = gyroSensor;
-		gyroAngle = gyroSensor.getAngleMode();
-		gyroData = new float[gyroAngle.sampleSize()];
 		
 		this.lcd = lcd;
 	}
 	
-	/**
-	 * This method implements a test for the gyro sensor
-	 */
-	public void testGyro() {
-		lcd.clear();
-		while (true) {
-			gyroAngle.fetchSample(gyroData, 0);
-			int angle = (int) (gyroData[0]);
-			//DecimalFormat numberFormat = new DecimalFormat("######0.00");
-			lcd.drawString("Angle: " + angle, 0, 1);
-			Delay.msDelay(500);
-			lcd.clear();
-			
-		}
-	}
 	/**
 	 * This method implements a test for the ultrasonic sensor
 	 */
@@ -105,24 +88,6 @@ public class Tester {
 		while(true) {
 			usDistance.fetchSample(usData, 0);
 			int distance =  (int) (usData[0] * 100.0);
-			if(distance == 2147483647) {
-				distance = 100;
-			}
-			if (distance >= 255 && filterControl < FILTER_OUT) {
-				// bad value: do not set the distance var, do increment the filter value
-				System.out.println(distance);
-				this.filterControl++;
-			} else if (distance >= 255) {
-				// We have repeated large values, so there must actually be nothing
-				// there: leave the distance alone
-				dist = distance;
-			} else {
-				// distance went below 255: reset filter and leave
-				// distance alone.
-				this.filterControl = 0;
-				dist = distance;
-			}
-
 			lcd.drawString("Distance: " + distance, 0, 1);
 			Delay.msDelay(500);
 			lcd.clear();
@@ -156,67 +121,13 @@ public class Tester {
 			lcd.drawString("R: " + numberFormat.format(rgbData[0]*1000), 0, 2);
 			lcd.drawString("G: " + numberFormat.format(rgbData[1]*1000), 0, 3);
 			lcd.drawString("B: " + numberFormat.format(rgbData[2]*1000), 0, 4);
+			
 			Delay.msDelay(1000);
 		}
 
 	}
 	
-	/**
-	 * This method tests the turns of the robot when it is avoiding obstacles
-	 */
-	public void testTurn() {
 
-		int angle =0;
-		for (int i = 1; i < 5; i++) {
-			// drive forward two tiles
-			leftMotor.setSpeed(200);
-			rightMotor.setSpeed(200);
-
-			leftMotor.rotate(convertDistance(Main.WHEEL_RAD, 1 * Main.TILE_SIZE), true);
-			rightMotor.rotate(convertDistance(Main.WHEEL_RAD, 1 * Main.TILE_SIZE), false);
-
-			//turn 90 degrees clockwise
-			leftMotor.setSpeed(140);
-			rightMotor.setSpeed(140);
-
-			leftMotor.rotate(convertAngle(Main.WHEEL_RAD, Main.TRACK, 90.0), true);
-			rightMotor.rotate(-convertAngle(Main.WHEEL_RAD, Main.TRACK, 90.0), false);
-
-			angle -= 90;
-
-			leftMotor.stop();
-			rightMotor.stop();
-
-			leftMotor.setSpeed(50);
-			rightMotor.setSpeed(50);
-
-
-//			if(gyroSensor.getAngle() > angle) {
-//				while(gyroSensor.fetch() >= angle) {
-//					leftMotor.forward();
-//					rightMotor.backward();
-//				}
-//			}
-//			if(gyroSensor.getAngle() < angle) {
-//				while(gyroSensor.fetch() <= angle) {
-//					leftMotor.backward();
-//					rightMotor.forward(); 
-//				}
-//			}
-
-			leftMotor.stop();
-			rightMotor.stop();
-			Sound.beep();
-
-			try {
-				Thread.sleep(3000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-	}
 	/**
 	 * This method allows the conversion of a distance to the total rotation of each
 	 * wheel need to cover that distance.
@@ -241,4 +152,22 @@ public class Tester {
 	private static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
+	/*
+			if(distance == 2147483647) {
+			distance = 100;
+		}
+		if (distance >= 255 && filterControl < FILTER_OUT) {
+			// bad value: do not set the distance var, do increment the filter value
+			this.filterControl++;
+		} else if (distance >= 255) {
+			// We have repeated large values, so there must actually be nothing
+			// there: leave the distance alone
+			dist = distance;
+		} else {
+			// distance went below 255: reset filter and leave
+			// distance alone.
+			this.filterControl = 0;
+			dist = distance;
+		}
+	 * */
 }

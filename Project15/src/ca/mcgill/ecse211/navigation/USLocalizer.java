@@ -34,7 +34,7 @@ public class USLocalizer {
 
 
 	//Constant
-	private int OPEN_SPACE = 120;
+	private int OPEN_SPACE = 255;
 	private int WALL = 30;
 
 	/**
@@ -49,7 +49,7 @@ public class USLocalizer {
 		this.odometer = odometer;
 		this.robot = robot;
 		this.usSensor = usSensor;
-		this.ROTATE_SPEED = robot.ROTATE_SPEED;
+		this.ROTATE_SPEED = 125;
 
 	}
 
@@ -62,6 +62,7 @@ public class USLocalizer {
 
 		double angleA, angleB, turningAngle;
 		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
+		
 		// Rotate to open space
 		while (usSensor.fetch() < OPEN_SPACE) {
 			robot.rotate(false);
@@ -70,8 +71,9 @@ public class USLocalizer {
 		while (usSensor.fetch() > WALL) {
 			robot.rotate(false);
 		}
+		
+		robot.stopMoving();
 		Sound.beep();
-		// record angle
 		angleA = odometer.getXYT()[2];
 
 		// rotate out of the wall range
@@ -84,7 +86,7 @@ public class USLocalizer {
 			robot.rotate(true);
 		}
 		
-		
+		robot.stopMoving();
 		Sound.beep();
 		angleB = odometer.getXYT()[2];
 
@@ -106,7 +108,7 @@ public class USLocalizer {
 		odometer.setXYT(0.0, 0.0, 0.0);
 
 	}
-
+	
 
 
 }

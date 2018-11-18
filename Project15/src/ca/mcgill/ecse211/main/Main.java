@@ -30,9 +30,9 @@ public class Main {
 
 	//Constants
 	public static final double WHEEL_RAD = 2.1;
-	public static final double TRACK = 14.35; 
+	public static final double TRACK = 14.36; 
 	public static final double TILE_SIZE = 30.48;
-	public static final double SENSOR_LENGTH = 13.3;
+	public static final double SENSOR_LENGTH = 12.4;
 	public static int[] startingCorner;
 
 	// Motor Objects, and Robot related parameters
@@ -40,37 +40,40 @@ public class Main {
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
 	//private static final EV3LargeRegulatedMotor sideLeftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 	//private static final EV3LargeRegulatedMotor sideRightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-	
+
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
 	//Sensor Object
-	private static final EV3GyroSensor gyro = new EV3GyroSensor(SensorPort.S1);
+	private static final EV3ColorSensor leftLight = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
 	private static final EV3UltrasonicSensor us = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
-	private static final EV3ColorSensor light = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
-	private static final EV3ColorSensor color = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+	private static final EV3ColorSensor color = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
+	private static final EV3ColorSensor rightLight = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
+
 
 	//Odometer
 	private static final Odometer odometer = Odometer.getOdometer(leftMotor,rightMotor);
 
 	//Controllers
-	private static GyroSensorController gyroSensor = new GyroSensorController(gyro,lcd);
 	private static ColorSensorController colorSensor = new ColorSensorController(color);
 	private static UltrasonicSensorController usSensor = new UltrasonicSensorController(us,lcd);
-	private static LightSensorController lightSensor = new LightSensorController(light,lcd);
-	private static RobotController robot = new RobotController(odometer,leftMotor,rightMotor, gyroSensor);
+	private static LightSensorController leftLS = new LightSensorController(leftLight,lcd);
+	private static LightSensorController rightLS = new LightSensorController(rightLight,lcd);
+	private static RobotController robot = new RobotController(odometer,leftMotor,rightMotor);
+	private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,robot,leftLS,rightLS);
 
+	public static long START_TIME = System.currentTimeMillis();
+	
 	// WiFi class
-//	private static WiFi wifi = new WiFi();
-	
+	private static WiFi wifi = new WiFi();
+
 	//Navigation
-	private static USLocalizer USLocalizer = new USLocalizer(odometer,robot,usSensor);
-	private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,lightSensor);
-	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,gyroSensor,robot);
-//	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi,lightSensor);
+	private static USLocalizer usLocalizer = new USLocalizer(odometer,robot,usSensor);
+	private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,leftLS, rightLS);
+	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,robot);
+	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi);
 
 
-	
 	/**
 	 * This is the central method in which it sequentically calls methods from the navigation package.
 	 * It first localizes with the ultrasonic sensor, then localizes on the starting corner with the light 
@@ -83,11 +86,11 @@ public class Main {
 
 		do {
 			/*----------Test sensors----------*/	
-			//			Tester test = new Tester(leftMotor, rightMotor,light,color,us,gyro,lcd);
+			//	Tester test = new Tester(leftMotor, rightMotor,leftLight,color,us,lcd);
 			//			//Gyro
 			//			test.testGyro();
 			//			//Color Sensor
-			//			//test.testCS();
+			//			test.testCS();
 			//			///Light Sensor
 			//			test.testLS();
 			//			//Ultrasonic sensor
@@ -97,37 +100,35 @@ public class Main {
 			/*--------------END---------------*/
 
 			//Display
-//			Display odometryDisplay = new Display(lcd); 
-//
-//			//Odometer thread
-//			Thread odoThread = new Thread(odometer);
-//			odoThread.start();
-//
-//			//Odometer display thread
-//			Thread odoDisplayThread = new Thread(odometryDisplay);
-//			odoDisplayThread.start();
-//
-//			//Center to 0 axis with USLocalize
-//			USLocalizer.usLocalize(); 
-//			lcd.clear();
-//			//Localize robot to origin with LightLocalizer
-//			startingCorner = wifi.getStartingCornerCoords();
-//			//startingCorner = new int[2];
-//			//startingCorner[0]=7;
-//			//startingCorner[1]=1;
-//			lightLocalizer.initialLocalize(startingCorner[0]*TILE_SIZE,startingCorner[1]*TILE_SIZE); 
-//			odometer.initialize(wifi.getStartingCorner());
-//
-//			//Navigation to tunnel entrance
-//			navigation.travelToTunnel(); 
-//
-//			//Navigation through tunnel 
-//			navigation.travelThroughTunnel(); 
-//			
-//			navigation.travelToRingSet();
+			Display odometryDisplay = new Display(lcd); 
 
-			ringSearcher.detectRing();
+			//Odometer thread
+			Thread odoThread = new Thread(odometer);
+			odoThread.start();
+
+			//Odometer display thread
+			Thread odoDisplayThread = new Thread(odometryDisplay);
+			odoDisplayThread.start();
 			
+			//Set odometry correction
+			robot.setOdoCorrection(odoCorr);
+			navigation.setOdoCorrection(odoCorr);
+			
+			//localization
+			usLocalizer.usLocalize();
+			lightLocalizer.initialLocalize();
+			odometer.initialize(1);
+			
+			//Navigation to tunnel entrance
+			navigation.travelToTunnel(); 
+
+			//Navigation through tunnel 
+			//navigation.travelThroughTunnel(); 
+
+			//navigation.travelToRingSet();
+
+			//ringSearcher.detectRing();
+
 			//Localize on (TR_LL)
 			//lightLocalizer.localize();
 
@@ -145,10 +146,12 @@ public class Main {
 
 			//Unload ring
 			//ringSearcher.unload();
+			
 		}while (Button.waitForAnyPress() != Button.ID_ESCAPE); 
 
 
 		System.exit(0);
 
 	}
+
 }

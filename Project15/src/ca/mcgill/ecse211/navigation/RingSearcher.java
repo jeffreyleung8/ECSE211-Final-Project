@@ -1,10 +1,10 @@
 package ca.mcgill.ecse211.navigation;
 
 import ca.mcgill.ecse211.controller.ColorSensorController;
-import ca.mcgill.ecse211.controller.GyroSensorController;
 import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.controller.UltrasonicSensorController;
 import ca.mcgill.ecse211.enumeration.SearchState;
+import ca.mcgill.ecse211.main.Main;
 import ca.mcgill.ecse211.odometer.Odometer;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -23,7 +23,6 @@ public class RingSearcher implements Runnable {
 	//Sensors
 	private ColorSensorController colorSensor;
 	private UltrasonicSensorController usSensor;
-	private GyroSensorController gyroSensor;
 
 	//Wifi class
 	//private Wifi wifi = new Wifi();
@@ -35,7 +34,7 @@ public class RingSearcher implements Runnable {
 	private SearchState searchState;
 
 	//Constants
-	private long START_TIME = 0;
+	private long START_TIME = Main.START_TIME;
 
 	//Tree Sides
 	int count = 1;
@@ -58,10 +57,9 @@ public class RingSearcher implements Runnable {
 	 * @param leftMotor
 	 * @param rightMotor
 	 */
-	public RingSearcher(Odometer odometer,ColorSensorController colorSensor, UltrasonicSensorController usSensor,GyroSensorController gyroSensor, RobotController robot) {
+	public RingSearcher(Odometer odometer,ColorSensorController colorSensor, UltrasonicSensorController usSensor, RobotController robot) {
 		this.colorSensor = colorSensor;
 		this.usSensor = usSensor;
-		this.gyroSensor = gyroSensor;
 		this.robot = robot;
 		this.odometer = odometer;
 	}
@@ -85,8 +83,9 @@ public class RingSearcher implements Runnable {
 	 * @return true if the ring is found
 	 */
 	public boolean detectRing() {
+		robot.setSpeeds(50, 50);
 		int color = 4;
-		while(usSensor.fetch() > 17) {
+		while(usSensor.fetch() > 19) {
 			robot.setSpeeds(50, 50);
 			robot.moveForward();
 		}
@@ -95,12 +94,8 @@ public class RingSearcher implements Runnable {
 
 		color = ColorSensorController.findMatch(colorSensor.fetch()) ;
 		while(color == 4) {
-			long timeElapsed = System.currentTimeMillis() - START_TIME;
-			//exceed 30 seconds
-			if(timeElapsed > 30000) {
-				break;
-			}
-			if(usSensor.fetch() > 14) {
+			
+			if(usSensor.fetch() > 12) {
 				robot.moveForward();
 			}
 			if(usSensor.fetch() < 19) {
@@ -108,21 +103,24 @@ public class RingSearcher implements Runnable {
 			}
 			color = ColorSensorController.findMatch(colorSensor.fetch()) ;	
 		}
-		
+
 		robot.stopMoving();
+		System.out.println(color);
 		int x = color;
-		//int x = colorSensor.detect();
-		for (int i =0; i < (x+1); i++) {
-			Sound.beep();
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(x!=4) {
+			//int x = colorSensor.detect();
+			for (int i =0; i < (x+1); i++) {
+				Sound.beep();
+				try {
+					Thread.sleep(500);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
 
-		while(usSensor.fetch() > 8) {
+		while(usSensor.fetch() > 9) {
 
 			robot.setSpeeds(50, 50);
 			robot.moveForward();
@@ -141,16 +139,20 @@ public class RingSearcher implements Runnable {
 		}
 
 		robot.stopMoving();
-
+		boolean isFound = false;
 		while(true) {
 			long timeElapsed = System.currentTimeMillis() - START_TIME;
 			//exceed 30 seconds
-			if(timeElapsed > 30000) {
+			System.out.println(timeElapsed);
+			if(timeElapsed > 150000 ) {
 				break;
 			}
 			int x = colorSensor.detect();
+	
+		
 			for (int i =0; i < (x+1); i++) {
 				Sound.beep();
+				isFound = true;
 				try {
 					Thread.sleep(500);
 				} catch (InterruptedException e) {
@@ -158,12 +160,15 @@ public class RingSearcher implements Runnable {
 					e.printStackTrace();
 				}
 			}
-			
-		}
-		
-		while(usSensor.fetch() > 8) {
+			if(isFound) {
+				break;
+			}
 
-			robot.setSpeeds(50, 50);
+		}
+
+		while(usSensor.fetch() > 9) {
+
+			robot.setSpeeds(80, 80);
 			robot.moveForward();
 		}
 		robot.travelDist(-robot.SENSOR_LENGTH);
@@ -171,7 +176,7 @@ public class RingSearcher implements Runnable {
 
 		return true;
 	}
-	
+
 
 	/*
 	 * 
