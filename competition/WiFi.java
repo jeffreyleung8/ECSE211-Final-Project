@@ -182,10 +182,10 @@ public class WiFi {
 		switch (team) {
 		case RED:
 			// Get coords of red search zone
-			llx = ((Long) data.get("TNR_LL_x")).intValue();
-			lly = ((Long) data.get("TNR_LL_y")).intValue();
-			urx = ((Long) data.get("TNR_UR_x")).intValue();
-			ury = ((Long) data.get("TNR_UR_y")).intValue();
+			llx = ((Long) data.get("BRR_LL_x")).intValue();
+			lly = ((Long) data.get("BRR_LL_y")).intValue();
+			urx = ((Long) data.get("BRR_UR_x")).intValue();
+			ury = ((Long) data.get("BRR_UR_y")).intValue();
 
 			// Corner convention:
 			// [0] = Lower Left
@@ -198,10 +198,10 @@ public class WiFi {
 
 		case GREEN:
 			// Get coords of red search zone
-			llx = ((Long) data.get("TNG_LL_x")).intValue();
-			lly = ((Long) data.get("TNG_LL_y")).intValue();
-			urx = ((Long) data.get("TNG_UR_x")).intValue();
-			ury = ((Long) data.get("TNG_UR_y")).intValue();
+			llx = ((Long) data.get("BRG_LL_x")).intValue();
+			lly = ((Long) data.get("BRG_LL_y")).intValue();
+			urx = ((Long) data.get("BRG_UR_x")).intValue();
+			ury = ((Long) data.get("BRG_UR_y")).intValue();
 
 			// Corner convention:
 			// [0] = Lower Left
@@ -225,8 +225,8 @@ public class WiFi {
 		int llx, urx;
 		switch (team) {
 		case RED:
-			llx = ((Long) data.get("TNR_LL_x")).intValue();
-			urx = ((Long) data.get("TNR_UR_x")).intValue();
+			llx = ((Long) data.get("BRR_LL_x")).intValue();
+			urx = ((Long) data.get("BRR_UR_x")).intValue();
 
 			if(urx-llx == 1) {
 				return true;
@@ -235,8 +235,8 @@ public class WiFi {
 				return false;
 			}
 		case GREEN:
-			llx = ((Long) data.get("TNG_LL_x")).intValue();
-			urx = ((Long) data.get("TNG_UR_x")).intValue();
+			llx = ((Long) data.get("BRG_LL_x")).intValue();
+			urx = ((Long) data.get("BRG_UR_x")).intValue();
 
 			if(urx-llx == 1) {
 				return true;

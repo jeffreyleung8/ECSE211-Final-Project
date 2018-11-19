@@ -198,6 +198,31 @@ public class Navigation extends Thread {
 		
 		
 	}
+	/**
+	 * A method to travel to tunnel exit
+	 * 
+	 */
+	public void travelToTunnelExit() {
+		if(wifi.isTunnelVertical(team)) {
+			int[] tunnelUL = tunnelZone[2];
+			//travel to the point under lower-right corner
+			robot.travelTo(tunnelUL[0],startingCornerCoords[1]);
+			robot.travelTo(tunnelUL[0], tunnelUL[1]-1);
+			//robot.travelTo(tunnelLR[0], tunnelLR[1]-1); //direct way
+
+		}
+		else {
+			int[] tunnelLL = tunnelZone[0];
+			//travel to the point next to the upper-right corner
+			robot.travelTo(startingCornerCoords[0],tunnelLL[1]);
+			robot.travelTo(tunnelLL[0]+1, tunnelLL[1]);
+			//robot.travelTo(tunnelUR[0]+1, tunnelUR[1]); //direct way
+		}
+	}
+	public void travelToStartingPoint() {
+
+	}
+	
 //	/**
 //	 * A method to drive our vehicle to the search zone
 //	 */
@@ -206,15 +231,7 @@ public class Navigation extends Thread {
 //		ringSearchThread.run();
 //	}
 	
-	/**
-	 * A method to determine whether another thread has called travelTo and turnTo
-	 * methods or not
-	 * 
-	 * @return boolean
-	 */
-	boolean isNavigating() throws OdometerExceptions {
-		return navigate;
-	}
+
 	/**
 	 * Sets the OdometryCorrection object to be used by the robot controller.
 	 * 

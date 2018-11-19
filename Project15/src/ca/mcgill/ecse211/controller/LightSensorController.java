@@ -40,7 +40,5 @@ public class LightSensorController{
 		colorIntensity = colorValue[0];
 		lcd.drawString("Color: " + colorIntensity, 0, 5);
 		return colorIntensity;
-	}
-	
-	
+	}	
 }

@@ -66,8 +66,6 @@ public class RingSearcher implements Runnable {
 
 	@Override 
 	public void run(){
-
-
 		//		if(detectRing()) {
 		//			grabRing();
 		//		}
@@ -77,61 +75,7 @@ public class RingSearcher implements Runnable {
 		//		}
 	}
 
-
-	/**
-	 * This method searches for the orange ring
-	 * @return true if the ring is found
-	 */
 	public boolean detectRing() {
-		robot.setSpeeds(50, 50);
-		int color = 4;
-		while(usSensor.fetch() > 19) {
-			robot.setSpeeds(50, 50);
-			robot.moveForward();
-		}
-
-		robot.stopMoving();
-
-		color = ColorSensorController.findMatch(colorSensor.fetch()) ;
-		while(color == 4) {
-			
-			if(usSensor.fetch() > 12) {
-				robot.moveForward();
-			}
-			if(usSensor.fetch() < 19) {
-				robot.moveBackward();
-			}
-			color = ColorSensorController.findMatch(colorSensor.fetch()) ;	
-		}
-
-		robot.stopMoving();
-		System.out.println(color);
-		int x = color;
-		if(x!=4) {
-			//int x = colorSensor.detect();
-			for (int i =0; i < (x+1); i++) {
-				Sound.beep();
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-
-		while(usSensor.fetch() > 9) {
-
-			robot.setSpeeds(50, 50);
-			robot.moveForward();
-		}
-		robot.travelDist(-robot.SENSOR_LENGTH);
-
-
-		return true;
-	}
-
-	public boolean detectRing1() {
 		int color = 4;
 		while(usSensor.fetch() > 17) {
 			robot.setSpeeds(50, 50);
@@ -190,46 +134,46 @@ public class RingSearcher implements Runnable {
  -Move forward until distance detected by US is less than d
 	 */
 
-	/**
-	 * This method searches the ring set
-	 */
-	public void searchRingSet() {
-		if(usSensor.fetch()<10) {
-			robot.stopMoving();
-			robot.turnBy(-45,true);
-			robot.travelDist(20);
-			robot.turnBy(45,true);
-			while(usSensor.fetch()>7) {
-				robot.moveForward();
-			}
-		}
+//	/**
+//	 * This method searches the ring set
+//	 */
+//	public void searchRingSet() {
+//		if(usSensor.fetch()<10) {
+//			robot.stopMoving();
+//			robot.turnBy(-45,true);
+//			robot.travelDist(20);
+//			robot.turnBy(45,true);
+//			while(usSensor.fetch()>7) {
+//				robot.moveForward();
+//			}
+//		}
+//
+//	}
 
-	}
-
-	/**
-	 * This method moves the robot to the next ring
-	 */
-	public void moveToNextRing() {
-
-		//if(!detectRing()) {
-
-		/*-------- TODO: Test Correct Distance to Cover entire Tree , travel 25 cm for now ----------*/
-		robot.travelDist(25);
-
-		//turn 90 degrees
-		robot.turnBy(90,true);
-
-		//increment count
-		count ++;
-
-		if(count>4) {
-			searchState = SearchState.TIME_OUT;
-		}
-
-
-
-		searchState = SearchState.IN_PROGRESS;
-	}
+//	/**
+//	 * This method moves the robot to the next ring
+//	 */
+//	public void moveToNextRing() {
+//
+//		//if(!detectRing()) {
+//
+//		/*-------- TODO: Test Correct Distance to Cover entire Tree , travel 25 cm for now ----------*/
+//		robot.travelDist(25);
+//
+//		//turn 90 degrees
+//		robot.turnBy(90,true);
+//
+//		//increment count
+//		count ++;
+//
+//		if(count>4) {
+//			searchState = SearchState.TIME_OUT;
+//		}
+//
+//
+//
+//		searchState = SearchState.IN_PROGRESS;
+//	}
 
 	/**
 	 * This method grabs a ring
