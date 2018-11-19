@@ -9,14 +9,10 @@ import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 
 /**
- * This class allows the robot to correct itself by using
- * the two rear sensors. When either sensor detects a perpendicular
- * line on the path of the robot, that side's motor stops until
- * the other sensor also detects the line, effectively straightening
- * the robot.
+ * This class allows the robot to correct itself (positiioning and odometer)
+ *  by using two rear sensors. 
  * 
- * @author Bijan Sadeghi
- * @author Esa Khan
+ * @author Jeffrey Leung
  *
  */
 public class OdometryCorrection {
@@ -77,13 +73,16 @@ public class OdometryCorrection {
 				}
 			}
 		}
+
 		if(!rightLineDetected || !leftLineDetected) {
 			if(rightLineDetected) {
-				robot.setSpeeds(70, 70);
+				robot.setSpeeds(50, 50);
 				robot.startMoving(true, false);
+				
+				
 			}
-			else {
-				robot.setSpeeds(70, 70);
+			else if(leftLineDetected) {
+				robot.setSpeeds(50, 50);
 				robot.startMoving(false, true);
 			}
 		}
@@ -99,6 +98,8 @@ public class OdometryCorrection {
 				robot.stopMoving();
 			}
 		}
+		
+		
 
 		correctOdo(corrTheta);
 

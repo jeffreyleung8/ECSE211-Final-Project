@@ -153,8 +153,6 @@ public class Odometer extends OdometerData implements Runnable {
 
 			// TODO Update odometer values with new calculated values
 			odo.update(dX, dY, deltaTheta);
-			
-		
 		      
 			// this ensures that the odometer only runs once every period
 			updateEnd = System.currentTimeMillis();

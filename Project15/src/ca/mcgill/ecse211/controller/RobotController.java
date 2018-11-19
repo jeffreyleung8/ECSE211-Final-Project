@@ -13,8 +13,8 @@ import lejos.robotics.RegulatedMotor;
 /** This class serves to control the robot's motors
  * 
  * @author Jeffrey Leung
- * @author Lea Akkary
  */
+
 public class RobotController {
 
 	// Motor objects

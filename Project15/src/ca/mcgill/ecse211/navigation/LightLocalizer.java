@@ -32,7 +32,7 @@ public class LightLocalizer {
 	private static LightSensorController leftLS;
 	private static LightSensorController rightLS;
 
-	private double color = 0.30;
+	private double color = 0.25;
 	/**
 	 * This is a constructor for this class
 	 * @param odometer
@@ -85,7 +85,7 @@ public class LightLocalizer {
 		robot.setSpeeds(150, 150);
 		robot.travelDist(-SENSOR_LENGTH);
 
-		robot.turnBy(89, false);
+		robot.turnBy(89, false); //90 is a bit too much
 		
 		Sound.beep();
 		Sound.beep();
@@ -112,7 +112,7 @@ public class LightLocalizer {
 				robot.setSpeeds(150, 150);
 				robot.startMoving(true, false);
 			}
-			else {
+			else if(leftLineDetected){
 				robot.setSpeeds(150, 150);
 				robot.startMoving(false, true);
 			}

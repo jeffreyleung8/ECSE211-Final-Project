@@ -39,13 +39,12 @@ public class ColorSensorController {
 	 * @param colorSensor
 	 */
 	public ColorSensorController(EV3ColorSensor colorSensor) {
-		//this.sideMotor = sideMotor;
 		this.colorSensor = colorSensor;
 		rgbValue = colorSensor.getRGBMode();
 		rgbData = new float[rgbValue.sampleSize()];
 	}
 
-	// Return RGB values to rgbData
+	
 	/**
 	 * This method allows to collect rgb values
 	 * @return (array containing rgb values) 

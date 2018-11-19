@@ -30,7 +30,7 @@ public class Main {
 
 	//Constants
 	public static final double WHEEL_RAD = 2.1;
-	public static final double TRACK = 14.36; 
+	public static final double TRACK = 14.35; 
 	public static final double TILE_SIZE = 30.48;
 	public static final double SENSOR_LENGTH = 12.4;
 	public static int[] startingCorner;
@@ -117,6 +117,8 @@ public class Main {
 			//localization
 			usLocalizer.usLocalize();
 			lightLocalizer.initialLocalize();
+			
+			
 			odometer.initialize(1);
 			
 			//Navigation to tunnel entrance
