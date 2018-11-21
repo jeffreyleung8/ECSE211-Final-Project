@@ -61,4 +61,12 @@ Nov 20: (Jeffrey)
 -navigation through tunnel works
 -navigation to ringset works
 -uslocalization doesnt always work
+
+Nov 21: (Lea)
+-Added new cases for navigation
+-Finished all test cases for when the tunnel is in vertical position
+-Finished all test cases for when the tunnel is in horizontal position
+-Navigation through tunnel in vertical position works
+-Navigation through tunnel in horizontal position needs to be tested
+
  
