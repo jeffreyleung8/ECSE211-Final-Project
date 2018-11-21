@@ -14,7 +14,7 @@ import ca.mcgill.ecse211.enumeration.Team;
 public class WiFi {
 
 
-	private static final String SERVER_IP = "192.168.2.11";
+	private static final String SERVER_IP = "192.168.2.13";
 
 	private static final int TEAM_NUMBER = 15;
 
