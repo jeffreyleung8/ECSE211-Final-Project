@@ -160,8 +160,18 @@ public class Navigation extends Thread {
 					robot.turnTo(270); // assure that robot is pointing */
 					break;				 
 				case 2:
-					break;
+					//travel to the point under upper-right corner 
+					robot.travelTo(startingCornerCoords[0], tunnelUR[1]);
+					robot.travelTo(tunnelUR[0]+1,tunnelUR[1]);
+					upperRight = true;
+					robot.turnTo(270); // assure that robot is pointing */
+					break;				 
 				case 3:
+					//travel to the point under upper-left corner 
+					robot.travelTo(startingCornerCoords[0], tunnelUL[1]);
+					robot.travelTo(tunnelUL[0]-1,tunnelUL[1]);
+					upperLeft = true;
+					robot.turnTo(90); // assure that robot is pointing */
 					break;
 				}
 			}
