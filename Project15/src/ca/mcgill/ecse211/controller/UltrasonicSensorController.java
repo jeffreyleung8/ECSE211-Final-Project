@@ -35,6 +35,8 @@ public class UltrasonicSensorController{
 		usDistance = this.usSensor.getMode("Distance");
 		usData = new float[usDistance.sampleSize()];
 		//average = new MeanFilter(usDistance,8);
+		//usData = new float[average.sampleSize()];
+
 		this.lcd = lcd;
 	}
 	
@@ -46,12 +48,11 @@ public class UltrasonicSensorController{
 		usDistance.fetchSample(usData, 0);
 		//average.fetchSample(usData, 0);
 		int distance =  (int) (usData[0] * 100.0);
-		
 		if (distance > 50) {
 			distance = 255;
 		}
-		lcd.clear();
-		lcd.drawString("Distance: " + distance, 0, 5);
+//		lcd.clear();
+//		lcd.drawString("Distance: " + distance, 0, 5);
 		return distance;
 	}
 	

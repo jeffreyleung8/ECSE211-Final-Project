@@ -8,6 +8,7 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.robotics.RegulatedMotor;
 import lejos.utility.Delay;
 import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3GyroSensor;
@@ -32,15 +33,15 @@ public class Main {
 	public static final double WHEEL_RAD = 2.1;
 	public static final double TRACK = 14.35; 
 	public static final double TILE_SIZE = 30.48;
-	public static final double SENSOR_LENGTH = 12.4;
+	public static final double SENSOR_LENGTH = 3.3;
 	public static int[] startingCorner;
 
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	//private static final EV3LargeRegulatedMotor sideLeftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-	//private static final EV3LargeRegulatedMotor sideRightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-
+//	private static final EV3LargeRegulatedMotor leftSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+//	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+	
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
@@ -118,24 +119,18 @@ public class Main {
 			usLocalizer.usLocalize();
 			lightLocalizer.initialLocalize();
 			
-			
-			odometer.initialize(1);
+			//Initialize odometer
+			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
 			
 			//Navigation to tunnel entrance
 			navigation.travelToTunnel(); 
 
 			//Navigation through tunnel 
-			//navigation.travelThroughTunnel(); 
+			navigation.travelThroughTunnel();
 
+			//Navigation to ring set
 			//navigation.travelToRingSet();
 
-			//ringSearcher.detectRing();
-
-			//Localize on (TR_LL)
-			//lightLocalizer.localize();
-
-			//Search for ring
-			//navigation.searchRing();
 
 			//Navigation to tunnel exit
 			//navigation.travelToTunnel();

@@ -34,7 +34,7 @@ public class USLocalizer {
 
 
 	//Constant
-	private int OPEN_SPACE = 255;
+	private int OPEN_SPACE = 50;
 	private int WALL = 30;
 
 	/**
@@ -48,12 +48,12 @@ public class USLocalizer {
 	public USLocalizer(Odometer odometer, RobotController robot,UltrasonicSensorController usSensor) {
 		this.odometer = odometer;
 		this.robot = robot;
-		this.usSensor = usSensor;
+		this.usSensor =usSensor;
 		this.ROTATE_SPEED = 125;
 
 	}
 
-	
+
 	/**
 	 * A method to localize position using the falling edge
 	 * 
@@ -62,30 +62,33 @@ public class USLocalizer {
 
 		double angleA, angleB, turningAngle;
 		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
-		
+
 		// Rotate to open space
 		while (usSensor.fetch() < OPEN_SPACE) {
 			robot.rotate(false);
 		}
+		
 		// Rotate to the first wall
 		while (usSensor.fetch() > WALL) {
 			robot.rotate(false);
 		}
-		
+
 		robot.stopMoving();
 		Sound.beep();
 		angleA = odometer.getXYT()[2];
-
+		
+		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
+		
 		// rotate out of the wall range
 		while (usSensor.fetch() < OPEN_SPACE ) {
 			robot.rotate(true);
 		}
-
+		
 		// rotate to the second wall
 		while (usSensor.fetch() > WALL) {
 			robot.rotate(true);
 		}
-		
+
 		robot.stopMoving();
 		Sound.beep();
 		angleB = odometer.getXYT()[2];
@@ -108,7 +111,7 @@ public class USLocalizer {
 		odometer.setXYT(0.0, 0.0, 0.0);
 
 	}
-	
+
 
 
 }

@@ -53,3 +53,12 @@ Nov 18 : (Jeffrey)
 -implemented odometryCorrection (working but needs improvements)
 -added wifi class for competition
 -rearranged code
+
+Nov 20: (Jeffrey)
+-moved the two light sensors to the front
+-modified odometry correction to support the hardware change
+-navigation to tunnel works for starting corner 1,3
+-navigation through tunnel works
+-navigation to ringset works
+-uslocalization doesnt always work
+ 

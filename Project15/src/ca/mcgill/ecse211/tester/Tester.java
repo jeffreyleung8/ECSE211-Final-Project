@@ -87,7 +87,11 @@ public class Tester {
 		lcd.clear();
 		while(true) {
 			usDistance.fetchSample(usData, 0);
+//			average.fetchSample(usData, 0);
 			int distance =  (int) (usData[0] * 100.0);
+			if(distance > 50) {
+				distance = 255;
+			}
 			lcd.drawString("Distance: " + distance, 0, 1);
 			Delay.msDelay(500);
 			lcd.clear();

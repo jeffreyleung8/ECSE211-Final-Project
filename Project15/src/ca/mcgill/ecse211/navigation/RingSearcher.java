@@ -39,12 +39,12 @@ public class RingSearcher implements Runnable {
 	//Tree Sides
 	int count = 1;
 
-	//Side motors
-	private static final EV3LargeRegulatedMotor leftSideMotor = 
-			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-
-	private static final EV3LargeRegulatedMotor rightSideMotor = 
-			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+//	//Side motors
+//	private static final EV3LargeRegulatedMotor leftSideMotor = 
+//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+//
+//	private static final EV3LargeRegulatedMotor rightSideMotor = 
+//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	//usdistance
 	//	int usDistance = usSensor.fetch();
@@ -180,39 +180,39 @@ public class RingSearcher implements Runnable {
 	 */
 	public void grabRing() {
 
-		// if(searchState == SearchState.RING_FOUND)
-
-
-		/*---------- TODO : Needs Testing and tweaking the values --------------------------- */			
-		robot.turnBy(90,true);
-
-		//move up a little
-		rightSideMotor.setSpeed(0);
-		leftSideMotor.setSpeed(0);
-		rightSideMotor.rotate(50);
-		leftSideMotor.rotate(50);
-
-		while(usSensor.fetch() > 4){
-			robot.moveForward();
-		}
-
-		//move up all the way
-		rightSideMotor.setSpeed(0);
-		leftSideMotor.setSpeed(0);
-		rightSideMotor.rotate(40);
-		leftSideMotor.rotate(40);
-
-		//move back down
-		rightSideMotor.setSpeed(0);
-		leftSideMotor.setSpeed(0);
-		rightSideMotor.rotate(-90);
-		leftSideMotor.rotate(-90);
-
-		//ring grabbed, move back from tree
-		while(usSensor.fetch()<10) {
-			robot.moveBackward();
-		}
-
+//		// if(searchState == SearchState.RING_FOUND)
+//
+//
+//		/*---------- TODO : Needs Testing and tweaking the values --------------------------- */			
+//		robot.turnBy(90,true);
+//
+//		//move up a little
+//		rightSideMotor.setSpeed(0);
+//		leftSideMotor.setSpeed(0);
+//		rightSideMotor.rotate(50);
+//		leftSideMotor.rotate(50);
+//
+//		while(usSensor.fetch() > 4){
+//			robot.moveForward();
+//		}
+//
+//		//move up all the way
+//		rightSideMotor.setSpeed(0);
+//		leftSideMotor.setSpeed(0);
+//		rightSideMotor.rotate(40);
+//		leftSideMotor.rotate(40);
+//
+//		//move back down
+//		rightSideMotor.setSpeed(0);
+//		leftSideMotor.setSpeed(0);
+//		rightSideMotor.rotate(-90);
+//		leftSideMotor.rotate(-90);
+//
+//		//ring grabbed, move back from tree
+//		while(usSensor.fetch()<10) {
+//			robot.moveBackward();
+//		}
+//
 
 	}
 
@@ -222,10 +222,10 @@ public class RingSearcher implements Runnable {
 	public void unloadRing() {
 
 		//move side motors down
-		rightSideMotor.setSpeed(0);
-		leftSideMotor.setSpeed(0);
-		rightSideMotor.rotate(-90);
-		leftSideMotor.rotate(-90);
+//		rightSideMotor.setSpeed(0);
+//		leftSideMotor.setSpeed(0);
+//		rightSideMotor.rotate(-90);
+//		leftSideMotor.rotate(-90);
 
 	}
 

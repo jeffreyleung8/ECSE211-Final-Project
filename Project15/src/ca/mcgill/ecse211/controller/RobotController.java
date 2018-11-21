@@ -46,7 +46,7 @@ public class RobotController {
 		this.odometer = odometer;
 		//this.odoCorr = odoCorr;
 	}
-	
+
 	public void directTravelTo(int x, int y) {
 
 		double currx = odometer.getXYT()[0];
@@ -71,7 +71,7 @@ public class RobotController {
 		// stop vehicle
 		leftMotor.stop(true);
 		rightMotor.stop(true);
-		
+
 		Sound.beep();
 	}
 	/**
@@ -93,7 +93,7 @@ public class RobotController {
 		double corrTheta = 0;
 
 		setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
-		
+
 		//Check if x-component is different
 		if(lastX - x != 0) {
 			if (lastX > x) {
@@ -104,11 +104,11 @@ public class RobotController {
 				corrTheta = 90;
 				deltax = 1;
 			}
-			
+
 			// Rotate to the proper angle
 			if (lastX != x)
 				turnTo(corrTheta);
-			
+
 			// Number of tiles to move in X
 			int tilesX = x - lastX;
 
@@ -121,7 +121,7 @@ public class RobotController {
 				if (i == 1) {
 					odoCorr.correct(corrTheta);
 				}
-				
+
 				// travelToDirect() to the next closest point
 				setSpeeds(150,150);
 
@@ -129,10 +129,10 @@ public class RobotController {
 
 				//Correction at the line
 				odoCorr.correct(corrTheta);
-				
+
 				// Move back by sensor_length at the last tile
 				if (i == Math.abs(tilesX)) {
-					this.travelDist(-SENSOR_LENGTH);
+					this.travelDist(SENSOR_LENGTH);
 				}
 
 			}
@@ -148,11 +148,11 @@ public class RobotController {
 				corrTheta = 0;
 				deltay = 1;
 			}
-			
+
 			// Rotate to the proper angle
 			if (lastY != y)
 				turnTo(corrTheta);
-			
+
 			// Number of tiles to move in Y
 			int tilesY = y - lastY;
 
@@ -169,13 +169,13 @@ public class RobotController {
 				// travelToDirect() to the next closest point
 				setSpeeds(150,150);
 				directTravelTo(lastX, lastY + deltay*i);
-				
+
 				// Correction at the line
 				odoCorr.correct(corrTheta);
 
 				// Move back by sensor_length at the last tile
 				if (i == Math.abs(tilesY)) {
-					this.travelDist(-SENSOR_LENGTH);
+					this.travelDist(SENSOR_LENGTH);
 				}
 			}
 		}
@@ -211,7 +211,7 @@ public class RobotController {
 
 		leftMotor.rotate(convertAngle(WHEEL_RAD, TRACK, dTheta), true);
 		rightMotor.rotate(-convertAngle(WHEEL_RAD, TRACK, dTheta), false);
-		
+
 	}
 
 	/**

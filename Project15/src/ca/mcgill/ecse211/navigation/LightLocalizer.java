@@ -68,7 +68,7 @@ public class LightLocalizer {
 		}
 		
 		robot.setSpeeds(150,150);
-		robot.travelDist(-SENSOR_LENGTH);
+		robot.travelDist(SENSOR_LENGTH);
 		robot.turnBy(90,true);
 		
 		robot.setSpeeds(150, 150);
@@ -83,7 +83,7 @@ public class LightLocalizer {
 			e.printStackTrace();
 		}
 		robot.setSpeeds(150, 150);
-		robot.travelDist(-SENSOR_LENGTH);
+		robot.travelDist(SENSOR_LENGTH);
 
 		robot.turnBy(89, false); //90 is a bit too much
 		
