@@ -58,6 +58,7 @@ public class OdometryCorrection {
 	public void correct(double corrTheta) {
 		robot.setSpeeds(150, 150);
 		robot.travelDist(-5);
+		
 		robot.moveForward();
 		boolean rightLineDetected = false;
 		boolean leftLineDetected = false;
@@ -79,8 +80,6 @@ public class OdometryCorrection {
 			if(rightLineDetected) {
 				robot.setSpeeds(50, 50);
 				robot.startMoving(true, false);
-				
-				
 			}
 			else if(leftLineDetected) {
 				robot.setSpeeds(50, 50);

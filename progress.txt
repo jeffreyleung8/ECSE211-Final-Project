@@ -69,4 +69,10 @@ Nov 21: (Lea)
 -Navigation through tunnel in vertical position works
 -Navigation through tunnel in horizontal position needs to be tested
 
+Nov 21: (Jeffrey)
+-Finished implementation of navigation class but needs to be tested
+-Methods(travelThroughTunnel(), travelToStartingPoint, travelToRingSet(), turnToTunnel())
+-Added two methods in wifi class(getClosestCornerToTunnel(), getClosestCornerToSC())
+
+
  

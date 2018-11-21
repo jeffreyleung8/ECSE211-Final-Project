@@ -116,9 +116,8 @@ public class Main {
 			navigation.setOdoCorrection(odoCorr);
 			
 			//localization
-		//	usLocalizer.usLocalize();
-		//	lightLocalizer.initialLocalize();
-	
+			usLocalizer.usLocalize();
+			lightLocalizer.initialLocalize();
 			
 			//Initialize odometer
 			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
@@ -127,20 +126,20 @@ public class Main {
 			navigation.travelToTunnel(); 
 
 			//Navigation through tunnel 
-			//navigation.travelThroughTunnel();
+			navigation.travelThroughTunnel();
 
 			//Navigation to ring set
-			//navigation.travelToRingSet();
+			navigation.travelToRingSet();
 
 
 			//Navigation to tunnel exit
-			//navigation.travelToTunnel();
+			navigation.travelToTunnel();
 
 			//Navigation through tunnel 
-			//navigation.travelThroughTunnel();
+			navigation.travelThroughTunnel();
 
 			//Navigation to starting point
-			//navigation.travelToStartingPoint();
+			navigation.travelToStartingPoint();
 
 			//Unload ring
 			//ringSearcher.unload();

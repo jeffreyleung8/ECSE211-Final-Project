@@ -14,7 +14,7 @@ import ca.mcgill.ecse211.enumeration.Team;
 public class WiFi {
 
 
-	private static final String SERVER_IP = "192.168.2.13";
+	private static final String SERVER_IP = "192.168.2.11";
 
 	private static final int TEAM_NUMBER = 15;
 
@@ -37,7 +37,7 @@ public class WiFi {
 	 * Stores all the data sent by the server JAR file into a Map object.
 	 */
 	public void getData() {
-		
+
 		// Initialize WifiConnection class
 		WifiConnection conn = new WifiConnection(SERVER_IP, TEAM_NUMBER, ENABLE_DEBUG_WIFI_PRINT);
 
@@ -101,9 +101,9 @@ public class WiFi {
 	 * coords(x,y)
 	 * @return starting corner coordinates
 	 */
-	public int[] getStartingCornerCoords() {
+	public int[] getStartingCornerCoords(int startingCorner) {
 		int[] coords = { 0, 0 };
-		switch (getStartingCorner(this.getTeam())) {
+		switch (startingCorner) {
 		case 0:
 			coords[0] = 1;
 			coords[1] = 1;
@@ -162,7 +162,7 @@ public class WiFi {
 			int[][] redZone = { { llx, lly }, { urx, lly }, { urx, ury },{ llx, ury } };
 
 			return redZone;
-			
+
 		default : 
 			return  null;
 		}
@@ -246,8 +246,8 @@ public class WiFi {
 
 		}
 	}
-	
-	
+
+
 	/**
 	 * Gets the search zone of the specified team
 	 * 
@@ -280,7 +280,7 @@ public class WiFi {
 			// Corner convention:
 			// TG_x corresponds to the x coordinate of the green team's tree.
 			// TG_y corresponds to the y coordinate of the green team's tree.
-			
+
 			int[]greenRingSet = {tg_x,tg_y};
 
 			return greenRingSet;
@@ -288,6 +288,64 @@ public class WiFi {
 		default:
 			return null;
 		}
+	}
+	/**
+	 * Gets the closest corner of the tunnel to ringset
+	 * 
+	 */
+	public int[] getClosestCornerToRS(Team team) {
+		int[] coords = { 0, 0, 0 };
+		int [] ringSet = getRingSet(team);
+		int[][] tunnelZone = getTunnelZone(team);
+		// Corner convention:
+		// [0] = Lower Left
+		// [1] = Lower Right
+		// [2] = Upper Right
+		// [3] = Upper Left
+		double min = Double.MAX_VALUE;
+
+		for(int i =0; i < 4; i++) {
+			int x =Math.abs(ringSet[0]-tunnelZone[i][0]);
+			int y =Math.abs(ringSet[1]-tunnelZone[i][1]);
+			double hypo = Math.sqrt((x*x+y*y));
+			if(min > hypo ) {
+				min = hypo;
+				coords[0]=tunnelZone[i][0];
+				coords[1]=tunnelZone[i][1];
+				coords[2]=i;
+
+			}
+		}
+		return coords;
+
+	}
+	/**
+	 * Gets the closest corner of the tunnel to starting corner
+	 * 
+	 */
+	public int[] getClosestCornerToSC(Team team) {
+		int[] coords = { 0, 0, 0 };
+		int [] sc = getStartingCornerCoords(this.getStartingCorner(team));
+		int[][] tunnelZone = getTunnelZone(team);
+		// Corner convention:
+		// [0] = Lower Left
+		// [1] = Lower Right
+		// [2] = Upper Right
+		// [3] = Upper Left
+		double min = Double.MAX_VALUE;
+
+		for(int i =0; i < 4; i++) {
+			int x =Math.abs(sc[0]-tunnelZone[i][0]);
+			int y =Math.abs(sc[1]-tunnelZone[i][1]);
+			double hypo = Math.sqrt((x*x+y*y));
+			if(min > hypo ) {
+				min = hypo;
+				coords[0]=tunnelZone[i][0];
+				coords[1]=tunnelZone[i][1];
+				coords[2]=i;
+			}
+		}
+		return coords;
 	}
 
 

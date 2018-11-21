@@ -8,6 +8,7 @@ import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
@@ -17,9 +18,6 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  * @author Lea Akkary
  */
 public class Navigation extends Thread {
-
-	//Sensor
-	//private LightSensorController lightSensor;
 
 	//Robot 
 	private RobotController robot;
@@ -68,6 +66,7 @@ public class Navigation extends Thread {
 	private boolean lowerLeft = false;
 	private boolean lowerRight = false;
 
+	private boolean goingToRingSet = false;
 	/**
 	 * This is a constructor for the RobotController class
 	 * @param odometer
@@ -87,7 +86,7 @@ public class Navigation extends Thread {
 		this.wifi = wifi;
 		this.team = wifi.getTeam();
 		this.startingCorner = wifi.getStartingCorner(team);
-		this.startingCornerCoords = wifi.getStartingCornerCoords();
+		this.startingCornerCoords = wifi.getStartingCornerCoords(startingCorner);
 		this.homeZone = wifi.getHomeZone(team);
 		this.tunnelZone = wifi.getTunnelZone(team);
 		this.ringSet = wifi.getRingSet(team);
@@ -97,117 +96,90 @@ public class Navigation extends Thread {
 	/**
 	 * A method to drive our vehicle to the tunnel
 	 */
+	/**
+	 * A method to drive our vehicle to the tunnel
+	 */
 	public void travelToTunnel() {
-		switch(team){
-		case GREEN:{
-			//tunnel is along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-				int[] tunnelLR = tunnelZone[1];
-				int[] tunnelLL = tunnelZone[0];
-				int[] tunnelUR = tunnelZone[2];
-				int[] tunnelUL = tunnelZone[3];
-				switch(startingCorner){
-				case 0: // corner 0
-					//travel to lower left corner of tunnel
-					robot.travelTo(tunnelLL[0],startingCornerCoords[1]);
-					robot.travelTo(tunnelLL[0], tunnelLL[1]-1);
-					lowerLeft = true;
-					robot.turnTo(0); //assure that robot is pointing 0
-					break;
-				case 1:	// corner 1
-					//travel to the point under lower-right corner 
-					robot.travelTo(tunnelLR[0],startingCornerCoords[1]);
-					robot.travelTo(tunnelLR[0], tunnelLR[1]-1);
-					lowerRight = true;
-					robot.turnTo(0); // assure that robot is pointing 0
-					break;
-				case 2: // corner 2
-					//travel to upper right corner
-					robot.travelTo(tunnelUR[0],startingCornerCoords[1]);
-					robot.travelTo(tunnelUR[0], tunnelUR[1]+1);
-					upperRight = true;
-					robot.turnTo(180);
-					break;
-				case 3: // corner 3
-					//travel to upper left corner
-					robot.travelTo(tunnelUL[0],startingCornerCoords[1]);
-					robot.travelTo(tunnelUL[0], tunnelUL[1]+1);
-					upperLeft = true;
-					robot.turnTo(180);
-					break;
-				}	
+		//tunnel is along y-axis (vertical)
+		if(wifi.isTunnelVertical(team)) {
+			int[] tunnelLR = tunnelZone[1];
+			int[] tunnelLL = tunnelZone[0];
+			int[] tunnelUR = tunnelZone[2];
+			int[] tunnelUL = tunnelZone[3];
+			switch(startingCorner){
+			case 0: // corner 0
+				//travel to lower left corner of tunnel
+				robot.travelTo(tunnelLL[0],startingCornerCoords[1]);
+				robot.travelTo(tunnelLL[0], tunnelLL[1]-1);
+				lowerLeft = true;
+				robot.turnTo(0); //assure that robot is pointing 0
+				break;
+			case 1:	// corner 1
+				//travel to the point under lower-right corner 
+				robot.travelTo(tunnelLR[0],startingCornerCoords[1]);
+				robot.travelTo(tunnelLR[0], tunnelLR[1]-1);
+				lowerRight = true;
+				robot.turnTo(0); // assure that robot is pointing 0
+				break;
+			case 2: // corner 2
+				//travel to upper right corner
+				robot.travelTo(tunnelUR[0],startingCornerCoords[1]);
+				robot.travelTo(tunnelUR[0], tunnelUR[1]+1);
+				upperRight = true;
+				robot.turnTo(180);
+				break;
+			case 3: // corner 3
+				//travel to upper left corner
+				robot.travelTo(tunnelUL[0],startingCornerCoords[1]);
+				robot.travelTo(tunnelUL[0], tunnelUL[1]+1);
+				upperLeft = true;
+				robot.turnTo(180);
+				break;
+			}	
+		}
+		//tunnel is along x-axis (horizontal)
+		else {
+			int[] tunnelLR = tunnelZone[1];
+			int[] tunnelLL = tunnelZone[0];
+			int[] tunnelUR = tunnelZone[2];
+			int[] tunnelUL = tunnelZone[3];
+			switch(startingCorner){
+			case 0:
+				//travel to the point under lower-left corner 
+				robot.travelTo(startingCornerCoords[0], tunnelLL[1]);
+				robot.travelTo(tunnelLL[0]-1,tunnelLL[1]);
+				lowerLeft = true;
+				robot.turnTo(90); // assure that robot is pointing 90
+				break;
+			case 1:
+				//travel to the point under lower-right corner 
+				robot.travelTo(startingCornerCoords[0], tunnelLR[1]);
+				robot.travelTo(tunnelLR[0]+1,tunnelLR[1]);
+				lowerRight = true;
+				robot.turnTo(270); // assure that robot is pointing 270
+				break;				 
+			case 2:
+				//travel to the point under upper-right corner 
+				robot.travelTo(startingCornerCoords[0], tunnelUR[1]);
+				robot.travelTo(tunnelUR[0]+1,tunnelUR[1]);
+				upperRight = true;
+				robot.turnTo(270); // assure that robot is pointing 270
+				break;				 
+			case 3:
+				//travel to the point under upper-left corner 
+				robot.travelTo(startingCornerCoords[0], tunnelUL[1]);
+				robot.travelTo(tunnelUL[0]-1,tunnelUL[1]);
+				upperLeft = true;
+				robot.turnTo(90); // assure that robot is pointing 90
 				break;
 			}
-			//tunnel is along x-axis (horizontal)
-			else {
-				int[] tunnelLR = tunnelZone[1];
-				int[] tunnelLL = tunnelZone[0];
-				int[] tunnelUR = tunnelZone[2];
-				int[] tunnelUL = tunnelZone[3];
-				switch(startingCorner){
-				case 0:
-					//travel to the point under lower-left corner 
-					robot.travelTo(startingCornerCoords[0], tunnelLL[1]);
-					robot.travelTo(tunnelLL[0]-1,tunnelLL[1]);
-					lowerLeft = true;
-					robot.turnTo(90); // assure that robot is pointing */
-					break;
-				case 1:
-					//travel to the point under lower-right corner 
-					robot.travelTo(startingCornerCoords[0], tunnelLR[1]);
-					robot.travelTo(tunnelLR[0]+1,tunnelLR[1]);
-					lowerRight = true;
-					robot.turnTo(270); // assure that robot is pointing */
-					break;				 
-				case 2:
-					//travel to the point under upper-right corner 
-					robot.travelTo(startingCornerCoords[0], tunnelUR[1]);
-					robot.travelTo(tunnelUR[0]+1,tunnelUR[1]);
-					upperRight = true;
-					robot.turnTo(270); // assure that robot is pointing */
-					break;				 
-				case 3:
-					//travel to the point under upper-left corner 
-					robot.travelTo(startingCornerCoords[0], tunnelUL[1]);
-					robot.travelTo(tunnelUL[0]-1,tunnelUL[1]);
-					upperLeft = true;
-					robot.turnTo(90); // assure that robot is pointing */
-					break;
-				}
-			}
-			break;
-		}
-		case RED:{
-			//tunnel is along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-				switch(startingCorner){
-				case 0:
-				case 1:
-				case 2:
-				case 3: 
-				}					
-
-			}
-			//tunnel is along x-axis (horizontal)
-			else {
-				int[] tunnelUL = tunnelZone[3];
-				switch(startingCorner){
-				case 0:
-				case 1:
-				case 2:
-				case 3:	//travel to the point to the left  of the upper-left corner
-					robot.travelTo(startingCornerCoords[0],tunnelUL[1]);
-					robot.travelTo(tunnelUL[0]-1, tunnelUL[1]);
-					robot.turnTo(90); //assure that the robot's orientation is 90
-					upperLeft = true;
-				}
-			}
-		}
-		break;
 		}
 	}
 
-
+	/**
+	 * A method to travel through the tunnel
+	 * 
+	 */
 	public void travelThroughTunnel(){
 
 		turnToTunnel();
@@ -231,137 +203,8 @@ public class Navigation extends Thread {
 		//Correct at next line
 		odoCorr.correct(odometer.getXYT()[2]);
 		robot.travelDist(SENSOR_LENGTH);
-	}
 
-	/**
-	 * A method to travel to the ringSet
-	 * 
-	 */
-	public void travelToRingSet() {
-		switch(team) {
-		case GREEN:
-			//Tunnel along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-				int urx = tunnelZone[2][0];
-				int llx = tunnelZone[3][0];
-				//Check where is the ring set in respect to the tunnel
-				//if the ringset is at the left of the tunnel
-				//travel to the right side of the ringset
-				if((llx+urx)/2 > ringSet[0]) {
-					int deltay = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE)-ringSet[1];  
-					robot.travelDist(deltay * TILE_SIZE);
-					robot.travelTo(ringSet[0]+1,ringSet[1]);
-				}
-				//if the ringset is at the right of the tunnel
-				//travel to the left side of the ringset
-				else {
-					int deltay = ringSet[1]-(int) Math.round(odometer.getXYT()[1] / TILE_SIZE);  
-					robot.travelDist(deltay * TILE_SIZE);
-					robot.travelTo(ringSet[0]-1,ringSet[1]);
-				}
-			}
-			//Tunnel along x-axis (horizontal)
-			else {
-			}
-
-		case RED:
-			//Tunnel along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-
-			}
-			//Tunnel along x-axis (horizontal)
-			else {
-				int ury = tunnelZone[2][1];
-				int lly = tunnelZone[1][1];
-				//Check where is the ring set in respect to the tunnel
-				//if the ringset is at the left of the tunnel
-				//travel to the right side of the ringset
-				if((lly+ury)/2 > ringSet[1]) {
-					int deltax = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE)-ringSet[0];  
-					robot.travelDist(deltax * TILE_SIZE);
-					robot.travelTo(ringSet[0],ringSet[1]+1);
-				}
-				//if the ringset is at the right of the tunnel
-				//travel to the left side of the ringset
-				else {
-					int deltax = ringSet[0]-(int) Math.round(odometer.getXYT()[0] / TILE_SIZE);  
-					robot.travelDist(deltax * TILE_SIZE);
-					robot.travelTo(ringSet[0],ringSet[1]-1);
-				}
-			}
-		}
-
-	}
-	/**
-	 * A method to travel to tunnel exit
-	 * 
-	 */
-	public void travelToTunnelExit() {
-		switch(team){
-		case GREEN:
-			//tunnel is along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-				int[] tunnelUR = tunnelZone[2];
-				switch(startingCorner){
-				case 0: 
-				
-				case 1:	//travel to the point above upper-right corner
-					int curry = (int) Math.round(odometer.getXYT()[1]/TILE_SIZE);
-					robot.travelTo(tunnelUR[0],curry);
-					robot.travelTo(tunnelUR[0], tunnelUR[1]+1);
-					upperRight = true;
-				case 2: 
-					
-				case 3:
-				}	
-			}
-			//tunnel is along x-axis (horizontal)
-			else {
-				int[] tunnelUR = tunnelZone[2];
-				switch(startingCorner){
-				case 0:
-				case 1: //travel to the point next to lower-right corner
-					lowerRight = true;
-				case 2:
-				case 3:
-				}
-			}
-		case RED:
-			//tunnel is along y-axis (vertical)
-			if(wifi.isTunnelVertical(team)) {
-				switch(startingCorner){
-				case 0:
-				case 1:
-				case 2:
-				case 3: 
-				}					
-
-			}
-			//tunnel is along x-axis (horizontal)
-			else {
-				int[] tunnelUL = tunnelZone[3];
-				switch(startingCorner){
-				case 0:
-				case 1: //x then y
-				case 2:
-				case 3:	
-				}
-			}
-		}
-	}
-	/**
-	 * A method to travel to the starting point
-	 * 
-	 */
-	public void travelToStartingPoint() {
-		switch(startingCorner) {
-		case 0: 
-		case 1: //y then x
-			int deltay = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE)-startingCornerCoords[1];  
-			robot.travelDist(deltay * TILE_SIZE);
-			robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-		case 2:
-		}
+		turnOutTunnel(goingToRingSet);
 	}
 	/**
 	 * A method to turn correctly to the tunnel entrance/exit
@@ -427,8 +270,301 @@ public class Navigation extends Thread {
 				lowerRight = false; //reinitialize
 			}
 		}
-		
+
 	}
+	/**
+	 * A method to turn correctly after traveling through tunnel
+	 * When it goes to the island
+	 * 
+	 */
+	public void turnOutTunnel(boolean goingToRingSet) {
+		int[] closestCorner;
+		if(goingToRingSet) {
+			closestCorner = wifi.getClosestCornerToRS(team);
+			goingToRingSet = false;
+		}
+		else {
+			closestCorner = wifi.getClosestCornerToSC(team);
+		}
+
+		if(wifi.isTunnelVertical(team)) {
+			switch(closestCorner[2]) {
+			case 0: //LL
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]-1)*TILE_SIZE, 180);
+				break;
+			case 1: //LR
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]-1)*TILE_SIZE, 180);
+				break;
+			case 2: //UR
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]+1)*TILE_SIZE, 0);
+				break;
+			case 3: //UL
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]+1)*TILE_SIZE, 0);
+				break;
+			}
+		}
+		else {
+			switch(closestCorner[2]) {
+			case 0: //LL
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT((closestCorner[0]-1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 270);
+				break;
+			case 1: //LR
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT((closestCorner[0]+1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 90);
+				break;
+			case 2: //UR
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT((closestCorner[0]+1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 90);
+				break;
+			case 3: //UL
+				robot.turnBy(90, true);
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.turnBy(90, false);
+				odoCorr.correct(odometer.getXYT()[2]);
+				odometer.setXYT((closestCorner[0]-1)*TILE_SIZE,(closestCorner[1])*TILE_SIZE, 270);
+				break;
+			}	
+		}
+	}
+	/**
+	 * A method to travel to the ringSet
+	 * 
+	 */
+	public void travelToRingSet() {
+		int currx=0, curry=0;
+		int [] closestCorner = wifi.getClosestCornerToRS(team);
+		//closestCorner[0] : x - coords
+		//closestCorner[1] : y - coords
+		//closestCorner[2] : corner of the tunnel (LL(0),LR(1),UR(2),UL(3)
+
+		//Tunnel along y-axis (vertical)
+		if(wifi.isTunnelVertical(team)) {
+			switch(closestCorner[2]) { 
+			case 0: //LL
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,ringSet[1]);
+				robot.travelTo(ringSet[0]+1,ringSet[1]);
+				break;
+			case 1: //LR
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,ringSet[1]);
+				robot.travelTo(ringSet[0]-1,ringSet[1]);
+				break;
+			case 2: //UR
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,ringSet[1]);
+				robot.travelTo(ringSet[0]-1,ringSet[1]);
+				break;
+			case 3: //UL
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,ringSet[1]);
+				robot.travelTo(ringSet[0]+1,ringSet[1]);
+				break;
+			}
+		}
+		//Tunnel along x-axis (horizontal)
+		else {
+			switch(closestCorner[2]) { 
+			case 0: //LL
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(ringSet[0],curry);
+				robot.travelTo(ringSet[0],ringSet[1]+1);
+				break;
+			case 1: //LR
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(ringSet[0],curry);
+				robot.travelTo(ringSet[0],ringSet[1]+1);
+				break;
+			case 2: //UR
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(ringSet[0],curry);
+				robot.travelTo(ringSet[0],ringSet[1]-1);
+				break;
+			case 3: //UL
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(ringSet[0],curry);
+				robot.travelTo(ringSet[0],ringSet[1]-1);
+				break;
+			}
+		}
+	}
+	/**
+	 * A method to travel to tunnel exit
+	 * 
+	 */
+	public void travelToTunnelExit() {
+		int[] closestCorner = wifi.getClosestCornerToRS(team);
+		//closestCorner[0] : x - coords
+		//closestCorner[1] : y - coords
+		//closestCorner[2] : corner of the tunnel (LL(0),LR(1),UR(2),UL(3)
+		if(wifi.isTunnelVertical(team)) {
+			switch(closestCorner[2]) { 
+			case 0:{ //LL
+				//x then y
+				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(closestCorner[0], y);
+				robot.travelTo(closestCorner[0], closestCorner[1]-1);
+				lowerLeft = true;
+				robot.turnTo(0);
+				break;
+			}
+			case 1:{ //LR
+				//x then y
+				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(closestCorner[0], y);
+				robot.travelTo(closestCorner[0], closestCorner[1]-1);
+				lowerRight = true;
+				robot.turnTo(0);
+				break;
+			}
+			case 2:{ //UR
+				//x then y
+				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(closestCorner[0], y);
+				robot.travelTo(closestCorner[0], closestCorner[1]+1);
+				upperRight = true;
+				robot.turnTo(180);
+				break;
+			}
+			case 3:{ //UL
+				//x then y
+				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(closestCorner[0], y);
+				robot.travelTo(closestCorner[0], closestCorner[1]+1);
+				upperLeft = true;
+				robot.turnTo(180);
+				break;
+			}
+			}
+		}
+		else {
+			switch(closestCorner[2]) {
+			case 0:{ //LL
+				//y then x
+				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(x, closestCorner[1]);
+				robot.travelTo(closestCorner[0]-1, closestCorner[1]);
+				lowerLeft = true;
+				robot.turnTo(90);
+				break;
+			}
+			case 1:{ //LR
+				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(x, closestCorner[1]);
+				robot.travelTo(closestCorner[0]+1, closestCorner[1]);
+				lowerRight = true;
+				robot.turnTo(270);
+				break;
+			}
+			case 2:{ //UR
+				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(x, closestCorner[1]);
+				robot.travelTo(closestCorner[0]+1, closestCorner[1]);
+				upperRight = true;
+				robot.turnTo(270);
+				break;
+			}
+			case 3:{ //UL
+				//y then x
+				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(x, closestCorner[1]);
+				robot.travelTo(closestCorner[0]-1, closestCorner[1]);
+				upperLeft = true;
+				robot.turnTo(90);
+				break;
+			}
+			}
+		}
+	}
+	/**
+	 * A method to travel to the starting point
+	 * 
+	 */
+	public void travelToStartingPoint() {
+		int currx=0, curry=0;
+		int [] closestCorner = wifi.getClosestCornerToSC(team);
+		//closestCorner[0] : x - coords
+		//closestCorner[1] : y - coords
+		//closestCorner[2] : corner of the tunnel (LL(0),LR(1),UR(2),UL(3)
+
+		//Tunnel along y-axis (vertical)
+		if(wifi.isTunnelVertical(team)) {
+			switch(closestCorner[2]) { 
+			case 0: //LL
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,startingCornerCoords[1]);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 1: //LR
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,startingCornerCoords[1]);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 2: //UR
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,startingCornerCoords[1]);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 3: //UL
+				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+				robot.travelTo(currx,startingCornerCoords[1]);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			}
+		}
+		//Tunnel along x-axis (horizontal)
+		else {
+			switch(closestCorner[2]) { 
+			case 0: //LL
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(startingCornerCoords[0],curry);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 1: //LR
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(startingCornerCoords[0],curry);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 2: //UR
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(startingCornerCoords[0],curry);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			case 3: //UL
+				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+				robot.travelTo(startingCornerCoords[0],curry);
+				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
+				break;
+			}
+		}
+	}
+
 	/**
 	 * Sets the OdometryCorrection object to be used by the robot controller.
 	 * 
