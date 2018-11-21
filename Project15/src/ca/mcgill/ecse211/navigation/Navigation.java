@@ -146,16 +146,16 @@ public class Navigation extends Thread {
 				int[] tunnelUL = tunnelZone[3];
 				switch(startingCorner){
 				case 0:
-					//travel to the point under lower-left corner
-					robot.travelTo(tunnelLL[1], startingCornerCoords[0]);
+					//travel to the point under lower-left corner 
+					robot.travelTo(startingCornerCoords[0], tunnelLL[1]);
 					robot.travelTo(tunnelLL[0]-1,tunnelLL[1]);
 					lowerLeft = true;
-					robot.turnTo(90); // assure that robot is pointing 
+					robot.turnTo(90); // assure that robot is pointing */
 					break;
 				case 1:
 					//travel to the point under lower-right corner 
 					robot.travelTo(startingCornerCoords[0], tunnelLR[1]);
-					robot.travelTo(tunnelLR[0]+1,startingCornerCoords[1]);
+					robot.travelTo(tunnelLR[0]+1,tunnelLR[1]);
 					lowerRight = true;
 					robot.turnTo(270); // assure that robot is pointing */
 					break;				 
