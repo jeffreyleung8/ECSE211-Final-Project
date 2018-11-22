@@ -307,29 +307,37 @@ public class Navigation extends Thread {
 			case 0: //LL
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]-1)*TILE_SIZE, 180);
 				break;
 			case 1: //LR
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]-1)*TILE_SIZE, 180);
 				break;
 			case 2: //UR
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]+1)*TILE_SIZE, 0);
 				break;
 			case 3: //UL
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT(closestCorner[0]*TILE_SIZE,(closestCorner[1]+1)*TILE_SIZE, 0);
 				break;
 			}
@@ -346,22 +354,28 @@ public class Navigation extends Thread {
 			case 1: //LR
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT((closestCorner[0]+1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 90);
 				break;
 			case 2: //UR
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT((closestCorner[0]+1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 90);
 				break;
 			case 3: //UL
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT((closestCorner[0]-1)*TILE_SIZE,(closestCorner[1])*TILE_SIZE, 270);
 				break;
 			}	
