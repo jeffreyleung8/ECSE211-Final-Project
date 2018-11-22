@@ -279,16 +279,40 @@ public class Navigation extends Thread {
 	 */
 	public void turnOutTunnel(boolean goingToRingSet) {
 		int[] closestCorner;
+		int corner;
 		if(goingToRingSet) {
 			closestCorner = wifi.getClosestCornerToRS(team);
+			corner = closestCorner[2];
+			//Check if ringset is in front of the tunnel
+			if(wifi.checkRSPos(team)) {
+				if(wifi.isTunnelVertical(team)) {
+					switch(corner) {
+					case 0: corner = 1; break;
+					case 1:	corner = 0; break;
+					case 2: corner = 3; break;
+					case 3: corner = 2; break;
+					}
+				}
+				else {
+					switch(corner) {
+					case 0: corner = 3; break;
+					case 1:	corner = 2; break;
+					case 2: corner = 1; break;
+					case 3: corner = 0; break;
+					}	
+				}
+			}
 			goingToRingSet = false;
+
 		}
 		else {
 			closestCorner = wifi.getClosestCornerToSC(team);
+			corner = closestCorner[2];
 		}
 
+
 		if(wifi.isTunnelVertical(team)) {
-			switch(closestCorner[2]) {
+			switch(corner) {
 			case 0: //LL
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
@@ -320,7 +344,7 @@ public class Navigation extends Thread {
 			}
 		}
 		else {
-			switch(closestCorner[2]) {
+			switch(corner) {
 			case 0: //LL
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);

@@ -347,6 +347,28 @@ public class WiFi {
 		}
 		return coords;
 	}
+	
+	/**
+	 * Checks if ringSet is in front of the tunnel
+	 * 
+	 */
+	public boolean checkRSPos(Team team) {
+		int[] ringSet = getRingSet(team);
+		int[][] tunnelZone = getTunnelZone(team);
+		int llx = tunnelZone[0][0];
+		int lly = tunnelZone[0][1];
+		int urx = tunnelZone[2][0];
+		int ury = tunnelZone[2][1];
+		
+		if(ringSet[0]== llx || ringSet[0] == urx || ringSet[1]==lly || ringSet[1]==ury) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
 
 
 }
