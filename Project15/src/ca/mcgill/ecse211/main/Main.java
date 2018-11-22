@@ -133,7 +133,7 @@ public class Main {
 
 
 			//Navigation to tunnel exit
-			navigation.travelToTunnel();
+			navigation.travelToTunnelExit();
 
 			//Navigation through tunnel 
 			navigation.travelThroughTunnel();
