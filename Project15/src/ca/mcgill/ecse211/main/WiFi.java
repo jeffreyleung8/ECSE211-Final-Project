@@ -373,6 +373,31 @@ public class WiFi {
 		}
 		return false;
 	}
+	/**
+	 * Checks if tunnel is touching border
+	 * 
+	 */
+	public boolean checkTunnel(Team team) {
+		int[][] tunnelZone = getTunnelZone(team);
+		int llx = tunnelZone[0][0];
+		int lly = tunnelZone[0][1];
+		int urx = tunnelZone[2][0];
+		int ury = tunnelZone[2][1];
+		
+		
+		if(isTunnelVertical(team)) {
+			if( llx ==0 ||  urx == 8) {
+				return true;
+			}
+		}
+		else {
+			if(lly == 0|| ury == 8) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	
 	
 

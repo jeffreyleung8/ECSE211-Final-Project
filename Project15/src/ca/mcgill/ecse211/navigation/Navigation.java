@@ -99,31 +99,32 @@ public class Navigation extends Thread {
 	 */
 	public void travelToTunnel() {
 		int[] closestCorner = wifi.getClosestCornerToSC(team);
+
 		//tunnel is along y-axis (vertical)
 		if(wifi.isTunnelVertical(team)) {
-			switch(startingCorner){
-			case 0: // corner 0
+			switch(closestCorner[2]){
+			case 0: // LL
 				//travel to lower left corner of tunnel
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
 				lowerLeft = true;
 				robot.turnTo(0); //assure that robot is pointing 0
 				break;
-			case 1:	// corner 1
+			case 1:	// LR
 				//travel to the point under lower-right corner 
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
 				lowerRight = true;
 				robot.turnTo(0); // assure that robot is pointing 0
 				break;
-			case 2: // corner 2
+			case 2: // UR
 				//travel to upper right corner
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
 				upperRight = true;
 				robot.turnTo(180);
 				break;
-			case 3: // corner 3
+			case 3: // UL
 				//travel to upper left corner
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
@@ -134,29 +135,29 @@ public class Navigation extends Thread {
 		}
 		//tunnel is along x-axis (horizontal)
 		else {
-			switch(startingCorner){
-			case 0:
+			switch(closestCorner[2]){
+			case 0: //LL
 				//travel to the point under lower-left corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1,closestCorner[1]);
 				lowerLeft = true;
 				robot.turnTo(90); // assure that robot is pointing 90
 				break;
-			case 1:
+			case 1: //LR
 				//travel to the point under lower-right corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1,closestCorner[1]);
 				lowerRight = true;
 				robot.turnTo(270); // assure that robot is pointing 270
 				break;				 
-			case 2:
+			case 2: //UR
 				//travel to the point under upper-right corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1,closestCorner[1]);
 				upperRight = true;
 				robot.turnTo(270); // assure that robot is pointing 270
 				break;				 
-			case 3:
+			case 3: //UL
 				//travel to the point under upper-left corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1,closestCorner[1]);
