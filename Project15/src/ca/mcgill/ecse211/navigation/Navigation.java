@@ -197,6 +197,10 @@ public class Navigation extends Thread {
 		robot.travelDist(SENSOR_LENGTH);
 
 		turnOutTunnel(goingToRingSet);
+		
+		if(goingToRingSet) {
+			goingToRingSet = false;
+		}
 	}
 	/**
 	 * A method to turn correctly to the tunnel entrance/exit
@@ -294,8 +298,6 @@ public class Navigation extends Thread {
 					}	
 				}
 			}
-			goingToRingSet = false;
-
 		}
 		else {
 			closestCorner = wifi.getClosestCornerToSC(team);
