@@ -101,7 +101,8 @@ public class OdometryCorrection {
 		
 		correctOdo(corrTheta);
 		
-
+		robot.travelDist(SENSOR_LENGTH);
+		
 	}
 	/**
 	 * Correct odometer
