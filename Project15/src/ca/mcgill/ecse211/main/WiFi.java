@@ -360,12 +360,18 @@ public class WiFi {
 		int urx = tunnelZone[2][0];
 		int ury = tunnelZone[2][1];
 		
-		if(ringSet[0]== llx || ringSet[0] == urx || ringSet[1]==lly || ringSet[1]==ury) {
-			return true;
+		
+		if(isTunnelVertical(team)) {
+			if(ringSet[0]== llx || ringSet[0] == urx) {
+				return true;
+			}
 		}
 		else {
-			return false;
+			if(ringSet[1]==lly || ringSet[1]==ury) {
+				return true;
+			}
 		}
+		return false;
 	}
 	
 	
