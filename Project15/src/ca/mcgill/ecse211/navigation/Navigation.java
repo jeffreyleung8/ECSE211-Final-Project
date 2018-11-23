@@ -67,6 +67,7 @@ public class Navigation extends Thread {
 	private boolean lowerRight = false;
 
 	private boolean goingToRingSet = true;
+	
 	/**
 	 * This is a constructor for the RobotController class
 	 * @param odometer
@@ -187,7 +188,7 @@ public class Navigation extends Thread {
 		//Move in the tunnel
 		robot.setSpeeds(200,200);
 		robot.travelDist(2*TILE_SIZE);
-
+		
 		//Correct at line at the tunnel exit
 		odoCorr.correct(odometer.getXYT()[2]);
 		robot.travelDist(TILE_SIZE);
@@ -349,8 +350,10 @@ public class Navigation extends Thread {
 			case 0: //LL
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				odometer.setXYT((closestCorner[0]-1)*TILE_SIZE,closestCorner[1]*TILE_SIZE, 270);
 				break;
 			case 1: //LR
@@ -401,21 +404,25 @@ public class Navigation extends Thread {
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]+1,ringSet[1]);
+				robot.turnTo(270);
 				break;
 			case 1: //LR
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]-1,ringSet[1]);
+				robot.turnTo(90);
 				break;
 			case 2: //UR
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]-1,ringSet[1]);
+				robot.turnTo(90);
 				break;
 			case 3: //UL
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]+1,ringSet[1]);
+				robot.turnTo(270);
 				break;
 			}
 		}
@@ -426,21 +433,25 @@ public class Navigation extends Thread {
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]+1);
+				robot.turnTo(180);
 				break;
 			case 1: //LR
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]+1);
+				robot.turnTo(180);
 				break;
 			case 2: //UR
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]-1);
+				robot.turnTo(0);
 				break;
 			case 3: //UL
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]-1);
+				robot.turnTo(0);
 				break;
 			}
 		}
