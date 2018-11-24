@@ -113,11 +113,11 @@ public class LightLocalizer {
 		}
 		if(!rightLineDetected || !leftLineDetected) {
 			if(rightLineDetected) {
-				robot.setSpeeds(150, 150);
+				robot.setSpeeds(50, 50);
 				robot.startMoving(true, false);
 			}
 			else if(leftLineDetected){
-				robot.setSpeeds(150, 150);
+				robot.setSpeeds(50, 50);
 				robot.startMoving(false, true);
 			}
 		}

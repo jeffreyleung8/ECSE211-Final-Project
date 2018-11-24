@@ -6,6 +6,7 @@ import ca.mcgill.ecse211.controller.UltrasonicSensorController;
 import ca.mcgill.ecse211.enumeration.SearchState;
 import ca.mcgill.ecse211.main.Main;
 import ca.mcgill.ecse211.odometer.Odometer;
+import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -24,27 +25,29 @@ public class RingSearcher implements Runnable {
 	private ColorSensorController colorSensor;
 	private UltrasonicSensorController usSensor;
 
-	//Wifi class
-	//private Wifi wifi = new Wifi();
+	public static final double SENSOR_LENGTH = 3.3;
 
 	//Odometer
 	private Odometer odometer;
 
 	//Search state
-	private SearchState searchState;
+	public SearchState searchState;
 
 	//Constants
 	private long START_TIME = Main.START_TIME;
 
-	//Tree Sides
-	int count = 1;
+	//Odometry correction
+	private OdometryCorrection odoCorr;
 
-//	//Side motors
-//	private static final EV3LargeRegulatedMotor leftSideMotor = 
-//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-//
-//	private static final EV3LargeRegulatedMotor rightSideMotor = 
-//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+	//Tree Sides
+	private int targetRing = 4;
+
+	//	//Side motors
+	//	private static final EV3LargeRegulatedMotor leftSideMotor = 
+	//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	//
+	//	private static final EV3LargeRegulatedMotor rightSideMotor = 
+	//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	//usdistance
 	//	int usDistance = usSensor.fetch();
@@ -62,171 +65,106 @@ public class RingSearcher implements Runnable {
 		this.usSensor = usSensor;
 		this.robot = robot;
 		this.odometer = odometer;
+		searchState = SearchState.IN_PROGRESS;
 	}
 
 	@Override 
 	public void run(){
-		//		if(detectRing()) {
-		//			grabRing();
-		//		}
-		//		else if(!detectRing()) {
-		//			moveToNextRing();
-		//			searchRingSet();
-		//		}
+		while(searchState == SearchState.IN_PROGRESS) {
+			
+			long timeElapsed = System.currentTimeMillis() - START_TIME;
+			//Time out at 4 min
+			if(timeElapsed >= 240000) {
+				searchState = SearchState.TIME_OUT;
+			}
+			
+			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
+				colorSensor.beep();
+				searchState = SearchState.RING_FOUND;
+			}
+		}
 	}
 
-	public boolean detectRing() {
-		int color = 4;
-		while(usSensor.fetch() > 17) {
-			robot.setSpeeds(50, 50);
+	public void detectRing() {
+
+		int color = colorSensor.findMatch(colorSensor.fetch()) ;
+
+		while(color == 4) {
+			color = colorSensor.findMatch(colorSensor.fetch()) ;	
+		}
+		colorSensor.beep();
+		
+		searchState = SearchState.RING_FOUND;
+		
+	}
+	
+	/**
+	 * This method serves to move forward and backward in order to detect the ring
+	 */
+	public void approachRing() {
+		odoCorr.correct(odometer.getXYT()[2]);
+
+		while(usSensor.fetch() > 13) {
+			robot.setSpeeds(70, 70);
 			robot.moveForward();
+		}
+		
+		while(searchState == SearchState.IN_PROGRESS) {
+			if(usSensor.fetch() > 12) {
+				while(usSensor.fetch()>12) {
+					robot.moveForward();
+				}
+				robot.stopMoving();
+			}
+
+
+			if(usSensor.fetch() < 18) {
+				while(usSensor.fetch()<18) {
+					robot.moveBackward();
+				}
+				robot.stopMoving();
+			}
 		}
 
 		robot.stopMoving();
-		boolean isFound = false;
-		while(true) {
-			long timeElapsed = System.currentTimeMillis() - START_TIME;
-			//exceed 30 seconds
-			System.out.println(timeElapsed);
-			if(timeElapsed > 150000 ) {
-				break;
-			}
-			int x = colorSensor.detect();
-	
-		
-			for (int i =0; i < (x+1); i++) {
-				Sound.beep();
-				isFound = true;
-				try {
-					Thread.sleep(500);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			if(isFound) {
-				break;
-			}
 
-		}
-
-		while(usSensor.fetch() > 9) {
-
+		while(usSensor.fetch() > 5) {
 			robot.setSpeeds(80, 80);
 			robot.moveForward();
 		}
-		robot.travelDist(-robot.SENSOR_LENGTH);
+		
+		robot.stopMoving();
+		
+		robot.travelDist(-15);
 
+		odoCorr.correct(odometer.getXYT()[2]);
 
-		return true;
-	}
-
-
-	/*
-	 * 
-	 * 
- -Searching for ring set (supposed the ring set is at the center)
- -Call method searchRingSet(x,y) in RingSearcher
- -Stop robot when distance detected by US is less than d
- -Turn 45 left
- -Move forward by distance x
- -Turn 45 right
- -Move forward until distance detected by US is less than d
-	 */
-
-//	/**
-//	 * This method searches the ring set
-//	 */
-//	public void searchRingSet() {
-//		if(usSensor.fetch()<10) {
-//			robot.stopMoving();
-//			robot.turnBy(-45,true);
-//			robot.travelDist(20);
-//			robot.turnBy(45,true);
-//			while(usSensor.fetch()>7) {
-//				robot.moveForward();
-//			}
-//		}
-//
-//	}
-
-//	/**
-//	 * This method moves the robot to the next ring
-//	 */
-//	public void moveToNextRing() {
-//
-//		//if(!detectRing()) {
-//
-//		/*-------- TODO: Test Correct Distance to Cover entire Tree , travel 25 cm for now ----------*/
-//		robot.travelDist(25);
-//
-//		//turn 90 degrees
-//		robot.turnBy(90,true);
-//
-//		//increment count
-//		count ++;
-//
-//		if(count>4) {
-//			searchState = SearchState.TIME_OUT;
-//		}
-//
-//
-//
-//		searchState = SearchState.IN_PROGRESS;
-//	}
-
-	/**
-	 * This method grabs a ring
-	 */
-	public void grabRing() {
-
-//		// if(searchState == SearchState.RING_FOUND)
-//
-//
-//		/*---------- TODO : Needs Testing and tweaking the values --------------------------- */			
-//		robot.turnBy(90,true);
-//
-//		//move up a little
-//		rightSideMotor.setSpeed(0);
-//		leftSideMotor.setSpeed(0);
-//		rightSideMotor.rotate(50);
-//		leftSideMotor.rotate(50);
-//
-//		while(usSensor.fetch() > 4){
-//			robot.moveForward();
-//		}
-//
-//		//move up all the way
-//		rightSideMotor.setSpeed(0);
-//		leftSideMotor.setSpeed(0);
-//		rightSideMotor.rotate(40);
-//		leftSideMotor.rotate(40);
-//
-//		//move back down
-//		rightSideMotor.setSpeed(0);
-//		leftSideMotor.setSpeed(0);
-//		rightSideMotor.rotate(-90);
-//		leftSideMotor.rotate(-90);
-//
-//		//ring grabbed, move back from tree
-//		while(usSensor.fetch()<10) {
-//			robot.moveBackward();
-//		}
-//
+		robot.travelDist(SENSOR_LENGTH);
 
 	}
 
+	private int roundTheta(double theta){
+		if(theta > 345 && theta < 15){
+			return 0;
+		}
+		if(theta < 105 && theta > 75){
+			return 90;
+		}
+		if(theta < 195 && theta > 165){
+			return 180;
+		}
+		if(theta < 285 && theta > 255){
+			return 270;
+		}
+		return 0;
+	}
 	/**
-	 * This method unloads the rings
+	 * Sets the OdometryCorrection object to be used by the robot controller.
+	 * 
+	 * @param odoCorrection the OdometryCorrection object to be used
 	 */
-	public void unloadRing() {
-
-		//move side motors down
-//		rightSideMotor.setSpeed(0);
-//		leftSideMotor.setSpeed(0);
-//		rightSideMotor.rotate(-90);
-//		leftSideMotor.rotate(-90);
-
+	public void setOdoCorrection(OdometryCorrection odoCorrection) {
+		this.odoCorr = odoCorrection;
 	}
 
 

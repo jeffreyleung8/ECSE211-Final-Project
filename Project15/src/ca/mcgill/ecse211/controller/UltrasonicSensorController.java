@@ -15,7 +15,7 @@ public class UltrasonicSensorController{
 	
 	private EV3UltrasonicSensor usSensor;
 	private SampleProvider usDistance;
-	private SampleProvider average;
+	//private SampleProvider average;
 	private float[] usData;
 	
 	private int dist = 0;

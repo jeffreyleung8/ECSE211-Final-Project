@@ -22,8 +22,7 @@ public class RobotController {
 	private  static EV3LargeRegulatedMotor rightMotor;
 
 	//Constants
-	public final int speed = 200;
-	public final int FORWARD_SPEED = 250;
+	public final int FORWARD_SPEED = 200;
 	public final int ROTATE_SPEED = 100;
 	public final double TRACK = Main.TRACK;
 	public final double WHEEL_RAD = Main.WHEEL_RAD;
@@ -214,6 +213,16 @@ public class RobotController {
 
 	}
 
+	/*
+	 * Check if robot is at the correct angle
+	 */
+	public void checkAngle(int angle) {
+		int current_angle = roundTheta(odometer.getXYT()[2]);
+		
+		if(current_angle != angle) {
+			turnTo(angle);
+		}
+	}
 	/**
 	 * Sets the speeds of the motors.
 	 * 
@@ -371,6 +380,22 @@ public class RobotController {
 	 */
 	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
+	}
+	
+	private int roundTheta(double theta){
+		if(theta > 345 && theta < 15){
+			return 0;
+		}
+		if(theta < 105 && theta > 75){
+			return 90;
+		}
+		if(theta < 195 && theta > 165){
+			return 180;
+		}
+		if(theta < 285 && theta > 255){
+			return 270;
+		}
+		return 0;
 	}
 
 	/**

@@ -77,6 +77,7 @@ public class USLocalizer {
 		Sound.beep();
 		angleA = odometer.getXYT()[2];
 		
+		
 		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 		
 		// rotate out of the wall range
@@ -88,7 +89,7 @@ public class USLocalizer {
 		while (usSensor.fetch() > WALL) {
 			robot.rotate(true);
 		}
-
+		
 		robot.stopMoving();
 		Sound.beep();
 		angleB = odometer.getXYT()[2];

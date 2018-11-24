@@ -60,6 +60,7 @@ public class OdometryCorrection {
 		robot.travelDist(-5);
 		
 		robot.moveForward();
+
 		boolean rightLineDetected = false;
 		boolean leftLineDetected = false;
 		
@@ -75,7 +76,6 @@ public class OdometryCorrection {
 				}
 			}
 		}
-
 		if(!rightLineDetected || !leftLineDetected) {
 			if(rightLineDetected) {
 				robot.setSpeeds(50, 50);

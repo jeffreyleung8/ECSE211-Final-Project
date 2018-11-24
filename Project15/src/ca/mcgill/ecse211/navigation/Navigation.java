@@ -109,28 +109,28 @@ public class Navigation extends Thread {
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
 				lowerLeft = true;
-				robot.turnTo(0); //assure that robot is pointing 0
+				robot.checkAngle(0); //assure that robot is pointing 0
 				break;
 			case 1:	// LR
 				//travel to the point under lower-right corner 
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
 				lowerRight = true;
-				robot.turnTo(0); // assure that robot is pointing 0
+				robot.checkAngle(0); // assure that robot is pointing 0
 				break;
 			case 2: // UR
 				//travel to upper right corner
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
 				upperRight = true;
-				robot.turnTo(180);
+				robot.checkAngle(180);
 				break;
 			case 3: // UL
 				//travel to upper left corner
 				robot.travelTo(closestCorner[0],startingCornerCoords[1]);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
 				upperLeft = true;
-				robot.turnTo(180);
+				robot.checkAngle(180);
 				break;
 			}	
 		}
@@ -142,28 +142,28 @@ public class Navigation extends Thread {
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1,closestCorner[1]);
 				lowerLeft = true;
-				robot.turnTo(90); // assure that robot is pointing 90
+				robot.checkAngle(90); // assure that robot is pointing 90
 				break;
 			case 1: //LR
 				//travel to the point under lower-right corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1,closestCorner[1]);
 				lowerRight = true;
-				robot.turnTo(270); // assure that robot is pointing 270
+				robot.checkAngle(270); // assure that robot is pointing 270
 				break;				 
 			case 2: //UR
 				//travel to the point under upper-right corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1,closestCorner[1]);
 				upperRight = true;
-				robot.turnTo(270); // assure that robot is pointing 270
+				robot.checkAngle(270); // assure that robot is pointing 270
 				break;				 
 			case 3: //UL
 				//travel to the point under upper-left corner 
 				robot.travelTo(startingCornerCoords[0], closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1,closestCorner[1]);
 				upperLeft = true;
-				robot.turnTo(90); // assure that robot is pointing 90
+				robot.checkAngle(90); // assure that robot is pointing 90
 				break;
 			}
 		}
@@ -186,7 +186,7 @@ public class Navigation extends Thread {
 		odoCorr.correct(odometer.getXYT()[2]);
 
 		//Move in the tunnel
-		robot.setSpeeds(200,200);
+		robot.setSpeeds(250,250);
 		robot.travelDist(2*TILE_SIZE);
 		
 		//Correct at line at the tunnel exit
@@ -284,18 +284,18 @@ public class Navigation extends Thread {
 			if(wifi.checkRSPos(team)) {
 				if(wifi.isTunnelVertical(team)) {
 					switch(corner) {
-					case 0: corner = 1; break;
-					case 1:	corner = 0; break;
-					case 2: corner = 3; break;
-					case 3: corner = 2; break;
+					case 0: corner = 1; closestCorner[0]++;break;
+					case 1:	corner = 0; closestCorner[0]--;break;
+					case 2: corner = 3; closestCorner[0]--;break;
+					case 3: corner = 2; closestCorner[0]++;break;
 					}
 				}
 				else {
 					switch(corner) {
-					case 0: corner = 3; break;
-					case 1:	corner = 2; break;
-					case 2: corner = 1; break;
-					case 3: corner = 0; break;
+					case 0: corner = 3; closestCorner[1]++; break;
+					case 1:	corner = 2; closestCorner[1]++;break;
+					case 2: corner = 1; closestCorner[1]--;break;
+					case 3: corner = 0; closestCorner[1]--;break;
 					}	
 				}
 			}
@@ -404,25 +404,25 @@ public class Navigation extends Thread {
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]+1,ringSet[1]);
-				robot.turnTo(270);
+				robot.checkAngle(270);
 				break;
 			case 1: //LR
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]-1,ringSet[1]);
-				robot.turnTo(90);
+				robot.checkAngle(90);
 				break;
 			case 2: //UR
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]-1,ringSet[1]);
-				robot.turnTo(90);
+				robot.checkAngle(90);
 				break;
 			case 3: //UL
 				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(currx,ringSet[1]);
 				robot.travelTo(ringSet[0]+1,ringSet[1]);
-				robot.turnTo(270);
+				robot.checkAngle(270);
 				break;
 			}
 		}
@@ -433,25 +433,25 @@ public class Navigation extends Thread {
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]+1);
-				robot.turnTo(180);
+				robot.checkAngle(180);
 				break;
 			case 1: //LR
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]+1);
-				robot.turnTo(180);
+				robot.checkAngle(180);
 				break;
 			case 2: //UR
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]-1);
-				robot.turnTo(0);
+				robot.checkAngle(0);
 				break;
 			case 3: //UL
 				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(ringSet[0],curry);
 				robot.travelTo(ringSet[0],ringSet[1]-1);
-				robot.turnTo(0);
+				robot.checkAngle(0);
 				break;
 			}
 		}
@@ -462,18 +462,37 @@ public class Navigation extends Thread {
 	 */
 	public void travelToTunnelExit() {
 		int[] closestCorner = wifi.getClosestCornerToRS(team);
+		int corner = closestCorner[2];
 		//closestCorner[0] : x - coords
 		//closestCorner[1] : y - coords
 		//closestCorner[2] : corner of the tunnel (LL(0),LR(1),UR(2),UL(3)
+		if(wifi.checkRSPos(team)) {
+			if(wifi.isTunnelVertical(team)) {
+				switch(corner) {
+				case 0: corner = 1; closestCorner[0]++;break;
+				case 1:	corner = 0; closestCorner[0]--;break;
+				case 2: corner = 3; closestCorner[0]--;break;
+				case 3: corner = 2; closestCorner[0]++;break;
+				}
+			}
+			else {
+				switch(corner) {
+				case 0: corner = 3; closestCorner[1]++;break;
+				case 1:	corner = 2; closestCorner[1]++;break;
+				case 2: corner = 1; closestCorner[1]--;break;
+				case 3: corner = 0; closestCorner[1]--;break;
+				}	
+			}
+		}
 		if(wifi.isTunnelVertical(team)) {
-			switch(closestCorner[2]) { 
+			switch(corner) { 
 			case 0:{ //LL
 				//x then y
 				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(closestCorner[0], y);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
+				robot.checkAngle(0);
 				lowerLeft = true;
-				robot.turnTo(0);
 				break;
 			}
 			case 1:{ //LR
@@ -481,8 +500,8 @@ public class Navigation extends Thread {
 				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(closestCorner[0], y);
 				robot.travelTo(closestCorner[0], closestCorner[1]-1);
+				robot.checkAngle(0);
 				lowerRight = true;
-				robot.turnTo(0);
 				break;
 			}
 			case 2:{ //UR
@@ -490,8 +509,8 @@ public class Navigation extends Thread {
 				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(closestCorner[0], y);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
+				robot.checkAngle(180);
 				upperRight = true;
-				robot.turnTo(180);
 				break;
 			}
 			case 3:{ //UL
@@ -499,37 +518,37 @@ public class Navigation extends Thread {
 				int y = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 				robot.travelTo(closestCorner[0], y);
 				robot.travelTo(closestCorner[0], closestCorner[1]+1);
+				robot.checkAngle(180);
 				upperLeft = true;
-				robot.turnTo(180);
 				break;
 			}
 			}
 		}
 		else {
-			switch(closestCorner[2]) {
+			switch(corner) {
 			case 0:{ //LL
 				//y then x
 				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(x, closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1, closestCorner[1]);
+				robot.checkAngle(90);
 				lowerLeft = true;
-				robot.turnTo(90);
 				break;
 			}
 			case 1:{ //LR
 				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(x, closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1, closestCorner[1]);
+				robot.checkAngle(270);
 				lowerRight = true;
-				robot.turnTo(270);
 				break;
 			}
 			case 2:{ //UR
 				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(x, closestCorner[1]);
 				robot.travelTo(closestCorner[0]+1, closestCorner[1]);
+				robot.checkAngle(270);
 				upperRight = true;
-				robot.turnTo(270);
 				break;
 			}
 			case 3:{ //UL
@@ -537,8 +556,8 @@ public class Navigation extends Thread {
 				int x = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 				robot.travelTo(x, closestCorner[1]);
 				robot.travelTo(closestCorner[0]-1, closestCorner[1]);
+				robot.checkAngle(90);
 				upperLeft = true;
-				robot.turnTo(90);
 				break;
 			}
 			}
@@ -557,53 +576,15 @@ public class Navigation extends Thread {
 
 		//Tunnel along y-axis (vertical)
 		if(wifi.isTunnelVertical(team)) {
-			switch(closestCorner[2]) { 
-			case 0: //LL
-				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
-				robot.travelTo(currx,startingCornerCoords[1]);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 1: //LR
-				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
-				robot.travelTo(currx,startingCornerCoords[1]);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 2: //UR
-				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
-				robot.travelTo(currx,startingCornerCoords[1]);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 3: //UL
-				currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
-				robot.travelTo(currx,startingCornerCoords[1]);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			}
+			currx = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
+			robot.travelTo(currx,startingCornerCoords[1]);
+			robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
 		}
 		//Tunnel along x-axis (horizontal)
 		else {
-			switch(closestCorner[2]) { 
-			case 0: //LL
-				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
-				robot.travelTo(startingCornerCoords[0],curry);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 1: //LR
-				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
-				robot.travelTo(startingCornerCoords[0],curry);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 2: //UR
-				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
-				robot.travelTo(startingCornerCoords[0],curry);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			case 3: //UL
-				curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
-				robot.travelTo(startingCornerCoords[0],curry);
-				robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
-				break;
-			}
+			curry = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
+			robot.travelTo(startingCornerCoords[0],curry);
+			robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
 		}
 	}
 

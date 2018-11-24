@@ -2,6 +2,7 @@ package ca.mcgill.ecse211.controller;
 
 import java.text.DecimalFormat;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
+import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
@@ -17,15 +18,14 @@ import lejos.robotics.SampleProvider;
  */
 public class ColorSensorController {
 
-	// Motor objects
-	//private EV3LargeRegulatedMotor sideMotor;
+	private enum Color {BLUE, GREEN, YELLOW, ORANGE};
 
 	private EV3ColorSensor colorSensor;
 	// Light sensor objects
 	private SampleProvider rgbValue;
 	// Float arrays for Color data
 	private float[] rgbData;
-
+	
 	// RGB Mean Values
 	private static final float[][] mean= {
 			{0.170390332f,0.767597595f,0.617868163f},
@@ -33,7 +33,8 @@ public class ColorSensorController {
 			{0.832694447f,0.538629888f,0.128443766f},
 			{0.953786617f,0.290982684f,0.074967764f}};
 
-
+	//Target color
+	private static int targetColor = 4;
 	/**
 	 * This is a constructor for the ColorSensorController class
 	 * @param colorSensor
@@ -45,6 +46,9 @@ public class ColorSensorController {
 	}
 
 	
+	public void disableSensor() {
+		colorSensor.close();
+	}
 	/**
 	 * This method allows to collect rgb values
 	 * @return (array containing rgb values) 
@@ -68,13 +72,33 @@ public class ColorSensorController {
 		} while (color == 4);
 		return color;
 	}
+	
+	public void beep() {
+		switch(targetColor) {
+		case 0: {
+			Sound.beep();
+		}
+		case 1:{
+			Sound.twoBeeps();
+		}
+		case 2:{
+			Sound.beep();
+			Sound.twoBeeps();
+		}
+		case 3:{
+			Sound.twoBeeps();
+			Sound.twoBeeps();
+		}
+		default: break;
+		}
+	}
 
 	/**
 	 * This method allows to match the readings and the mean to 
 	 * determine the color detected
 	 * @return (integer representing color)
 	 */
-	public static int findMatch(float array[]) {
+	public int findMatch(float array[]) {
 
 		float euc=(float)Math.sqrt((Math.pow(array[0], 2)+Math.pow(array[1], 2)+Math.pow(array[2], 2)));
 
@@ -89,6 +113,7 @@ public class ColorSensorController {
 			float differenceG=Math.abs(G-(float)mean[i][1])/0.05f;
 			float differenceB=Math.abs(B-(float)mean[i][2])/0.05f;
 			if (differenceR<1.0  &&differenceG<1.0 && differenceB<1.0) {
+				targetColor = i;
 				return i;
 			}
 		}

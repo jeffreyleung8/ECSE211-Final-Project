@@ -17,6 +17,7 @@ import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.tester.*;
 import java.text.DecimalFormat;
 import ca.mcgill.ecse211.controller.*;
+import ca.mcgill.ecse211.enumeration.SearchState;
 
 /** This is the main class of the project. It is at the top level of the layered hierarchy.
  *  It serves to link all the classses together and make a sequence of methods classes from 
@@ -39,9 +40,9 @@ public class Main {
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-//	private static final EV3LargeRegulatedMotor leftSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-//	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-	
+	//	private static final EV3LargeRegulatedMotor leftSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	//	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
+
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
@@ -64,7 +65,7 @@ public class Main {
 	private static OdometryCorrection odoCorr = new OdometryCorrection(odometer,robot,leftLS,rightLS);
 
 	public static long START_TIME = System.currentTimeMillis();
-	
+
 	// WiFi class
 	private static WiFi wifi = new WiFi();
 
@@ -110,18 +111,19 @@ public class Main {
 			//Odometer display thread
 			Thread odoDisplayThread = new Thread(odometryDisplay);
 			odoDisplayThread.start();
-			
+
 			//Set odometry correction
 			robot.setOdoCorrection(odoCorr);
 			navigation.setOdoCorrection(odoCorr);
-			
+			ringSearcher.setOdoCorrection(odoCorr);
+
 			//localization
 			usLocalizer.usLocalize();
 			lightLocalizer.initialLocalize();
-			
+
 			//Initialize odometer
 			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
-			
+
 			//Navigation to tunnel entrance
 			navigation.travelToTunnel(); 
 
@@ -131,18 +133,46 @@ public class Main {
 			//Navigation to ring set
 			navigation.travelToRingSet();
 
-
+			//Ring search and grab
+			Thread ringSearch = new Thread(ringSearcher);
+			ringSearch.start();
+			
+			ringSearcher.approachRing();
+			
+			try {
+				ringSearch.join();
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			//Navigation to tunnel exit
 			navigation.travelToTunnelExit();
 
 			//Navigation through tunnel 
 			navigation.travelThroughTunnel();
-
+			
 			//Navigation to starting point
 			navigation.travelToStartingPoint();
 
 			//Unload ring
 			//ringSearcher.unload();
+			
+//			for(int i=0; i<5; i++) {
+//				Sound.beep();
+//				try {
+//					Thread.sleep(500);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//			}
+			
+			Sound.beep();
+			Sound.twoBeeps();
+			Sound.twoBeeps();
+			
+			System.exit(0);
 			
 		}while (Button.waitForAnyPress() != Button.ID_ESCAPE); 
 
