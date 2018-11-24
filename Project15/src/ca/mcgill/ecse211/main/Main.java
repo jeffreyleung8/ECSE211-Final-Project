@@ -123,16 +123,44 @@ public class Main {
 
 			//Initialize odometer
 			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
-
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Navigation to tunnel entrance
 			navigation.travelToTunnel(); 
 
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Navigation through tunnel 
 			navigation.travelThroughTunnel();
 
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Navigation to ring set
 			navigation.travelToRingSet();
 
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Ring search and grab
 			Thread ringSearch = new Thread(ringSearcher);
 			ringSearch.start();
@@ -146,11 +174,32 @@ public class Main {
 				e1.printStackTrace();
 			}
 			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Navigation to tunnel exit
 			navigation.travelToTunnelExit();
 
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
 			//Navigation through tunnel 
 			navigation.travelThroughTunnel();
+			
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 			//Navigation to starting point
 			navigation.travelToStartingPoint();
