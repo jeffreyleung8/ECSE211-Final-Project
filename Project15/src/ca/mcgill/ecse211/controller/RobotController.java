@@ -22,8 +22,8 @@ public class RobotController {
 	private  static EV3LargeRegulatedMotor rightMotor;
 
 	//Constants
-	public final int FORWARD_SPEED = 200;
-	public final int ROTATE_SPEED = 100;
+	public final int FORWARD_SPEED = 220;
+	public final int ROTATE_SPEED = 150;
 	public final double TRACK = Main.TRACK;
 	public final double WHEEL_RAD = Main.WHEEL_RAD;
 	public final double TILE_SIZE = Main.TILE_SIZE;
@@ -69,7 +69,7 @@ public class RobotController {
 
 		// stop vehicle
 		leftMotor.stop(true);
-		rightMotor.stop(true);
+		rightMotor.stop(false);
 
 		Sound.beep();
 	}
@@ -253,19 +253,15 @@ public class RobotController {
 		leftMotor.startSynchronization();
 		leftMotor.backward();
 		rightMotor.backward();
-		leftMotor.endSynchronization();
+		leftMotor.endSynchronization();	
 	}
 
 	/**
 	 * Stops the robot
 	 */
 	public void stopMoving() {
-		leftMotor.synchronizeWith(new RegulatedMotor[] { rightMotor });
-		leftMotor.startSynchronization();
-		leftMotor.stop();
-		rightMotor.stop();
-		leftMotor.endSynchronization();
-
+		leftMotor.stop(true);
+		rightMotor.stop(false);
 	}
 	/**
 	 * Stops the specified motors of the robot.

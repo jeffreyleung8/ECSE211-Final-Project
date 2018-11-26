@@ -99,6 +99,7 @@ public class Navigation extends Thread {
 	 * Travels to the closest point to the tunnel
 	 */
 	public void travelToTunnel() {
+		robot.setSpeeds(150, 150);
 		int[] closestCorner = wifi.getClosestCornerToSC(team);
 
 		//tunnel is along y-axis (vertical)
@@ -167,6 +168,14 @@ public class Navigation extends Thread {
 				break;
 			}
 		}
+		robot.setSpeeds(0, 0);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/**
@@ -180,6 +189,8 @@ public class Navigation extends Thread {
 		//Correct at initial line
 		odoCorr.correct(odometer.getXYT()[2]);
 
+		robot.setSpeeds(150, 150);
+
 		robot.travelDist(TILE_SIZE);
 
 		//Correct at line at the tunnel entrance
@@ -191,10 +202,14 @@ public class Navigation extends Thread {
 		
 		//Correct at line at the tunnel exit
 		odoCorr.correct(odometer.getXYT()[2]);
+		
+		robot.setSpeeds(150, 150);
 		robot.travelDist(TILE_SIZE);
 
 		//Correct at next line
 		odoCorr.correct(odometer.getXYT()[2]);
+		
+		robot.setSpeeds(150, 150);
 		robot.travelDist(SENSOR_LENGTH);
 
 		turnOutTunnel(goingToRingSet);
@@ -202,12 +217,20 @@ public class Navigation extends Thread {
 		if(goingToRingSet) {
 			goingToRingSet = false;
 		}
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	/**
 	 * A method to turn correctly to the tunnel entrance/exit
 	 * 
 	 */
 	public void turnToTunnel() {
+		robot.setSpeeds(150, 150);
 		//Tunnel is vertical
 		if(wifi.isTunnelVertical(team)) {
 			if(upperLeft) {
@@ -267,6 +290,7 @@ public class Navigation extends Thread {
 				lowerRight = false; //reinitialize
 			}
 		}
+		robot.setSpeeds(0, 0);
 
 	}
 	/**
@@ -275,6 +299,7 @@ public class Navigation extends Thread {
 	 * 
 	 */
 	public void turnOutTunnel(boolean goingToRingSet) {
+		robot.setSpeeds(150, 150);
 		int[] closestCorner;
 		int corner;
 		if(goingToRingSet) {
@@ -385,12 +410,14 @@ public class Navigation extends Thread {
 				break;
 			}	
 		}
+		robot.setSpeeds(0, 0);
 	}
 	/**
 	 * A method to travel to the ringSet
 	 * 
 	 */
 	public void travelToRingSet() {
+		robot.setSpeeds(150, 150);
 		int currx=0, curry=0;
 		int [] closestCorner = wifi.getClosestCornerToRS(team);
 		//closestCorner[0] : x - coords
@@ -455,12 +482,14 @@ public class Navigation extends Thread {
 				break;
 			}
 		}
+		robot.setSpeeds(0, 0);
 	}
 	/**
 	 * A method to travel to tunnel exit
 	 * 
 	 */
 	public void travelToTunnelExit() {
+		robot.setSpeeds(150, 150);
 		int[] closestCorner = wifi.getClosestCornerToRS(team);
 		int corner = closestCorner[2];
 		//closestCorner[0] : x - coords
@@ -562,12 +591,14 @@ public class Navigation extends Thread {
 			}
 			}
 		}
+		robot.setSpeeds(0, 0);
 	}
 	/**
 	 * A method to travel to the starting point
 	 * 
 	 */
 	public void travelToStartingPoint() {
+		robot.setSpeeds(150, 150);
 		int currx=0, curry=0;
 		int [] closestCorner = wifi.getClosestCornerToSC(team);
 		//closestCorner[0] : x - coords
@@ -586,6 +617,7 @@ public class Navigation extends Thread {
 			robot.travelTo(startingCornerCoords[0],curry);
 			robot.travelTo(startingCornerCoords[0],startingCornerCoords[1]);
 		}
+		robot.setSpeeds(0, 0);
 	}
 
 	/**

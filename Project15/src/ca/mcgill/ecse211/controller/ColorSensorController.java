@@ -40,8 +40,7 @@ public class ColorSensorController {
 			{0.1732410055,0.6778531281,0.7144947101},
 			{0.4777487339,0.8592604804,0.1828320925},
 			{0.8541708187,0.5005476676,0.140869603},
-			{0.9547663589,0.2766071505,0.1091314998}};
-	
+			{0.9547663589,0.2766071505,0.1091314998}};	
 	//Target color
 	private static int targetColor = 4;
 	/**
@@ -86,17 +85,21 @@ public class ColorSensorController {
 		switch(targetColor) {
 		case 0: {
 			Sound.beep();
+			break;
 		}
 		case 1:{
 			Sound.twoBeeps();
+			break;
 		}
 		case 2:{
 			Sound.beep();
 			Sound.twoBeeps();
+			break;
 		}
 		case 3:{
 			Sound.twoBeeps();
 			Sound.twoBeeps();
+			break;
 		}
 		default: break;
 		}
@@ -111,12 +114,13 @@ public class ColorSensorController {
 		
 		double blue,green,yellow,orange;
 		
-		float euc=(float)Math.sqrt((Math.pow(array[0], 2)+Math.pow(array[1], 2)+Math.pow(array[2], 2)));
 
+		double euc = (Math.sqrt(array[0]*array[0] + array[1]*array[1] +array[2]*array[2]));
+		
 		// normalize
-		float R=array[0]/euc;
-		float G=array[1]/euc;
-		float B=array[2]/euc;
+		double R=array[0]/euc;
+		double G=array[1]/euc;
+		double B=array[2]/euc;
 		
 		blue = Math.sqrt(Math.pow(R - mean[0][0], 2) + Math.pow(G - mean[0][1], 2) + Math.pow(B - mean[0][2], 2));
 		green = Math.sqrt(Math.pow(R - mean[1][0], 2) + Math.pow(G - mean[1][1], 2) + Math.pow(B - mean[1][2], 2));
@@ -128,16 +132,24 @@ public class ColorSensorController {
 		//sorted array
 		Arrays.sort(list);
 		
-		if(list[0]==blue) {
+		if(list[0]== blue) {
+			targetColor = 0;
+			System.out.println("blue");
 			return 0;
 		}
-		else if(list[0]==green) {
+		else if(list[0]== green) {
+			targetColor = 1;
+			System.out.println("green");
 			return 1;
 		}
-		else if(list[0]==yellow) {
+		else if(list[0]== yellow) {
+			targetColor = 2;
+			System.out.println("yellow");
 			return 2;
 		}
-		else if(list[0]==orange) {
+		else if(list[0]== orange) {
+			targetColor = 3;
+			System.out.println("orange");
 			return 3;
 		}
 		else {

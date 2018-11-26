@@ -38,7 +38,7 @@ public class LightSensorController{
 	public float fetch() {
 		idColour.fetchSample(colorValue, 0);
 		colorIntensity = colorValue[0];
-		lcd.drawString("Color: " + colorIntensity, 0, 5);
+		//lcd.drawString("Color: " + colorIntensity, 0, 5);
 		return colorIntensity;
 	}	
 }

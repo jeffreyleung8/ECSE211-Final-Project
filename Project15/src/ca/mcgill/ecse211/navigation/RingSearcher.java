@@ -18,6 +18,8 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
  */
 public class RingSearcher implements Runnable {
 
+	private enum State {APPROACHING,DETECTING,GRABING};
+	private State state;
 	//Robot
 	private RobotController robot;
 
@@ -66,8 +68,26 @@ public class RingSearcher implements Runnable {
 		this.robot = robot;
 		this.odometer = odometer;
 		searchState = SearchState.IN_PROGRESS;
+		state = State.APPROACHING;
+		
 	}
 
+//	@Override 
+//	public void run(){
+//		while(searchState == SearchState.IN_PROGRESS) {
+//			
+//			long timeElapsed = System.currentTimeMillis() - START_TIME;
+//			//Time out at 4 min
+//			if(timeElapsed >= 240000) {
+//				searchState = SearchState.TIME_OUT;
+//			}
+//		
+//			if(colorSensor.findMatch(colorSensor.fetch())!=4) {
+//				colorSensor.beep();
+//				searchState = SearchState.RING_FOUND;
+//			}
+//		}
+//	}
 	@Override 
 	public void run(){
 		while(searchState == SearchState.IN_PROGRESS) {
@@ -77,13 +97,41 @@ public class RingSearcher implements Runnable {
 			if(timeElapsed >= 240000) {
 				searchState = SearchState.TIME_OUT;
 			}
+
+			float[] rgb = colorSensor.fetch();
 			
-			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
-				colorSensor.beep();
+			switch(state) {
+			case APPROACHING:{
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.setSpeeds(100, 100);
+				robot.travelDist(7.8); //DISTANCE TO CHANGE
+				
+				state = State.DETECTING;
+				break;
+			}
+			case DETECTING:{
+				if(colorSensor.findMatch(rgb) != 4) {
+					colorSensor.beep();
+					//searchState = SearchState.RING_FOUND;
+					state = State.GRABING;
+					
+				}
+				break;
+			}
+			case GRABING:{
+				robot.setSpeeds(80, 80);
+				robot.travelDist(8); //DISTANCE TO CHANGE
+				robot.travelDist(-13); //DISTANCE TO CHANGE
+				odoCorr.correct(odometer.getXYT()[2]);
+				robot.travelDist(SENSOR_LENGTH);
 				searchState = SearchState.RING_FOUND;
+				break;
+			}
 			}
 		}
 	}
+	
+	
 
 	public void detectRing() {
 
@@ -101,7 +149,65 @@ public class RingSearcher implements Runnable {
 	/**
 	 * This method serves to move forward and backward in order to detect the ring
 	 */
-	public void approachRing() {
+	public void grabRing() {
+				
+		odoCorr.correct(odometer.getXYT()[2]);
+		
+		robot.setSpeeds(100, 100);
+
+		robot.travelDist(15);
+		
+		while(searchState == SearchState.IN_PROGRESS) {
+//			long timeElapsed = System.currentTimeMillis() - START_TIME;
+//			//Time out at 4 min
+//			if(timeElapsed >= 240000) {
+//				searchState = SearchState.TIME_OUT;
+//			}
+//			
+//			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
+//				colorSensor.beep();
+//				searchState = SearchState.RING_FOUND;
+//			}
+		}
+		robot.travelDist(10);
+		
+		robot.travelDist(-30);
+		
+		odoCorr.correct(odometer.getXYT()[2]);
+		
+	}
+
+	private int roundTheta(double theta){
+		if(theta > 345 && theta < 15){
+			return 0;
+		}
+		if(theta < 105 && theta > 75){
+			return 90;
+		}
+		if(theta < 195 && theta > 165){
+			return 180;
+		}
+		if(theta < 285 && theta > 255){
+			return 270;
+		}
+		return 0;
+	}
+	/**
+	 * Sets the OdometryCorrection object to be used by the robot controller.
+	 * 
+	 * @param odoCorrection the OdometryCorrection object to be used
+	 */
+	public void setOdoCorrection(OdometryCorrection odoCorrection) {
+		this.odoCorr = odoCorrection;
+	}
+
+
+
+
+}
+
+/*
+ * public void approachRing1() {
 		odoCorr.correct(odometer.getXYT()[2]);
 
 		while(usSensor.fetch() > 13) {
@@ -141,33 +247,5 @@ public class RingSearcher implements Runnable {
 
 		robot.travelDist(SENSOR_LENGTH);
 
-	}
-
-	private int roundTheta(double theta){
-		if(theta > 345 && theta < 15){
-			return 0;
-		}
-		if(theta < 105 && theta > 75){
-			return 90;
-		}
-		if(theta < 195 && theta > 165){
-			return 180;
-		}
-		if(theta < 285 && theta > 255){
-			return 270;
-		}
-		return 0;
-	}
-	/**
-	 * Sets the OdometryCorrection object to be used by the robot controller.
-	 * 
-	 * @param odoCorrection the OdometryCorrection object to be used
-	 */
-	public void setOdoCorrection(OdometryCorrection odoCorrection) {
-		this.odoCorr = odoCorrection;
-	}
-
-
-
-
-}
+	}*/
+ 

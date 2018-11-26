@@ -65,40 +65,40 @@ public class OdometryCorrection {
 		boolean rightLineDetected = false;
 		boolean leftLineDetected = false;
 		
-		// Move the robot until one of the sensors detects a line
-		while (!leftLineDetected && !rightLineDetected) {
-			if(rightLS.fetch() < color || leftLS.fetch() < color) {
-				robot.stopMoving();
-				if(rightLS.fetch() < color) {
-					rightLineDetected = true;
-				}
-				if(leftLS.fetch() < color) {
-					leftLineDetected = true;
-				}
-			}
-		}
-		if(!rightLineDetected || !leftLineDetected) {
-			if(rightLineDetected) {
-				robot.setSpeeds(75,75);
-				robot.startMoving(true, false);
-				while(!leftLineDetected) {
-					if(leftLS.fetch()<color) {
-						leftLineDetected = true;
-						robot.stopMoving();
-					}
-				}
-			}
-			else if(leftLineDetected) {
-				robot.setSpeeds(75, 75);
-				robot.startMoving(false, true);
-				while(!rightLineDetected) {
-					if(rightLS.fetch() < color) {
-						rightLineDetected = true;
-						robot.stopMoving();
-					}
-				}
-			}
-		}
+//		// Move the robot until one of the sensors detects a line
+//		while (!leftLineDetected && !rightLineDetected) {
+//			if(rightLS.fetch() < color || leftLS.fetch() < color) {
+//				robot.stopMoving();
+//				if(rightLS.fetch() < color) {
+//					rightLineDetected = true;
+//				}
+//				if(leftLS.fetch() < color) {
+//					leftLineDetected = true;
+//				}
+//			}
+//		}
+//		if(!rightLineDetected ^ !leftLineDetected) {
+//			if(rightLineDetected) {
+//				robot.setSpeeds(75,75);
+//				robot.startMoving(true, false);
+////				while(!leftLineDetected) {
+////					if(leftLS.fetch() < color) {
+////						leftLineDetected = true;
+////						robot.stopMoving();
+////					}
+////				}
+//			}
+//			else if(leftLineDetected) {
+//				robot.setSpeeds(75, 75);
+//				robot.startMoving(false, true);
+////				while(!rightLineDetected) {
+////					if(rightLS.fetch() < color) {
+////						rightLineDetected = true;
+////						robot.stopMoving();
+////					}
+////				}
+//			}
+//		}
 //		// Keep moving the left/right motor until both lines have been detected
 //		while ((!leftLineDetected || !rightLineDetected)) {
 //			// If the other line detected, stop the motors
@@ -111,8 +111,37 @@ public class OdometryCorrection {
 //				robot.stopMoving();
 //			}
 //		}
+		while (!leftLineDetected && !rightLineDetected ) {
+			if (rightLS.fetch() < color) {
+				rightLineDetected = true;
+				// Stop the right motor
+				robot.stopMoving(false, true);
+
+			} else if (leftLS.fetch() < color) {
+				leftLineDetected = true;
+
+				// Stop the left motor
+				robot.stopMoving(true, false);
+			}
+		}
+
+		// Get the odometer's reading 
+
+		// Keep moving the left/right motor until both lines have been detected
+		while ((!leftLineDetected || !rightLineDetected)) {
+			// If the other line detected, stop the motors
+			if (rightLineDetected && leftLS.fetch() < color) {
+				leftLineDetected = true;
+				robot.stopMoving();
+			} else if (leftLineDetected && rightLS.fetch() < color) {
+				rightLineDetected = true;
+				robot.stopMoving();
+			}
+		}
 		
 		correctOdo(corrTheta);
+		
+		robot.setSpeeds(150, 150);
 				
 	}
 	/**
@@ -184,7 +213,14 @@ public class OdometryCorrection {
 
 		odometer.setTheta(corrTheta);
 
-		robot.setSpeeds(150, 150);
+		//robot.setSpeeds(150, 150);
+		
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 	}
 	private double roundTheta(double theta){

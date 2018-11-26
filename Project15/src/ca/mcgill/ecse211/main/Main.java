@@ -8,6 +8,7 @@ import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.SensorPort;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
+import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.RegulatedMotor;
 import lejos.utility.Delay;
 import lejos.hardware.sensor.EV3ColorSensor;
@@ -32,7 +33,7 @@ public class Main {
 
 	//Constants
 	public static final double WHEEL_RAD = 2.1;
-	public static final double TRACK = 14.35; 
+	public static final double TRACK = 14.25; //14.35
 	public static final double TILE_SIZE = 30.48;
 	public static final double SENSOR_LENGTH = 3.3;
 	public static int[] startingCorner;
@@ -48,7 +49,7 @@ public class Main {
 
 	//Sensor Object
 	private static final EV3ColorSensor leftLight = new EV3ColorSensor(LocalEV3.get().getPort("S1"));
-	private static final EV3UltrasonicSensor us = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
+	private static final SensorModes us = new EV3UltrasonicSensor(LocalEV3.get().getPort("S2"));
 	private static final EV3ColorSensor color = new EV3ColorSensor(LocalEV3.get().getPort("S3"));
 	private static final EV3ColorSensor rightLight = new EV3ColorSensor(LocalEV3.get().getPort("S4"));
 
@@ -109,120 +110,73 @@ public class Main {
 			odoThread.start();
 
 			//Odometer display thread
-			Thread odoDisplayThread = new Thread(odometryDisplay);
-			odoDisplayThread.start();
+//			Thread odoDisplayThread = new Thread(odometryDisplay);
+//			odoDisplayThread.start();
 
 			//Set odometry correction
 			robot.setOdoCorrection(odoCorr);
 			navigation.setOdoCorrection(odoCorr);
 			ringSearcher.setOdoCorrection(odoCorr);
 
+
 			//localization
-			usLocalizer.usLocalize();
-			lightLocalizer.initialLocalize();
+			//usLocalizer.usLocalize();
+			
+//			Thread usThread = new Thread(usLocalizer);
+//			usThread.start();
+//
+//			try {
+//				usThread.join();
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//
+//			lightLocalizer.initialLocalize();
+//
+//			//Initialize odometer
+//			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
+//
+//			//Navigation to tunnel entrance
+//			navigation.travelToTunnel(); 
+//
+//			//Navigation through tunnel 
+//			navigation.travelThroughTunnel();
+//
+//			//Navigation to ring set
+//			navigation.travelToRingSet();
 
-			//Initialize odometer
-			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation to tunnel entrance
-			navigation.travelToTunnel(); 
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation through tunnel 
-			navigation.travelThroughTunnel();
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation to ring set
-			navigation.travelToRingSet();
-
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			//Ring search and grab
 			Thread ringSearch = new Thread(ringSearcher);
 			ringSearch.start();
-			
-			ringSearcher.approachRing();
-			
+
+			//ringSearcher.grabRing();
+
 			try {
 				ringSearch.join();
 			} catch (InterruptedException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation to tunnel exit
-			navigation.travelToTunnelExit();
 
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation through tunnel 
-			navigation.travelThroughTunnel();
-			
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
-			//Navigation to starting point
-			navigation.travelToStartingPoint();
+//			//Navigation to tunnel exit
+//			navigation.travelToTunnelExit();
+//
+//			//Navigation through tunnel 
+//			navigation.travelThroughTunnel();
+//
+//			//Navigation to starting point
+//			navigation.travelToStartingPoint();
 
 			//Unload ring
 			//ringSearcher.unload();
-			
-//			for(int i=0; i<5; i++) {
-//				Sound.beep();
-//				try {
-//					Thread.sleep(500);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//			}
-			
+
 			Sound.beep();
 			Sound.twoBeeps();
 			Sound.twoBeeps();
-			
+
 			System.exit(0);
-			
+
 		}while (Button.waitForAnyPress() != Button.ID_ESCAPE); 
 
 
