@@ -50,6 +50,12 @@ public class RobotController {
 		//this.odoCorr = odoCorr;
 	}
 
+	/**
+	 * This method controls the robot's trajectory. It can make the robot travel to a certain coordinate just by
+	 * specifying x and y in the parameters.
+	 * @param x
+	 * @param y
+	 */
 	public void directTravelTo(int x, int y) {
 
 		double currx = odometer.getXYT()[0];
