@@ -57,7 +57,10 @@ public class OdometryCorrection {
 	 */
 	public void correct(double corrTheta) {
 		
+		robot.resetMotors();
+		
 		robot.setSpeeds(150, 150);
+		
 		robot.travelDist(-6);
 		
 		robot.moveForward();
@@ -142,6 +145,10 @@ public class OdometryCorrection {
 //		}
 		
 		correctOdo(corrTheta);
+		
+		robot.resetMotors();
+		
+		robot.setSpeeds(150, 150);
 						
 	}
 	/**
@@ -212,17 +219,7 @@ public class OdometryCorrection {
 		}
 
 		odometer.setTheta(corrTheta);
-
-		robot.setSpeeds(150, 150);
 		
-		try {
-			Thread.sleep(500);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-
 	}
 	private double roundTheta(double theta){
 		if(theta > 345 && theta < 15){

@@ -65,7 +65,9 @@ public class RobotController {
 		// Turn to the correct angle towards the endpoint
 		turnTo(mTheta);
 		//checkAngle((int)mTheta);
-
+		
+		resetMotors();
+		
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
 
@@ -85,17 +87,19 @@ public class RobotController {
 	 * @param y y-Coordinate
 	 */
 	public void travelTo(int x, int y) {
-		
+
 		int deltax = 0, deltay = 0;
 
 		//Nearest waypoint
 		int lastX = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 		int lastY = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 
-		
+
 		// Angle to turn to to go to the next point
 		double corrTheta = 0;
-
+		
+		resetMotors();
+		
 		setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 
 		//Check if x-component is different
@@ -112,12 +116,10 @@ public class RobotController {
 			// Rotate to the proper angle
 			if (lastX != x)
 				checkAngle((int)corrTheta);
-				//turnTo(corrTheta);
+			//turnTo(corrTheta);
 
 			// Number of tiles to move in X
 			int tilesX = x - lastX;
-
-			setSpeeds(150, 150);
 
 			// Advance towards next point's x coordinate
 			for (int i = 1; i <= Math.abs(tilesX); i++) {
@@ -126,9 +128,6 @@ public class RobotController {
 				if (i == 1) {
 					odoCorr.correct(corrTheta);
 				}
-
-				// travelToDirect() to the next closest point
-				setSpeeds(150,150);
 
 				directTravelTo(lastX + deltax*i, lastY);
 
@@ -161,8 +160,6 @@ public class RobotController {
 			// Number of tiles to move in Y
 			int tilesY = y - lastY;
 
-			setSpeeds(150, 150);
-
 			// Advance towards next point's y coordinate
 			for (int i = 1; i <= Math.abs(tilesY); i++) {
 
@@ -172,7 +169,6 @@ public class RobotController {
 				}
 
 				// travelToDirect() to the next closest point
-				setSpeeds(150,150);
 				directTravelTo(lastX, lastY + deltay*i);
 
 				// Correction at the line
@@ -201,6 +197,9 @@ public class RobotController {
 		double dTheta = theta - currTheta;
 
 		// Set speed to turn speed
+		
+		resetMotors();
+		
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
 
@@ -224,7 +223,7 @@ public class RobotController {
 	 */
 	public void checkAngle(int angle) {
 		int current_angle = roundTheta(odometer.getXYT()[2]);
-		
+
 		if(current_angle != angle) {
 			turnTo(angle);
 		}
@@ -383,7 +382,7 @@ public class RobotController {
 	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
-	
+
 	private int roundTheta(double theta){
 		if(theta > 345 && theta < 15){
 			return 0;
@@ -399,6 +398,19 @@ public class RobotController {
 		}
 		return 0;
 	}
+
+	public void resetMotors() {
+		// reset the motor
+		leftMotor.stop(true);
+		rightMotor.stop(false);
+		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftMotor, rightMotor }) {
+			motor.setAcceleration(3000);
+		}
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
+	}
 	
 	public void turnMotor() {
 		leftSideMotor.setSpeed(30);
@@ -406,7 +418,7 @@ public class RobotController {
 		leftSideMotor.rotate(-20,true);
 		rightSideMotor.rotate(-20,false);
 	}
-	
+
 	public void unload() {
 		leftSideMotor.setSpeed(150);
 		rightSideMotor.setSpeed(150);

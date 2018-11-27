@@ -74,5 +74,11 @@ Nov 21: (Jeffrey)
 -Methods(travelThroughTunnel(), travelToStartingPoint, travelToRingSet(), turnToTunnel())
 -Added two methods in wifi class(getClosestCornerToTunnel(), getClosestCornerToSC())
 
-
- 
+Nov 26 : (Jeffrey)
+-Tested new uslocalization (works)
+-Localization happens under 30 seconds
+-Navigation works (can navigate to the ring set and can navigate back to starting corner)
+-Ring detection needs improvement(sometimes detect yellow while the ring is orange, vice versa)
+-The two frames are now lifted by the two side motors
+-The robot can unload rings (tested)
+-Software bug(robot sometimes does unexpected quick turns)
