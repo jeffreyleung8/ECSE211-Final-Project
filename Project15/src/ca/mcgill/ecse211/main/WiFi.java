@@ -220,31 +220,90 @@ public class WiFi {
 	 * @return boolean true for vertical, false for horizontal
 	 */
 	public boolean isTunnelVertical(Team team) {
-		int llx, urx;
+
+		int [][] tunnelZone = this.getTunnelZone(team);
+		int [][] teamZone = this.getHomeZone(team);
+		// [0] = Lower Left
+		// [1] = Lower Right
+		// [2] = Upper Right
+		// [3] = Upper Left
+		switch(this.getStartingCorner(team)) {
+		case 0:{
+			//compare lly of tunnel to ury of team zone 
+			//compare llx & urx of tunnel to urx of team zone
+			if(tunnelZone[0][1] <= teamZone[2][1] && tunnelZone[1][1] <= teamZone[2][1]) {
+				if(tunnelZone[0][0] >= teamZone[3][0] &&tunnelZone[1][0]<= teamZone[2][0]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		case 1:{
+			if(tunnelZone[0][1] <= teamZone[2][1] && tunnelZone[1][1] <= teamZone[2][1]) {
+				if(tunnelZone[0][0] >= teamZone[3][0] &&tunnelZone[1][0]<= teamZone[2][0]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		case 2:{
+			if(tunnelZone[2][1] >= teamZone[0][1] && tunnelZone[3][1] >= teamZone[0][1]) {
+				if(tunnelZone[2][0] <= teamZone[1][0] &&tunnelZone[3][0]>= teamZone[0][0]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		case 3:{
+			if(tunnelZone[2][1] >= teamZone[0][1] && tunnelZone[3][1] >= teamZone[0][1]) {
+				if(tunnelZone[2][0] <= teamZone[1][0] &&tunnelZone[3][0]>= teamZone[0][0]) {
+					return true;
+				}
+			}
+			return false;
+		}
+		default: return false;
+		}
+	}
+
+
+	public int getTunnelSize(Team team) {
+		int tunnelSize = 0;
+		int llx, lly, urx, ury;
 		switch (team) {
 		case RED:
+			// Get coords of red search zone
 			llx = ((Long) data.get("TNR_LL_x")).intValue();
+			lly = ((Long) data.get("TNR_LL_y")).intValue();
 			urx = ((Long) data.get("TNR_UR_x")).intValue();
+			ury = ((Long) data.get("TNR_UR_y")).intValue();
 
-			if(urx-llx == 1) {
-				return true;
+			if(urx-llx >= ury - lly) {
+				return (urx-llx);
 			}
 			else {
-				return false;
+				return (ury - lly);
 			}
+
+
 		case GREEN:
+			// Get coords of red search zone
 			llx = ((Long) data.get("TNG_LL_x")).intValue();
+			lly = ((Long) data.get("TNG_LL_y")).intValue();
 			urx = ((Long) data.get("TNG_UR_x")).intValue();
+			ury = ((Long) data.get("TNG_UR_y")).intValue();
 
-			if(urx-llx == 1) {
-				return true;
+			if(urx-llx >= ury - lly) {
+				return (urx-llx);
 			}
 			else {
-				return false;
+				return (ury - lly);
 			}
-		default: return false;
 
+		default:
+			return 0;
 		}
+
 	}
 
 
@@ -347,7 +406,7 @@ public class WiFi {
 		}
 		return coords;
 	}
-	
+
 	/**
 	 * Checks if ringSet is in front of the tunnel
 	 * 
@@ -359,8 +418,8 @@ public class WiFi {
 		int lly = tunnelZone[0][1];
 		int urx = tunnelZone[2][0];
 		int ury = tunnelZone[2][1];
-		
-		
+
+
 		if(isTunnelVertical(team)) {
 			if(ringSet[0]== llx || ringSet[0] == urx) {
 				return true;
@@ -383,8 +442,8 @@ public class WiFi {
 		int lly = tunnelZone[0][1];
 		int urx = tunnelZone[2][0];
 		int ury = tunnelZone[2][1];
-		
-		
+
+
 		if(isTunnelVertical(team)) {
 			if( llx ==0 ||  urx == 8) {
 				return true;
@@ -397,9 +456,9 @@ public class WiFi {
 		}
 		return false;
 	}
-	
-	
-	
+
+
+
 
 
 }

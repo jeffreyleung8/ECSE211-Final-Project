@@ -69,29 +69,13 @@ public class RingSearcher implements Runnable {
 		this.odometer = odometer;
 		searchState = SearchState.IN_PROGRESS;
 		state = State.APPROACHING;
-		
+
 	}
 
-//	@Override 
-//	public void run(){
-//		while(searchState == SearchState.IN_PROGRESS) {
-//			
-//			long timeElapsed = System.currentTimeMillis() - START_TIME;
-//			//Time out at 4 min
-//			if(timeElapsed >= 240000) {
-//				searchState = SearchState.TIME_OUT;
-//			}
-//		
-//			if(colorSensor.findMatch(colorSensor.fetch())!=4) {
-//				colorSensor.beep();
-//				searchState = SearchState.RING_FOUND;
-//			}
-//		}
-//	}
 	@Override 
 	public void run(){
 		while(searchState == SearchState.IN_PROGRESS) {
-			
+
 			long timeElapsed = System.currentTimeMillis() - START_TIME;
 			//Time out at 4 min
 			if(timeElapsed >= 240000) {
@@ -99,29 +83,28 @@ public class RingSearcher implements Runnable {
 			}
 
 			float[] rgb = colorSensor.fetch();
-			
+
 			switch(state) {
 			case APPROACHING:{
 				odoCorr.correct(odometer.getXYT()[2]);
 				robot.setSpeeds(100, 100);
-				robot.travelDist(7.8); //DISTANCE TO CHANGE
-				
+				robot.travelDist(8); //Distance to reach the ring
+
 				state = State.DETECTING;
 				break;
 			}
 			case DETECTING:{
 				if(colorSensor.findMatch(rgb) != 4) {
 					colorSensor.beep();
-					//searchState = SearchState.RING_FOUND;
 					state = State.GRABING;
-					
+
 				}
 				break;
 			}
 			case GRABING:{
 				robot.setSpeeds(80, 80);
-				robot.travelDist(8); //DISTANCE TO CHANGE
-				robot.travelDist(-13); //DISTANCE TO CHANGE
+				robot.travelDist(8); //Distane to grab the ring
+				robot.travelDist(-13); //Distance to back off
 				odoCorr.correct(odometer.getXYT()[2]);
 				robot.travelDist(SENSOR_LENGTH);
 				searchState = SearchState.RING_FOUND;
@@ -130,68 +113,8 @@ public class RingSearcher implements Runnable {
 			}
 		}
 	}
-	
-	
 
-	public void detectRing() {
 
-		int color = colorSensor.findMatch(colorSensor.fetch()) ;
-
-		while(color == 4) {
-			color = colorSensor.findMatch(colorSensor.fetch()) ;	
-		}
-		colorSensor.beep();
-		
-		searchState = SearchState.RING_FOUND;
-		
-	}
-	
-	/**
-	 * This method serves to move forward and backward in order to detect the ring
-	 */
-	public void grabRing() {
-				
-		odoCorr.correct(odometer.getXYT()[2]);
-		
-		robot.setSpeeds(100, 100);
-
-		robot.travelDist(15);
-		
-		while(searchState == SearchState.IN_PROGRESS) {
-//			long timeElapsed = System.currentTimeMillis() - START_TIME;
-//			//Time out at 4 min
-//			if(timeElapsed >= 240000) {
-//				searchState = SearchState.TIME_OUT;
-//			}
-//			
-//			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
-//				colorSensor.beep();
-//				searchState = SearchState.RING_FOUND;
-//			}
-		}
-		robot.travelDist(10);
-		
-		robot.travelDist(-30);
-		
-		odoCorr.correct(odometer.getXYT()[2]);
-		
-	}
-
-	private int roundTheta(double theta){
-		if(theta > 345 && theta < 15){
-			return 0;
-		}
-		if(theta < 105 && theta > 75){
-			return 90;
-		}
-		if(theta < 195 && theta > 165){
-			return 180;
-		}
-		if(theta < 285 && theta > 255){
-			return 270;
-		}
-		return 0;
-	}
 	/**
 	 * Sets the OdometryCorrection object to be used by the robot controller.
 	 * 
@@ -200,52 +123,53 @@ public class RingSearcher implements Runnable {
 	public void setOdoCorrection(OdometryCorrection odoCorrection) {
 		this.odoCorr = odoCorrection;
 	}
-
-
-
-
 }
 
 /*
- * public void approachRing1() {
-		odoCorr.correct(odometer.getXYT()[2]);
+ //	public void detectRing() {
+//
+//		int color = colorSensor.findMatch(colorSensor.fetch()) ;
+//
+//		while(color == 4) {
+//			color = colorSensor.findMatch(colorSensor.fetch()) ;	
+//		}
+//		colorSensor.beep();
+//		
+//		searchState = SearchState.RING_FOUND;
+//		
+//	}
+//	
+	/**
+ * This method serves to move forward and backward in order to detect the ring
+ */
+//	public void grabRing() {
+//				
+//		odoCorr.correct(odometer.getXYT()[2]);
+//		
+//		robot.setSpeeds(100, 100);
+//
+//		robot.travelDist(15);
+//		
+//		while(searchState == SearchState.IN_PROGRESS) {
+////			long timeElapsed = System.currentTimeMillis() - START_TIME;
+////			//Time out at 4 min
+////			if(timeElapsed >= 240000) {
+////				searchState = SearchState.TIME_OUT;
+////			}
+////			
+////			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
+////				colorSensor.beep();
+////				searchState = SearchState.RING_FOUND;
+////			}
+//		}
+//		robot.travelDist(10);
+//		
+//		robot.travelDist(-30);
+//		
+//		odoCorr.correct(odometer.getXYT()[2]);
+//		
+//	}*/
 
-		while(usSensor.fetch() > 13) {
-			robot.setSpeeds(70, 70);
-			robot.moveForward();
-		}
-		
-		while(searchState == SearchState.IN_PROGRESS) {
-			if(usSensor.fetch() > 12) {
-				while(usSensor.fetch()>12) {
-					robot.moveForward();
-				}
-				robot.stopMoving();
-			}
 
 
-			if(usSensor.fetch() < 18) {
-				while(usSensor.fetch()<18) {
-					robot.moveBackward();
-				}
-				robot.stopMoving();
-			}
-		}
 
-		robot.stopMoving();
-
-		while(usSensor.fetch() > 5) {
-			robot.setSpeeds(80, 80);
-			robot.moveForward();
-		}
-		
-		robot.stopMoving();
-		
-		robot.travelDist(-15);
-
-		odoCorr.correct(odometer.getXYT()[2]);
-
-		robot.travelDist(SENSOR_LENGTH);
-
-	}*/
- 

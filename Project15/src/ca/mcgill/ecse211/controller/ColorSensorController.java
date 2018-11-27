@@ -20,7 +20,7 @@ import lejos.robotics.SampleProvider;
  */
 public class ColorSensorController {
 
-	private enum Color {BLUE, GREEN, YELLOW, ORANGE};
+	//private enum Color {BLUE, GREEN, YELLOW, ORANGE};
 
 	private EV3ColorSensor colorSensor;
 	// Light sensor objects
@@ -40,7 +40,9 @@ public class ColorSensorController {
 			{0.1732410055,0.6778531281,0.7144947101},
 			{0.4777487339,0.8592604804,0.1828320925},
 			{0.8541708187,0.5005476676,0.140869603},
-			{0.9547663589,0.2766071505,0.1091314998}};	
+			{0.9547663589,0.2766071505,0.1091314998},
+			{0.1345000000,0.0855000000,0.0122500000}};
+	
 	//Target color
 	private static int targetColor = 4;
 	/**
@@ -54,9 +56,6 @@ public class ColorSensorController {
 	}
 
 	
-	public void disableSensor() {
-		colorSensor.close();
-	}
 	/**
 	 * This method allows to collect rgb values
 	 * @return (array containing rgb values) 
@@ -67,19 +66,19 @@ public class ColorSensorController {
 		return rgbData;
 	}
 
-	/**
-	 * This method allows to detect the color of the ring
-	 * 0-blue 1-green 2-yellow 3-orange 4-None
-	 * @return (integer representing the color)
-	 */
-	public int detect() {
-		int color;
-		do {
-			color = findMatch(fetch());
-			//   System.out.println("stuck in detect()");
-		} while (color == 4);
-		return color;
-	}
+//	/**
+//	 * This method allows to detect the color of the ring
+//	 * 0-blue 1-green 2-yellow 3-orange 4-None
+//	 * @return (integer representing the color)
+//	 */
+//	public int detect() {
+//		int color;
+//		do {
+//			color = findMatch(fetch());
+//			//   System.out.println("stuck in detect()");
+//		} while (color == 4);
+//		return color;
+//	}
 	
 	public void beep() {
 		switch(targetColor) {
@@ -112,7 +111,7 @@ public class ColorSensorController {
 	 */
 	public int findMatch(float array[]) {
 		
-		double blue,green,yellow,orange;
+		double blue,green,yellow,orange,none;
 		
 
 		double euc = (Math.sqrt(array[0]*array[0] + array[1]*array[1] +array[2]*array[2]));
@@ -126,8 +125,8 @@ public class ColorSensorController {
 		green = Math.sqrt(Math.pow(R - mean[1][0], 2) + Math.pow(G - mean[1][1], 2) + Math.pow(B - mean[1][2], 2));
 		yellow = Math.sqrt(Math.pow(R - mean[2][0], 2) + Math.pow(G - mean[2][1], 2) + Math.pow(B - mean[2][2], 2));
 		orange = Math.sqrt(Math.pow(R - mean[3][0], 2) + Math.pow(G - mean[3][1], 2) + Math.pow(B - mean[3][2], 2));
-
-		double[] list = {blue, green, yellow, orange};
+		none = Math.sqrt(Math.pow(R - mean[4][0], 2) + Math.pow(G - mean[4][1], 2) + Math.pow(B - mean[4][2], 2));
+		double[] list = {blue, green, yellow, orange, none};
 
 		//sorted array
 		Arrays.sort(list);

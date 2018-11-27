@@ -6,6 +6,7 @@ import ca.mcgill.ecse211.odometer.Odometer;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.hardware.Sound;
+import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.robotics.RegulatedMotor;
 
@@ -20,6 +21,9 @@ public class RobotController {
 	// Motor objects
 	private  static EV3LargeRegulatedMotor leftMotor;
 	private  static EV3LargeRegulatedMotor rightMotor;
+
+	private static final EV3LargeRegulatedMotor leftSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
+	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	//Constants
 	public final int FORWARD_SPEED = 220;
@@ -60,6 +64,7 @@ public class RobotController {
 
 		// Turn to the correct angle towards the endpoint
 		turnTo(mTheta);
+		//checkAngle((int)mTheta);
 
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
@@ -80,14 +85,14 @@ public class RobotController {
 	 * @param y y-Coordinate
 	 */
 	public void travelTo(int x, int y) {
-
+		
 		int deltax = 0, deltay = 0;
 
 		//Nearest waypoint
 		int lastX = (int) Math.round(odometer.getXYT()[0] / TILE_SIZE);
 		int lastY = (int) Math.round(odometer.getXYT()[1] / TILE_SIZE);
 
-
+		
 		// Angle to turn to to go to the next point
 		double corrTheta = 0;
 
@@ -106,7 +111,8 @@ public class RobotController {
 
 			// Rotate to the proper angle
 			if (lastX != x)
-				turnTo(corrTheta);
+				checkAngle((int)corrTheta);
+				//turnTo(corrTheta);
 
 			// Number of tiles to move in X
 			int tilesX = x - lastX;
@@ -150,7 +156,7 @@ public class RobotController {
 
 			// Rotate to the proper angle
 			if (lastY != y)
-				turnTo(corrTheta);
+				checkAngle((int)corrTheta);
 
 			// Number of tiles to move in Y
 			int tilesY = y - lastY;
@@ -393,7 +399,25 @@ public class RobotController {
 		}
 		return 0;
 	}
+	
+	public void turnMotor() {
+		leftSideMotor.setSpeed(30);
+		rightSideMotor.setSpeed(30);
+		leftSideMotor.rotate(-20,true);
+		rightSideMotor.rotate(-20,false);
+	}
+	
+	public void unload() {
+		leftSideMotor.setSpeed(150);
+		rightSideMotor.setSpeed(150);
+		leftSideMotor.rotate(-85, true);
+		rightSideMotor.rotate(-85, false);
+		leftSideMotor.setSpeed(250);
+		rightSideMotor.setSpeed(250);
+		leftSideMotor.rotate(100, true);
+		rightSideMotor.rotate(100);
 
+	}
 	/**
 	 * Sets the OdometryCorrection object to be used by the robot controller.
 	 * 

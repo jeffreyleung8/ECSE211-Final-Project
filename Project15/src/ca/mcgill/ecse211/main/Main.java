@@ -41,9 +41,7 @@ public class Main {
 	// Motor Objects, and Robot related parameters
 	private static final EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("A"));
 	private static final EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("D"));
-	//	private static final EV3LargeRegulatedMotor leftSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-	//	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-
+	
 	//LCD Screen Object
 	private static final TextLCD lcd = LocalEV3.get().getTextLCD();
 
@@ -110,47 +108,45 @@ public class Main {
 			odoThread.start();
 
 			//Odometer display thread
-//			Thread odoDisplayThread = new Thread(odometryDisplay);
-//			odoDisplayThread.start();
+			Thread odoDisplayThread = new Thread(odometryDisplay);			
+			odoDisplayThread.start();
 
 			//Set odometry correction
 			robot.setOdoCorrection(odoCorr);
 			navigation.setOdoCorrection(odoCorr);
 			ringSearcher.setOdoCorrection(odoCorr);
 
-
-			//localization
-			//usLocalizer.usLocalize();
 			
-//			Thread usThread = new Thread(usLocalizer);
-//			usThread.start();
-//
-//			try {
-//				usThread.join();
-//			} catch (InterruptedException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//
-//			lightLocalizer.initialLocalize();
-//
-//			//Initialize odometer
-//			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
-//
-//			//Navigation to tunnel entrance
-//			navigation.travelToTunnel(); 
-//
-//			//Navigation through tunnel 
-//			navigation.travelThroughTunnel();
-//
-//			//Navigation to ring set
-//			navigation.travelToRingSet();
+			robot.turnMotor();
+			
+			Thread usThread = new Thread(usLocalizer);
+			usThread.start();
+
+			try {
+				usThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+			lightLocalizer.initialLocalize();
+
+			//Initialize odometer
+			odometer.initialize(wifi.getStartingCorner(wifi.getTeam()));
+
+			//Navigation to tunnel entrance
+			navigation.travelToTunnel(); 
+
+			//Navigation through tunnel 
+			navigation.travelThroughTunnel();
+
+			//Navigation to ring set
+			navigation.travelToRingSet();
 
 			//Ring search and grab
 			Thread ringSearch = new Thread(ringSearcher);
 			ringSearch.start();
 
-			//ringSearcher.grabRing();
 
 			try {
 				ringSearch.join();
@@ -159,17 +155,17 @@ public class Main {
 				e1.printStackTrace();
 			}
 
-//			//Navigation to tunnel exit
-//			navigation.travelToTunnelExit();
-//
-//			//Navigation through tunnel 
-//			navigation.travelThroughTunnel();
-//
-//			//Navigation to starting point
-//			navigation.travelToStartingPoint();
+			//Navigation to tunnel exit
+			navigation.travelToTunnelExit();
 
-			//Unload ring
-			//ringSearcher.unload();
+			//Navigation through tunnel 
+			navigation.travelThroughTunnel();
+
+			//Navigation to starting point
+			navigation.travelToStartingPoint();
+
+			robot.unload();
+
 
 			Sound.beep();
 			Sound.twoBeeps();
