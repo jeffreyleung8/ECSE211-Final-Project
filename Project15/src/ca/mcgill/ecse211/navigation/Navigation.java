@@ -12,7 +12,9 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
- * This class is used for navigating the robot
+ * This class is used for navigating the robot, it helps the robot go to a specific tunnel, then travel through the tunnel
+ * Then find the ring set and navigate around the ring set.
+ * Then go back to the same tunnel, travel through it back to starting point.
  * FOR BETA DEMO 
  * @author Jeffrey Leung
  * @author Lea Akkary

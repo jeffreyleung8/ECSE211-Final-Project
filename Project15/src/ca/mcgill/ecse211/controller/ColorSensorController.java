@@ -15,7 +15,8 @@ import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 
 /** This class serves to detect and classify rings colors
- * 
+ * It is the color sensor controller, so it controls the color sensor to detect the color of the rings
+ * (blue, orange, red, yellow)
  * @author Jeffrey Leung
  * @author Lea Akkary
  */
@@ -58,7 +59,7 @@ public class ColorSensorController {
 
 	
 	/**
-	 * This method allows to collect rgb values
+	 * This method allows to collect rgb values detected by the color sensor
 	 * @return (array containing rgb values) 
 	 */
 
@@ -67,7 +68,7 @@ public class ColorSensorController {
 		return rgbData;
 	}
 
-//	/**
+	/**
 //	 * This method allows to detect the color of the ring
 //	 * 0-blue 1-green 2-yellow 3-orange 4-None
 //	 * @return (integer representing the color)

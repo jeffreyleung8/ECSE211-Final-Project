@@ -12,7 +12,7 @@ import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.main.*;
 
-/** This class serves to drive the cart to the origin
+/** This class serves to drive the cart to the origin. 
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
