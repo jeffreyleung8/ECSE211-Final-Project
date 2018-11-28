@@ -6,6 +6,7 @@ import java.util.Arrays;
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.lcd.TextLCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.Port;
@@ -44,7 +45,7 @@ public class ColorSensorController {
 			{0.1345000000,0.0855000000,0.0122500000}};
 	
 	//Target color
-	private static int targetColor = 4;
+	private int targetColor = 0;
 	/**
 	 * This is a constructor for the ColorSensorController class
 	 * @param colorSensor
@@ -82,28 +83,34 @@ public class ColorSensorController {
 	
 	public void beep() {
 		switch(targetColor) {
-		case 0: {
+		case 1: {
 			Sound.beep();
-			break;
-		}
-		case 1:{
-			Sound.twoBeeps();
+			LCD.drawString("blue", 0, 5);
 			break;
 		}
 		case 2:{
-			Sound.beep();
 			Sound.twoBeeps();
+			LCD.drawString("green", 0, 5);
 			break;
 		}
 		case 3:{
+			Sound.beep();
+			Sound.twoBeeps();
+			LCD.drawString("yellow", 0, 5);
+			break;
+		}
+		case 4:{
 			Sound.twoBeeps();
 			Sound.twoBeeps();
+			LCD.drawString("orange", 0, 5);
 			break;
 		}
 		default: break;
 		}
 	}
-
+	public void setTargetColor(int color){
+		targetColor = color;
+	}
 	/**
 	 * This method allows to match the readings and the mean to 
 	 * determine the color detected
@@ -132,27 +139,27 @@ public class ColorSensorController {
 		Arrays.sort(list);
 		
 		if(list[0]== blue) {
-			targetColor = 0;
-			System.out.println("blue");
-			return 0;
-		}
-		else if(list[0]== green) {
 			targetColor = 1;
-			System.out.println("green");
+			//System.out.println("blue");
 			return 1;
 		}
-		else if(list[0]== yellow) {
+		else if(list[0]== green) {
 			targetColor = 2;
-			System.out.println("yellow");
+			//System.out.println("green");
 			return 2;
 		}
-		else if(list[0]== orange) {
+		else if(list[0]== yellow) {
 			targetColor = 3;
-			System.out.println("orange");
+			//System.out.println("yellow");
 			return 3;
 		}
-		else {
+		else if(list[0]== orange) {
+			targetColor = 4;
+			//System.out.println("orange");
 			return 4;
+		}
+		else {
+			return 0;
 		}
 		
 	}

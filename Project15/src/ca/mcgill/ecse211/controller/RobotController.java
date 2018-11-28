@@ -26,7 +26,7 @@ public class RobotController {
 	private static final EV3LargeRegulatedMotor rightSideMotor = new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	//Constants
-	public final int FORWARD_SPEED = 220;
+	public final int FORWARD_SPEED = 350;
 	public final int ROTATE_SPEED = 150;
 	public final double TRACK = Main.TRACK;
 	public final double WHEEL_RAD = Main.WHEEL_RAD;
@@ -65,12 +65,12 @@ public class RobotController {
 		// Turn to the correct angle towards the endpoint
 		turnTo(mTheta);
 		//checkAngle((int)mTheta);
-		
+
 		resetMotors();
-		
+
 		leftMotor.setSpeed(FORWARD_SPEED);
 		rightMotor.setSpeed(FORWARD_SPEED);
-
+		
 		leftMotor.rotate(convertDistance(WHEEL_RAD, hypot), true);
 		rightMotor.rotate(convertDistance(WHEEL_RAD, hypot), false);
 
@@ -97,9 +97,9 @@ public class RobotController {
 
 		// Angle to turn to to go to the next point
 		double corrTheta = 0;
-		
+
 		resetMotors();
-		
+
 		setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
 
 		//Check if x-component is different
@@ -127,16 +127,19 @@ public class RobotController {
 				// Correction at first line
 				if (i == 1) {
 					odoCorr.correct(corrTheta);
+					this.travelDist(SENSOR_LENGTH,150);
+					//directTravelTo(lastX+deltax*Math.abs(tilesX),lastY);
 				}
-
+				
 				directTravelTo(lastX + deltax*i, lastY);
 
-				//Correction at the line
-				odoCorr.correct(corrTheta);
+//				//Correction at the line
+//				odoCorr.correct(corrTheta);
 
 				// Move back by sensor_length at the last tile
 				if (i == Math.abs(tilesX)) {
-					this.travelDist(SENSOR_LENGTH);
+					odoCorr.correct(corrTheta);
+					this.travelDist(SENSOR_LENGTH,150);
 				}
 
 			}
@@ -166,17 +169,20 @@ public class RobotController {
 				// Correction at first line
 				if (i == 1) {
 					odoCorr.correct(corrTheta);
+					this.travelDist(SENSOR_LENGTH,150);
+				//	directTravelTo(lastX,deltay*Math.abs(tilesY)+lastY);
 				}
 
 				// travelToDirect() to the next closest point
 				directTravelTo(lastX, lastY + deltay*i);
 
 				// Correction at the line
-				odoCorr.correct(corrTheta);
+				//odoCorr.correct(corrTheta);
 
 				// Move back by sensor_length at the last tile
 				if (i == Math.abs(tilesY)) {
-					this.travelDist(SENSOR_LENGTH);
+					odoCorr.correct(corrTheta);
+					this.travelDist(SENSOR_LENGTH,150);
 				}
 			}
 		}
@@ -197,9 +203,9 @@ public class RobotController {
 		double dTheta = theta - currTheta;
 
 		// Set speed to turn speed
-		
+
 		resetMotors();
-		
+
 		leftMotor.setSpeed(ROTATE_SPEED);
 		rightMotor.setSpeed(ROTATE_SPEED);
 
@@ -327,7 +333,10 @@ public class RobotController {
 	 * 
 	 * @param dist 
 	 */
-	public void travelDist(double distance) {
+	public void travelDist(double distance,int speed) {
+
+		resetMotors();
+		setSpeeds(speed,speed);
 		leftMotor.rotate(convertDistance(WHEEL_RAD, distance), true);
 		rightMotor.rotate(convertDistance(WHEEL_RAD, distance), false);
 	}
@@ -411,12 +420,21 @@ public class RobotController {
 		} catch (InterruptedException e) {
 		}
 	}
-	
+
 	public void turnMotor() {
+		leftSideMotor.stop(true);
+		rightSideMotor.stop(false);
+		for (EV3LargeRegulatedMotor motor : new EV3LargeRegulatedMotor[] { leftSideMotor, rightSideMotor }) {
+			motor.setAcceleration(3000);
+		}
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+		}
 		leftSideMotor.setSpeed(30);
 		rightSideMotor.setSpeed(30);
-		leftSideMotor.rotate(-20,true);
-		rightSideMotor.rotate(-20,false);
+		leftSideMotor.rotate(-18,true);
+		rightSideMotor.rotate(-18,false);
 	}
 
 	public void unload() {

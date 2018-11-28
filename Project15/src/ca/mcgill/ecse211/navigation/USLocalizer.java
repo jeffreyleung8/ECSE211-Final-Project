@@ -83,7 +83,7 @@ public class USLocalizer implements Runnable {
 			
 			switch(state) {
 			case RESET:{
-				if (distance >= 45) {
+				if (distance >= 40) {
 					robot.stopMoving();
 					//odometer.setTheta(0);
 					state = State.FIRSTWALL;
@@ -136,6 +136,7 @@ public class USLocalizer implements Runnable {
 					deltaTheta = 225 - (angleA + angleB) / 2;
 				}
 				turningAngle = deltaTheta + odometer.getXYT()[2];
+				robot.setSpeeds(220, 220);
 				robot.turnBy(turningAngle,false);
 				odometer.setXYT(0.0, 0.0, 0.0);
 				state = State.DONE;

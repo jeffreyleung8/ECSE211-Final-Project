@@ -69,9 +69,9 @@ public class Odometer extends OdometerData implements Runnable {
 	public void initialize(int startingCorner) {
 		switch(startingCorner) {
 		case 0: nbXLines = 1; nbYLines = 1; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 0); break;
-		case 1: nbXLines = 7; nbYLines = 1; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 270); break;
-		case 2: nbXLines = 7; nbYLines = 7; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 180); break;
-		case 3: nbXLines = 1; nbYLines = 7; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 90); break;
+		case 1: nbXLines = 14; nbYLines = 1; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 270); break;
+		case 2: nbXLines = 14; nbYLines = 8; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 180); break;
+		case 3: nbXLines = 1; nbYLines = 8; odo.setXYT(nbXLines*TILE_SIZE, nbYLines*TILE_SIZE, 90); break;
 		}
 		
 	}

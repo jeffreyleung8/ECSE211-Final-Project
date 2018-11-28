@@ -14,7 +14,7 @@ import ca.mcgill.ecse211.enumeration.Team;
 public class WiFi {
 
 
-	private static final String SERVER_IP = "192.168.2.15";
+	private static final String SERVER_IP = "192.168.2.10";
 
 	private static final int TEAM_NUMBER = 15;
 
@@ -109,16 +109,16 @@ public class WiFi {
 			coords[1] = 1;
 			break;
 		case 1:
-			coords[0] = 7;
+			coords[0] = 14;
 			coords[1] = 1;
 			break;
 		case 2:
-			coords[0] = 7;
-			coords[1] = 7;
+			coords[0] = 14;
+			coords[1] = 8;
 			break;
 		case 3:
 			coords[0] = 1;
-			coords[1] = 7;
+			coords[1] = 8;
 			break;
 		}
 		return coords;

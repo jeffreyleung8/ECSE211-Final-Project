@@ -33,7 +33,7 @@ public class Main {
 
 	//Constants
 	public static final double WHEEL_RAD = 2.1;
-	public static final double TRACK = 14.25; //14.35
+	public static final double TRACK = 14.15; //14.35
 	public static final double TILE_SIZE = 30.48;
 	public static final double SENSOR_LENGTH = 3.3;
 	public static int[] startingCorner;
@@ -116,8 +116,7 @@ public class Main {
 			navigation.setOdoCorrection(odoCorr);
 			ringSearcher.setOdoCorrection(odoCorr);
 
-			
-			robot.turnMotor();
+			//robot.turnMotor();
 			
 			Thread usThread = new Thread(usLocalizer);
 			usThread.start();
@@ -164,8 +163,7 @@ public class Main {
 			//Navigation to starting point
 			navigation.travelToStartingPoint();
 
-			robot.unload();
-
+			//robot.unload();
 
 			Sound.beep();
 			Sound.twoBeeps();

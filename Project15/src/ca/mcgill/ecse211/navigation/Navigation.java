@@ -180,8 +180,8 @@ public class Navigation extends Thread {
 
 		//Correct at initial line
 		odoCorr.correct(odometer.getXYT()[2]);
-
-		robot.travelDist(TILE_SIZE);
+		
+		robot.travelDist(TILE_SIZE,250);
 
 		//Correct at line at the tunnel entrance
 		odoCorr.correct(odometer.getXYT()[2]);
@@ -189,19 +189,22 @@ public class Navigation extends Thread {
 		//Move in the tunnel
 		robot.resetMotors();
 		
-		robot.setSpeeds(250,250);
+		//robot.setSpeeds(200,200);
+		robot.setAcceleration(250);
 		int tunnelSize = wifi.getTunnelSize(team);
-		robot.travelDist(tunnelSize*TILE_SIZE);
+		robot.travelDist(tunnelSize*TILE_SIZE,350);
+		
+		robot.setAcceleration(0);
 		
 		//Correct at line at the tunnel exit
 		odoCorr.correct(odometer.getXYT()[2]);
 		
-		robot.travelDist(TILE_SIZE);
+		robot.travelDist(TILE_SIZE,250);
 
 		//Correct at next line
 		odoCorr.correct(odometer.getXYT()[2]);
 		
-		robot.travelDist(SENSOR_LENGTH);
+		robot.travelDist(SENSOR_LENGTH,150);
 
 		turnOutTunnel(goingToRingSet);
 		
@@ -220,7 +223,7 @@ public class Navigation extends Thread {
 			if(upperLeft) {
 				robot.turnBy(90,false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,true);
 				upperLeft = false; //reinitialize
 			}
@@ -228,7 +231,7 @@ public class Navigation extends Thread {
 			else if (upperRight) {
 				robot.turnBy(90,true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,false);
 				upperRight = false; //reinitialize
 			}
@@ -236,7 +239,7 @@ public class Navigation extends Thread {
 			else if (lowerLeft) {
 				robot.turnBy(90,true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,false);
 				lowerLeft = false; //reinitialize
 			}
@@ -244,7 +247,7 @@ public class Navigation extends Thread {
 			else if(lowerRight) {
 				robot.turnBy(90,false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,true);
 				lowerRight = false; //reinitialize
 			}
@@ -253,7 +256,7 @@ public class Navigation extends Thread {
 			if(upperLeft) {
 				robot.turnBy(90,true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,false);
 				upperLeft = false; //reinitialize
 			}
@@ -261,7 +264,7 @@ public class Navigation extends Thread {
 			else if (upperRight) {
 				robot.turnBy(90,false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,true);
 				upperRight = false; //reinitialize
 			}
@@ -269,7 +272,7 @@ public class Navigation extends Thread {
 			else if (lowerLeft) {
 				robot.turnBy(90,false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,true);
 				lowerLeft = false; //reinitialize
 			}
@@ -277,7 +280,7 @@ public class Navigation extends Thread {
 			else if(lowerRight) {
 				robot.turnBy(90,true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH);
+				robot.travelDist(TILE_SIZE/2+SENSOR_LENGTH,150);
 				robot.turnBy(90,false);
 				lowerRight = false; //reinitialize
 			}
@@ -326,7 +329,7 @@ public class Navigation extends Thread {
 			case 0: //LL
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, false);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -335,7 +338,7 @@ public class Navigation extends Thread {
 			case 1: //LR
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, true);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -344,7 +347,7 @@ public class Navigation extends Thread {
 			case 2: //UR
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, false);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -353,7 +356,7 @@ public class Navigation extends Thread {
 			case 3: //UL
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, true);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -366,7 +369,7 @@ public class Navigation extends Thread {
 			case 0: //LL
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, true);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -375,7 +378,7 @@ public class Navigation extends Thread {
 			case 1: //LR
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, false);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -384,7 +387,7 @@ public class Navigation extends Thread {
 			case 2: //UR
 				robot.turnBy(90, false);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, true);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);
@@ -393,7 +396,7 @@ public class Navigation extends Thread {
 			case 3: //UL
 				robot.turnBy(90, true);
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				robot.turnBy(90, false);
 				//odoCorr.correct(odometer.getXYT()[2]);
 				//robot.travelDist(SENSOR_LENGTH);

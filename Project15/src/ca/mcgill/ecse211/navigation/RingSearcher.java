@@ -10,6 +10,8 @@ import ca.mcgill.ecse211.odometer.OdometryCorrection;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import java.util.ArrayList;
+
 /**
  * This class implements the ring searcher
  * @author Jeffrey Leung
@@ -88,25 +90,51 @@ public class RingSearcher implements Runnable {
 			case APPROACHING:{
 				odoCorr.correct(odometer.getXYT()[2]);
 				robot.setSpeeds(100, 100);
-				robot.travelDist(8); //Distance to reach the ring
+				robot.travelDist(8.2,100); //Distance to reach the ring
 
 				state = State.DETECTING;
 				break;
 			}
 			case DETECTING:{
-				if(colorSensor.findMatch(rgb) != 4) {
-					colorSensor.beep();
-					state = State.GRABING;
-
+				int color = 0;
+				while(color == 0) {
+				ArrayList<Integer> samples = new ArrayList<Integer>(300);
+				//100 samples
+				for(int i = 0 ; i < 300; i++){
+					color = colorSensor.findMatch(rgb);
+					samples.add(i,color);
 				}
+				int[] data = new int[5];
+				
+				for(Integer sample : samples){
+					data[sample]++;
+				}
+				int max = data[0];
+				for(int j=1; j<5;j++){
+					if(data[j]>max){
+						max = data[j];
+						color = j;
+					}
+				}
+				}
+
+				colorSensor.setTargetColor(color);
+				colorSensor.beep();
+				state = State.GRABING;
+
+				// if(colorSensor.findMatch(rgb) != 0) {
+				// 	colorSensor.beep();
+				// 	state = State.GRABING;
+
+				// }
 				break;
 			}
 			case GRABING:{
 				robot.setSpeeds(80, 80);
-				robot.travelDist(8); //Distane to grab the ring
-				robot.travelDist(-13); //Distance to back off
+				robot.travelDist(8.5,150); //Distane to grab the ring
+				robot.travelDist(-13,150); //Distance to back off
 				odoCorr.correct(odometer.getXYT()[2]);
-				robot.travelDist(SENSOR_LENGTH);
+				robot.travelDist(SENSOR_LENGTH,150);
 				searchState = SearchState.RING_FOUND;
 				break;
 			}
