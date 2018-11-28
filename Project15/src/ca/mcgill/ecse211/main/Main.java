@@ -116,7 +116,8 @@ public class Main {
 			navigation.setOdoCorrection(odoCorr);
 			ringSearcher.setOdoCorrection(odoCorr);
 
-			//robot.turnMotor();
+			robot.turnMotor();
+			
 			
 			Thread usThread = new Thread(usLocalizer);
 			usThread.start();
@@ -163,7 +164,7 @@ public class Main {
 			//Navigation to starting point
 			navigation.travelToStartingPoint();
 
-			//robot.unload();
+			robot.unload();
 
 			Sound.beep();
 			Sound.twoBeeps();

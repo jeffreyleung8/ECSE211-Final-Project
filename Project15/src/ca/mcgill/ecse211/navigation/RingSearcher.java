@@ -43,18 +43,12 @@ public class RingSearcher implements Runnable {
 	//Odometry correction
 	private OdometryCorrection odoCorr;
 
-	//Tree Sides
-	private int targetRing = 4;
+	//Side motors
+	private static final EV3LargeRegulatedMotor leftSideMotor = 
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
 
-	//	//Side motors
-	//	private static final EV3LargeRegulatedMotor leftSideMotor = 
-	//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("B"));
-	//
-	//	private static final EV3LargeRegulatedMotor rightSideMotor = 
-	//			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
-
-	//usdistance
-	//	int usDistance = usSensor.fetch();
+	private static final EV3LargeRegulatedMotor rightSideMotor = 
+			new EV3LargeRegulatedMotor(LocalEV3.get().getPort("C"));
 
 	/**
 	 *  Constructor for ring searcher
@@ -98,35 +92,31 @@ public class RingSearcher implements Runnable {
 			case DETECTING:{
 				int color = 0;
 				while(color == 0) {
-				ArrayList<Integer> samples = new ArrayList<Integer>(300);
-				//100 samples
-				for(int i = 0 ; i < 300; i++){
-					color = colorSensor.findMatch(rgb);
-					samples.add(i,color);
-				}
-				int[] data = new int[5];
-				
-				for(Integer sample : samples){
-					data[sample]++;
-				}
-				int max = data[0];
-				for(int j=1; j<5;j++){
-					if(data[j]>max){
-						max = data[j];
-						color = j;
+					ArrayList<Integer> samples = new ArrayList<Integer>(300);
+					//100 samples
+					for(int i = 0 ; i < 300; i++){
+						color = colorSensor.findMatch(rgb);
+						samples.add(i,color);
+					}
+					int[] data = new int[5];
+
+					for(Integer sample : samples){
+						data[sample]++;
+					}
+					int max = data[0];
+					color = 0;
+					for(int j = 1; j < 5; j++){
+						if(data[j] > max){
+							max = data[j];
+							color = j;
+						}
 					}
 				}
+				if(color != 0) {
+					colorSensor.setTargetColor(4);
+					colorSensor.beep();
+					state = State.GRABING;
 				}
-
-				colorSensor.setTargetColor(color);
-				colorSensor.beep();
-				state = State.GRABING;
-
-				// if(colorSensor.findMatch(rgb) != 0) {
-				// 	colorSensor.beep();
-				// 	state = State.GRABING;
-
-				// }
 				break;
 			}
 			case GRABING:{
@@ -153,50 +143,6 @@ public class RingSearcher implements Runnable {
 	}
 }
 
-/*
- //	public void detectRing() {
-//
-//		int color = colorSensor.findMatch(colorSensor.fetch()) ;
-//
-//		while(color == 4) {
-//			color = colorSensor.findMatch(colorSensor.fetch()) ;	
-//		}
-//		colorSensor.beep();
-//		
-//		searchState = SearchState.RING_FOUND;
-//		
-//	}
-//	
-	/**
- * This method serves to move forward and backward in order to detect the ring
- */
-//	public void grabRing() {
-//				
-//		odoCorr.correct(odometer.getXYT()[2]);
-//		
-//		robot.setSpeeds(100, 100);
-//
-//		robot.travelDist(15);
-//		
-//		while(searchState == SearchState.IN_PROGRESS) {
-////			long timeElapsed = System.currentTimeMillis() - START_TIME;
-////			//Time out at 4 min
-////			if(timeElapsed >= 240000) {
-////				searchState = SearchState.TIME_OUT;
-////			}
-////			
-////			if(colorSensor.findMatch(colorSensor.fetch()) != 4) {
-////				colorSensor.beep();
-////				searchState = SearchState.RING_FOUND;
-////			}
-//		}
-//		robot.travelDist(10);
-//		
-//		robot.travelDist(-30);
-//		
-//		odoCorr.correct(odometer.getXYT()[2]);
-//		
-//	}*/
 
 
 

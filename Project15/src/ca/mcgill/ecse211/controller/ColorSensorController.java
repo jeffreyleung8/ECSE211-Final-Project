@@ -30,19 +30,11 @@ public class ColorSensorController {
 	private float[] rgbData;
 	
 	// RGB Mean Values
-//	private static final float[][] mean= {
-//			{0.170390332f,0.767597595f,0.617868163f},
-//			{0.402231815f,0.906190081f,0.13049561f},
-//			{0.832694447f,0.538629888f,0.128443766f},
-//			{0.953786617f,0.290982684f,0.074967764f}};
-	
-	
-	private static final double[][]mean = {
-			{0.1732410055,0.6778531281,0.7144947101},
-			{0.4777487339,0.8592604804,0.1828320925},
-			{0.8541708187,0.5005476676,0.140869603},
-			{0.9547663589,0.2766071505,0.1091314998},
-			{0.1345000000,0.0855000000,0.0122500000}};
+	private static final float[][] mean= {
+			{0.170390332f,0.767597595f,0.617868163f},
+			{0.402231815f,0.906190081f,0.13049561f},
+			{0.832694447f,0.538629888f,0.128443766f},
+			{0.953786617f,0.290982684f,0.074967764f}};
 	
 	//Target color
 	private int targetColor = 0;
@@ -66,23 +58,9 @@ public class ColorSensorController {
 		rgbValue.fetchSample(rgbData, 0);
 		return rgbData;
 	}
-
-//	/**
-//	 * This method allows to detect the color of the ring
-//	 * 0-blue 1-green 2-yellow 3-orange 4-None
-//	 * @return (integer representing the color)
-//	 */
-//	public int detect() {
-//		int color;
-//		do {
-//			color = findMatch(fetch());
-//			//   System.out.println("stuck in detect()");
-//		} while (color == 4);
-//		return color;
-//	}
 	
 	public void beep() {
-		switch(targetColor) {
+		switch(this.targetColor) {
 		case 1: {
 			Sound.beep();
 			LCD.drawString("blue", 0, 5);
@@ -108,9 +86,11 @@ public class ColorSensorController {
 		default: break;
 		}
 	}
+	
 	public void setTargetColor(int color){
-		targetColor = color;
+		this.targetColor = color;
 	}
+	
 	/**
 	 * This method allows to match the readings and the mean to 
 	 * determine the color detected
@@ -140,22 +120,18 @@ public class ColorSensorController {
 		
 		if(list[0]== blue) {
 			targetColor = 1;
-			//System.out.println("blue");
 			return 1;
 		}
 		else if(list[0]== green) {
 			targetColor = 2;
-			//System.out.println("green");
 			return 2;
 		}
 		else if(list[0]== yellow) {
 			targetColor = 3;
-			//System.out.println("yellow");
 			return 3;
 		}
 		else if(list[0]== orange) {
 			targetColor = 4;
-			//System.out.println("orange");
 			return 4;
 		}
 		else {

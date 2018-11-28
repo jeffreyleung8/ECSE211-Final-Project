@@ -33,7 +33,7 @@ public class OdometryCorrection {
 	// Odometer
 	private Odometer odometer;
 
-	private double color = 0.28;
+	private double color = 0.30;
 
 	/**
 	 * @param odometer
@@ -56,63 +56,17 @@ public class OdometryCorrection {
 	 * Correct position and odometer
 	 */
 	public void correct(double corrTheta) {
-		
-		robot.travelDist(-6,150);
-		
+
+		robot.travelDist(-7,150);
+
 		robot.moveForward();
 
 		boolean rightLineDetected = false;
 		boolean leftLineDetected = false;
-		
-		// Move the robot until one of the sensors detects a line
-//		while (!leftLineDetected && !rightLineDetected) {
-//			double rightSample = rightLS.fetch();
-//			double leftSample = leftLS.fetch();
-//			if(rightSample < color || leftSample < color) {
-//				robot.stopMoving();
-//				if(rightSample < color) {
-//					rightLineDetected = true;
-//				}
-//				if(leftSample < color) {
-//					leftLineDetected = true;
-//				}
-//			}
-//		}
-//		if(!rightLineDetected ^ !leftLineDetected) {
-//			if(rightLineDetected) {
-//				robot.setSpeeds(50,50);
-//				robot.startMoving(true, false);
-//				while(!leftLineDetected) {
-//					if(leftLS.fetch() < color) {
-//						leftLineDetected = true;
-//						robot.stopMoving();
-//					}
-//				}
-//			}
-//			else if(leftLineDetected) {
-//				robot.setSpeeds(50,50);
-//				robot.startMoving(false, true);
-//				while(!rightLineDetected) {
-//					if(rightLS.fetch() < color) {
-//						rightLineDetected = true;
-//						robot.stopMoving();
-//					}
-//				}
-//			}
-//		}
-//		// Keep moving the left/right motor until both lines have been detected
-//		while ((!leftLineDetected || !rightLineDetected)) {
-//			// If the other line detected, stop the motors		
-//			if (rightLineDetected && leftLS.fetch() < color) {
-//				leftLineDetected = true;
-//				robot.stopMoving();
-//			} 
-//			else if (leftLineDetected && rightLS.fetch() < color) {
-//				rightLineDetected = true;
-//				robot.stopMoving();
-//			}
-//		}
+
 		while (!leftLineDetected && !rightLineDetected ) {
+			//double rightSample = rightLS.fetch();
+			//double leftSample = leftLS.fetch();
 			if (rightLS.fetch() < color) {
 				rightLineDetected = true;
 				// Stop the right motor
@@ -139,13 +93,13 @@ public class OdometryCorrection {
 				robot.stopMoving();
 			}
 		}
-		
+
 		correctOdo(corrTheta);
-		
+
 		robot.resetMotors();
-		
+
 		robot.setSpeeds(150, 150);
-						
+
 	}
 	/**
 	 * Correct odometer
@@ -155,7 +109,7 @@ public class OdometryCorrection {
 		double corrX = 0;
 		double corrY = 0;
 		double corrTheta = roundTheta(theta);
-		
+
 		//Correction in X
 		if (corrTheta == 90 || corrTheta == 270) {
 
@@ -215,7 +169,7 @@ public class OdometryCorrection {
 		}
 
 		odometer.setTheta(corrTheta);
-		
+
 	}
 	private double roundTheta(double theta){
 		if(theta > 345 && theta < 15){
