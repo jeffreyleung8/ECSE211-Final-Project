@@ -13,9 +13,7 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import java.util.ArrayList;
 
 /**
- * This class implements the ring searcher. When this class is called, the state is set to IN_PROGRESS.While this state is set, the robot 
- * can do 3 different actions: DETECTING, APPROACHING, GRABBING: so once the robot detects a ring, it approaches it
- * to be able to detect its color and then grabs it.
+ * This class implements the ring searcher
  * @author Jeffrey Leung
  * @author leaakkari
  *
@@ -75,9 +73,7 @@ public class RingSearcher implements Runnable {
 		state = State.APPROACHING;
 
 	}
-	/**
-	 * Thread that controls the ring search
-	 */
+
 	@Override 
 	public void run(){
 		while(searchState == SearchState.IN_PROGRESS) {
