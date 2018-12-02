@@ -10,7 +10,7 @@ import lejos.hardware.lcd.LCD;
 
 /**
  * This class allows the robot to correct itself (positiioning and odometer)
- *  by using two rear sensors. 
+ *  by using two front light sensors(line detection)
  * 
  * @author Jeffrey Leung
  *
@@ -36,10 +36,11 @@ public class OdometryCorrection {
 	private double color = 0.30;
 
 	/**
-	 * @param odometer
-	 * @param robot
-	 * @param leftLS
-	 * @param rightLS
+	 * Construction of the odometryCorrection class
+	 * @param odometer odometer of the robot (singleton)
+	 * @param leftLS left front light sensor that is used
+	 * @param rightLS right front light sensor that is used
+	 * @param robot robot controller to control the motors
 	 */
 	public OdometryCorrection(Odometer odometer,RobotController robot,LightSensorController leftLS, LightSensorController rightLS) {
 		this.odometer = odometer;
@@ -54,6 +55,7 @@ public class OdometryCorrection {
 
 	/**
 	 * Correct position and odometer
+	 * @param corrTheta orientation at which you want the robot to be/is
 	 */
 	public void correct(double corrTheta) {
 
@@ -102,7 +104,8 @@ public class OdometryCorrection {
 
 	}
 	/**
-	 * Correct odometer
+	 * Correct odometer 
+	 * @param theta orientation at which you want the robot to be/is
 	 */
 	private void correctOdo(double theta) {
 		//Correction variables
@@ -171,6 +174,12 @@ public class OdometryCorrection {
 		odometer.setTheta(corrTheta);
 
 	}
+	/**
+	 * This method allows to round the angle received
+	 * 
+	 * @param theta angle to get rounded
+	 * @return angle that is rounded to a general angle (integer)
+	 */
 	private double roundTheta(double theta){
 		if(theta > 345 && theta < 15){
 			return 0;

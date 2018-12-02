@@ -20,9 +20,19 @@ import java.text.DecimalFormat;
 import ca.mcgill.ecse211.controller.*;
 import ca.mcgill.ecse211.enumeration.SearchState;
 
-/** This is the main class of the project. It is at the top level of the layered hierarchy.
- *  It serves to link all the classses together and make a sequence of methods classes from 
- *  the middle layer (navigation package) in order to execute the tasks of the game. 
+/** This is the main class of the project. It is at the top level of the layered hierarchy. 
+ *It serves to link all the classes together and make a sequence of methods classes from the middle layer 
+ *(navigation package) in order to execute the tasks of the game. 
+ *First, all the constants about the robot are set (WHEEL_RAD, TRACK, TILE_SIZE, SENSOR_LENGTH), 
+ *all the sensor are initialized and Odometer is declared, as well as the wifi class to be able to 
+ *pass parameters to the robot. Then, threads start: the display thread is launched, 
+ *followed by the odometer thread and then the odometer display thread. 
+ *The robot localizes. Once it finishes localizing, the odometry correction is launched, 
+ *so that when the robot is travelling to the tree, it stays on the right path, so it corrects at every tile.
+ *The robot then travels through the tunnel to the ring set. Once the tree is detected, the ring search thread is started. 
+ *The robot tries to detect as many rings as possible and to pick them up when found. 
+ *Once it finds all the rings, the robot travels back through the tunnel to the starting point and drops all 
+ *the rings it collected.
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
@@ -71,8 +81,8 @@ public class Main {
 	//Navigation
 	private static USLocalizer usLocalizer = new USLocalizer(odometer,robot,usSensor);
 	private static LightLocalizer lightLocalizer = new LightLocalizer(odometer,robot,leftLS, rightLS);
-	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensor, usSensor,robot);
-	private static Navigation navigation = new Navigation(odometer,robot,ringSearcher,wifi);
+	private static RingSearcher ringSearcher = new RingSearcher(odometer,colorSensorr,robot);
+	private static Navigation navigation = new Navigation(odometer,robot,wifi);
 
 
 	/**

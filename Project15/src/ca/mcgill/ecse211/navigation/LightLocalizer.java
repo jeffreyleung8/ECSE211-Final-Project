@@ -12,7 +12,12 @@ import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.navigation.*;
 import ca.mcgill.ecse211.main.*;
 
-/** This class serves to drive the cart to the origin
+/** 
+ *This class serves to localize the robot at the starting corner
+ * using the two front light sensors.It basically moves to the intersection 
+ * of the starting corner and correct its orientation every time it detects a line in 
+ * its path to this intersection. The robot will beep 3 three when the robot will be parallel
+ * to the left wall
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
@@ -34,11 +39,11 @@ public class LightLocalizer {
 
 	private double color = 0.30;
 	/**
-	 * This is a constructor for this class
-	 * @param odometer
-	 * @param leftMotor
-	 * @param rightMotor
-	 * @param lightSensor
+	 * This is a constructor for this lightLocalizer class
+	 * @param odometer odometer of the robot (singleton)
+	 * @param leftLS left front light sensor that is used
+	 * @param rightLS right front light sensor that is used
+	 *@param robot robot controller to control the motors
 	 */
 	public LightLocalizer(Odometer odometer,RobotController robot,LightSensorController leftLS,LightSensorController rightLS ) {
 		this.odometer = odometer;
@@ -50,7 +55,7 @@ public class LightLocalizer {
 	}
 
 	/**
-	 * This method localizes the robot from the starting point
+	 * This method localizes the robot to the starting point using the two front light sensors
 	 */
 	public void initialLocalize() {
 
@@ -79,8 +84,7 @@ public class LightLocalizer {
 	}
 
 	/**
-	 * This method serves to correct the orientation of the robot for the initial 
-	 * light localization
+	 * This method serves to correct the orientation of the robot with line detection
 	 */
 	private void correct() {
 
@@ -102,8 +106,6 @@ public class LightLocalizer {
 			}
 		}
 
-		// Get the odometer's reading 
-
 		// Keep moving the left/right motor until both lines have been detected
 		while ((!leftLineDetected || !rightLineDetected)) {
 			// If the other line detected, stop the motors
@@ -117,8 +119,4 @@ public class LightLocalizer {
 		}
 
 	}
-
-
-
-
 }

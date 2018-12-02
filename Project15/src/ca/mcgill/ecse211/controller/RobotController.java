@@ -12,6 +12,10 @@ import lejos.robotics.RegulatedMotor;
 
 
 /** This class serves to control the robot's motors
+ *  It allows the robot to perform basic operations such as move forward, change speed,
+ *  navigate to a specific point, to stop etc.
+ *  Since it controls the mobility of the robot, it is essentially used in all navigation classes
+ *  namely in usLocalizer, lightLocalizer, navigation and ringSearcher
  * 
  * @author Jeffrey Leung
  */
@@ -36,20 +40,26 @@ public class RobotController {
 	//Odometer
 	private Odometer odometer;
 
+	//Odometry correction
 	private OdometryCorrection odoCorr;
 	/**
 	 * This is a constructor for the RobotController class
-	 * @param odometer
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param odometer odometer of the robot (singleton)
+	 * @param leftMotor the left motor of the robot
+	 * @param rightMotor the right motor of the robot
 	 */
 	public RobotController(Odometer odometer,EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) {
 		this.leftMotor = leftMotor;
 		this.rightMotor = rightMotor;
 		this.odometer = odometer;
-		//this.odoCorr = odoCorr;
 	}
 
+	/**
+	 * A method to drive our vehicle to a certain Cartesian coordinate
+	 * 
+	 * @param x x-coordinate of the board
+	 * @param y y-coordinate of the board
+	 */
 	public void directTravelTo(int x, int y) {
 
 		double currx = odometer.getXYT()[0];
@@ -81,10 +91,11 @@ public class RobotController {
 		Sound.beep();
 	}
 	/**
-	 * A method to drive our vehicle to a certain Cartesian coordinate
+	 * A method to drive our vehicle to a certain Cartesian coordinate using 
+	 * odometry correction
 	 * 
-	 * @param x x-Coordinate
-	 * @param y y-Coordinate
+	 * @param x x-Coordinate of the board
+	 * @param y y-Coordinate of the board
 	 */
 	public void travelTo(int x, int y) {
 
@@ -192,7 +203,7 @@ public class RobotController {
 	/**
 	 * A method to turn our vehicle to a certain angle
 	 * 
-	 * @param theta
+	 * @param theta angle you want the robot to be
 	 */
 	public void turnTo(double theta) {
 
@@ -224,8 +235,10 @@ public class RobotController {
 
 	}
 
-	/*
+	/**
 	 * Check if robot is at the correct angle
+	 *
+	 * @param angle angle you want the robot to be
 	 */
 	public void checkAngle(int angle) {
 		int current_angle = roundTheta(odometer.getXYT()[2]);
@@ -237,8 +250,8 @@ public class RobotController {
 	/**
 	 * Sets the speeds of the motors.
 	 * 
-	 * @param leftSpeed 
-	 * @param rightSpeed 
+	 * @param leftSpeed speed of left motor
+	 * @param rightSpeed speed of right motor
 	 */
 	public void setSpeeds(int leftSpeed, int rightSpeed) {
 		leftMotor.setSpeed(leftSpeed);
@@ -246,7 +259,7 @@ public class RobotController {
 	}
 
 	/**
-	 * Moves the robot forward
+	 * Moves the robot forward with synchronized motors
 	 */
 	public void moveForward() {
 		leftMotor.synchronizeWith(new RegulatedMotor[] { rightMotor });
@@ -257,7 +270,7 @@ public class RobotController {
 	}
 
 	/**
-	 * Moves the robot backward 
+	 * Moves the robot backward with synchronized motors
 	 */
 	public void moveBackward() {
 		leftMotor.synchronizeWith(new RegulatedMotor[] { rightMotor });
@@ -268,17 +281,17 @@ public class RobotController {
 	}
 
 	/**
-	 * Stops the robot
+	 * Stops the motors of the robot namely stop the robot
 	 */
 	public void stopMoving() {
 		leftMotor.stop(true);
 		rightMotor.stop(false);
 	}
 	/**
-	 * Stops the specified motors of the robot.
-	 * 
-	 * @param stopLeft 
-	 * @param stopRight 
+	 * Stops the specified motors of the robot with synchronization
+	 * true - stop , false - don't stop
+	 * @param stopLeft boolean stop leftMotor
+	 * @param stopRight boolean stop rightMotor
 	 */
 	public void stopMoving(boolean stopLeft, boolean stopRight) {
 		leftMotor.synchronizeWith(new RegulatedMotor[] { rightMotor });
@@ -291,10 +304,10 @@ public class RobotController {
 	}
 
 	/**
-	 * Stops the specified motors of the robot.
-	 * 
-	 * @param stopLeft 
-	 * @param stopRight 
+	 * Starts the specified motors of the robot.
+	 * true - start , false - don't start
+	 * @param startLeft boolean start leftMotor
+	 * @param startRight boolean start rightMotor 
 	 */
 	public void startMoving(boolean startLeft, boolean startRight) {
 		if (startLeft)
@@ -315,7 +328,7 @@ public class RobotController {
 	/**
 	 * Turns the robot by the specified angle
 	 * 
-	 * @param dTheta 
+	 * @param dTheta angle to turn
 	 */
 	public void turnBy(double dTheta, boolean clockwise) {
 		if(clockwise) {
@@ -329,9 +342,10 @@ public class RobotController {
 	}
 
 	/**
-	 * Moves the robot forward by the specified distance 
-	 * 
-	 * @param dist 
+	 * Moves the robot forward by the specified distance in cm
+	 * positive distance - forward , negative distance - backward
+	 * @param dist distance to travel
+	 * @param speed speed of the motors
 	 */
 	public void travelDist(double distance,int speed) {
 
@@ -344,8 +358,7 @@ public class RobotController {
 	/**
 	 * Rotate the robot clockwise or counterclockwise.
 	 * 
-	 * @param rotateClockwise 
-	 * @param speed 
+	 * @param rotateClockwise true for clockwise, false for counterclockwise
 	 */
 	public void rotate(boolean rotateClockwise) {
 		if (rotateClockwise) {
@@ -356,10 +369,11 @@ public class RobotController {
 			rightMotor.forward();
 		}
 	}
+
 	/**
 	 * Specifies whether the robot is current moving.
 	 * 
-	 * @return 
+	 * @return boolean true for moving, false for not moving
 	 */
 	public boolean isMoving() {
 		if (leftMotor.isMoving() || rightMotor.isMoving())
@@ -371,9 +385,10 @@ public class RobotController {
 	 * This method allows the conversion of a distance to the total rotation of each
 	 * wheel need to cover that distance.
 	 * 
-	 * @param radius
-	 * @param distance
-	 * @return 
+	 * @param radius radius of wheel
+	 * @param distance desired distance to move the robot
+	 * @return angle the robot needs to rotate its wheels in order to travel forward by
+	 *         the distance provided
 	 */
 	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
@@ -383,15 +398,21 @@ public class RobotController {
 	 * This method allows the conversion of a angle to the total rotation of each
 	 * wheel need to cover that distance.
 	 * 
-	 * @param radius
-	 * @param distance
-	 * @param angle
+	 * @param radius radius of wheel 
+	 * @param width track of robot
+	 * @param angle angle desired to turn the robot by
 	 * @return the angle the robot needs to turn each wheel to rotate
 	 */
 	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
 
+	/**
+	 * This method allows to round the angle received
+	 * 
+	 * @param theta angle to get rounded
+	 * @return angle that is rounded to a general angle (integer)
+	 */
 	private int roundTheta(double theta){
 		if(theta > 345 && theta < 15){
 			return 0;
@@ -408,6 +429,10 @@ public class RobotController {
 		return 0;
 	}
 
+	/**
+	 * This method allows to reset the motors
+	 * 
+	 */
 	public void resetMotors() {
 		// reset the motor
 		leftMotor.stop(true);
@@ -421,6 +446,9 @@ public class RobotController {
 		}
 	}
 
+	/**
+	 * This method allows to rotate the side motors in order to lift the two frames
+	 */
 	public void turnMotor() {
 		leftSideMotor.stop(true);
 		rightSideMotor.stop(false);
@@ -437,6 +465,11 @@ public class RobotController {
 		rightSideMotor.rotate(-18,false);
 	}
 
+	/**
+	 * This method allows to unload the rings from the two frames by rotating 
+	 * quickly the two side motors
+	 * 
+	 */
 	public void unload() {
 		leftSideMotor.setSpeed(150);
 		rightSideMotor.setSpeed(150);

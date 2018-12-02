@@ -2,7 +2,6 @@ package ca.mcgill.ecse211.controller;
 
 import java.text.DecimalFormat;
 import java.util.Arrays;
-
 import ca.mcgill.ecse211.odometer.OdometerExceptions;
 import lejos.hardware.Sound;
 import lejos.hardware.ev3.LocalEV3;
@@ -15,13 +14,13 @@ import lejos.robotics.Color;
 import lejos.robotics.SampleProvider;
 
 /** This class serves to detect and classify rings colors
+ * It is used in the ringSearcher class in the ring searching process
+ * It can detect the color blue, green, yellow and orange
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
  */
 public class ColorSensorController {
-
-	//private enum Color {BLUE, GREEN, YELLOW, ORANGE};
 
 	private EV3ColorSensor colorSensor;
 	// Light sensor objects
@@ -38,9 +37,10 @@ public class ColorSensorController {
 	
 	//Target color
 	private int targetColor = 0;
+	
 	/**
 	 * This is a constructor for the ColorSensorController class
-	 * @param colorSensor
+	 * @param colorSensor the color sensor to use
 	 */
 	public ColorSensorController(EV3ColorSensor colorSensor) {
 		this.colorSensor = colorSensor;
@@ -50,8 +50,8 @@ public class ColorSensorController {
 
 	
 	/**
-	 * This method allows to collect rgb values
-	 * @return (array containing rgb values) 
+	 * This method allows to collect rgb values detected by the color sensor
+	 * @return array containing rgb values read by color sensor
 	 */
 
 	public float[] fetch() {
@@ -59,6 +59,12 @@ public class ColorSensorController {
 		return rgbData;
 	}
 	
+	/** 
+	 *This method allows to beep n times depending the color
+	 * 1-blue 2-green 3-yellow 4-orange 0-None 
+	 * @return integer representing the color
+	 */
+
 	public void beep() {
 		switch(this.targetColor) {
 		case 1: {
@@ -87,15 +93,22 @@ public class ColorSensorController {
 		}
 	}
 	
+	/**
+	 * This method allows to set the target color
+	 * 1-blue 2-green 3-yellow 4-orange 0-None 
+	 * @param color integer representing color
+	 */
 	public void setTargetColor(int color){
 		this.targetColor = color;
 	}
 	
 	/**
-	 * This method allows to match the readings and the mean to 
-	 * determine the color detected
-	 * @return (integer representing color)
+	 * This method allows to match the readings and the mean to determine the color detected
+	 * 1-blue 2-green 3-yellow 4-orange 0-None 
+	 * @param array array containing rgb values
+	 * @return integer representing color
 	 */
+	
 	public int findMatch(float array[]) {
 		
 		double blue,green,yellow,orange,none;

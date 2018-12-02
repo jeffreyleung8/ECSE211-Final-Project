@@ -12,7 +12,11 @@ import ca.mcgill.ecse211.controller.RobotController;
 import ca.mcgill.ecse211.controller.UltrasonicSensorController;
 import ca.mcgill.ecse211.main.*;
 
-/** This class serves to drive the robot to the 0 degrees axis
+/** This class serves to drive the robot to the 0 degrees axis.
+ * It is using the ultrasonic sensor to read the limit between the wall and the open space.
+ * It will read the two limits and calculate an angle to turn which will place
+ * the robot parallel to the left wall. This class will be run as a thread as the distance 
+ * readings are more accurate and quicker.
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
@@ -48,12 +52,11 @@ public class USLocalizer implements Runnable {
 	private double angleA, angleB, turningAngle;
 
 	/**
-	 * Constructor to initialize variables
+	 * Constructor of the usLocalizer class
 	 * 
-	 * @param Odometer
-	 * @param EV3LargeRegulatedMotor
-	 * @param EV3LargeRegulatedMotor
-	 * @param usSensor
+	 * @param odometer odometer of the robot (singleton)
+	 * @param robot robot controller to control the motors
+	 * @param usSensor ultrasonic sensor that is used
 	 */
 	public USLocalizer(Odometer odometer, RobotController robot,UltrasonicSensorController usSensor) {
 		this.odometer = odometer;
@@ -66,6 +69,10 @@ public class USLocalizer implements Runnable {
 		robot.setSpeeds(175,175);
 	}
 
+	/**
+	 * Thread run() method which localize the robot
+	 * It performs different operations depending the state in which it is in
+	 */
 	public void run() {
 	
 		while(isRunning) {
@@ -152,73 +159,5 @@ public class USLocalizer implements Runnable {
 			this.prevDistance = distance;
 		}
 	}
-	/**
-	 * A method to localize position using the falling edge
-	 * 
-	 */
-	public void usLocalize() {
-
-		double angleA, angleB, turningAngle;
-		boolean firstWallDetected, secondWallDetected;
-		
-		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
-		
-//		if(usSensor.fetch() < WALL) {
-//			while(usSensor.fetch() < 50) {
-//				robot.rotate(true);
-//			}
-//		}
-		// Rotate to open space
-		while (usSensor.fetch() < OPEN_SPACE) {
-			robot.rotate(false);
-		}
-		
-		// Rotate to the first wall
-		while (usSensor.fetch() > WALL) {
-			robot.rotate(false);
-		}
-
-		robot.stopMoving();
-		Sound.beep();
-		angleA = odometer.getXYT()[2];
-		
-		//robot.turnBy(50, true);
-		
-		robot.setSpeeds(ROTATE_SPEED, ROTATE_SPEED);
-		
-		// rotate out of the wall range
-		while (usSensor.fetch() < OPEN_SPACE ) {
-			robot.rotate(true);
-		}
-		
-		// rotate to the second wall
-		while (usSensor.fetch() > WALL) {
-			robot.rotate(true);
-		}
-		
-		robot.stopMoving();
-		Sound.beep();
-		angleB = odometer.getXYT()[2];
-
-		robot.stopMoving();
-
-		// calculate angle of rotation
-		if (angleA < angleB) {
-			deltaTheta = 45 - (angleA + angleB) / 2;
-
-		} else if (angleA > angleB) {
-			deltaTheta = 225 - (angleA + angleB) / 2;
-		}
-
-		turningAngle = deltaTheta + odometer.getXYT()[2];
-
-		robot.turnBy(turningAngle,false);
-
-		// set odometer to theta = 0
-		odometer.setXYT(0.0, 0.0, 0.0);
-
-	}
-
-
 
 }

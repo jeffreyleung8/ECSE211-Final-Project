@@ -12,8 +12,10 @@ import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 
 /**
- * This class is used for navigating the robot
- * FOR BETA DEMO 
+ * This class is used for navigating the robot accros the board depending on the placement 
+ * of the tunnel,the starting corner and the ringset. It allows to navigate from the starting point
+ * to the ringset through the tunnel and go back to the starting point
+ *
  * @author Jeffrey Leung
  * @author Lea Akkary
  */
@@ -34,9 +36,6 @@ public class Navigation extends Thread {
 	private Odometer odometer;
 
 	private OdometryCorrection odoCorr;
-
-	//RingSearcher class
-	private RingSearcher ringSearcher;
 
 	//Wifi class
 	private WiFi wifi;
@@ -70,16 +69,13 @@ public class Navigation extends Thread {
 	
 	/**
 	 * This is a constructor for the RobotController class
-	 * @param odometer
-	 * @param leftMotor
-	 * @param rightMotor
-	 * @param ringSearcher
-	 * @param gyroSensor
+	 * @param odometer odometer of the robot (singleton)
+	 * @param robot robot controller to control the motors
+	 * @param wifi wifi class that contains the game parameters
 	 */
-	public Navigation(Odometer odometer,RobotController robot, RingSearcher ringSearcher, WiFi wifi) {
+	public Navigation(Odometer odometer,RobotController robot, WiFi wifi) {
 		this.odometer = odometer;
 		this.robot = robot;
-		this.ringSearcher = ringSearcher;
 		this.FORWARD_SPEED = robot.FORWARD_SPEED;
 		this.ROTATE_SPEED = robot.ROTATE_SPEED;
 		this.TILE_SIZE = robot.TILE_SIZE;
@@ -214,7 +210,8 @@ public class Navigation extends Thread {
 		
 	}
 	/**
-	 * A method to turn correctly to the tunnel entrance/exit
+	 * A method to turn the robot to the inside and place itself 
+	 * to enter the tunnel entrance
 	 * 
 	 */
 	public void turnToTunnel() {
@@ -289,8 +286,9 @@ public class Navigation extends Thread {
 
 	}
 	/**
-	 * A method to turn correctly after traveling through tunnel
-	 * When it goes to the island
+	 * A method to turn to one of the two closest intersection of the tunnel 
+	 * It will turn to the one closest to the ringset or the starting corner
+	 * It is used after traveling the tunnel (tunnel exit)
 	 * 
 	 */
 	public void turnOutTunnel(boolean goingToRingSet) {

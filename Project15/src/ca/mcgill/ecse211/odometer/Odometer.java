@@ -42,8 +42,8 @@ public class Odometer extends OdometerData implements Runnable {
 	 * This is the default constructor of this class. It initiates all motors and variables once.It
 	 * cannot be accessed externally.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param leftMotor left motor of the robot
+	 * @param rightMotor right motor of the robot
 	 * @throws OdometerExceptions
 	 */
 	private Odometer(EV3LargeRegulatedMotor leftMotor, EV3LargeRegulatedMotor rightMotor) throws OdometerExceptions {
@@ -78,8 +78,8 @@ public class Odometer extends OdometerData implements Runnable {
 	/**
 	 * This method is meant to ensure only one instance of the odometer is used throughout the code.
 	 * 
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param leftMotor left motor of the robot
+	 * @param rightMotor right motor of the robot
 	 * @return new or existing Odometer Object
 	 * @throws OdometerExceptions
 	 */

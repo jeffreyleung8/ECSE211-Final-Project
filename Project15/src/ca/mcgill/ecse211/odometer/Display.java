@@ -6,6 +6,8 @@ import lejos.hardware.lcd.TextLCD;
 
 /**
  * This class implements the display thread
+ * It is used to display the odometer values (x,y position and heading of the robot)
+ * on the ev3 screen
  * @author Jeffrey Leung
  * @author leaakkari
  *
@@ -21,7 +23,7 @@ public class Display implements Runnable {
   /**
    * This is the class constructor
    * 
-   * @param odoData
+   * @param odoData data of odometer
    * @throws OdometerExceptions 
    */
   public Display(TextLCD lcd) throws OdometerExceptions {
@@ -32,7 +34,7 @@ public class Display implements Runnable {
   /**
    * This is the overloaded class constructor
    * 
-   * @param odoData
+   * @param odoData data of odometer
    * @throws OdometerExceptions 
    */
   public Display(TextLCD lcd, long timeout) throws OdometerExceptions {
@@ -41,6 +43,9 @@ public class Display implements Runnable {
     this.lcd = lcd;
   }
 
+  /**
+   * Thread run() to periodically display the ododata on the lcd screen
+   */
   public void run() {
     
     lcd.clear();

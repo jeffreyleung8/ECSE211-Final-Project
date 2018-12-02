@@ -43,18 +43,16 @@ public class Tester {
 	private int filterControl;
 	private static final int FILTER_OUT = 20;
 	
-	
 	private TextLCD lcd;
 	
 	/**
 	 * This is a constructor for this class
-	 * @param leftMotor
-	 * @param rightMotor
-	 * @param lightSensor
-	 * @param colorSensor
-	 * @param usSensor
-	 * @param gyroSensor
-	 * @param lcd
+	 * @param leftMotor left motor of the robot
+	 * @param rightMotor right motor of the robot
+	 * @param lightSensor light sensor used
+	 * @param colorSensor color sensor used
+	 * @param usSensor ultrasonic sensor used
+	 * @param lcd lcd screen of robot
 	 */
 	public Tester(EV3LargeRegulatedMotor leftMotor,EV3LargeRegulatedMotor rightMotor,EV3ColorSensor lightSensor,EV3ColorSensor colorSensor,
 					EV3UltrasonicSensor usSensor,TextLCD lcd) {
@@ -63,7 +61,6 @@ public class Tester {
 		
 		this.lightSensor = lightSensor;
 		idColour = this.lightSensor.getRedMode();
-		//idColour = this.lightSensor.getColorIDMode();
 		colorValue = new float[idColour.sampleSize()];
 		
 		this.colorSensor = colorSensor;
@@ -73,10 +70,7 @@ public class Tester {
 		this.usSensor = usSensor;
 		usDistance = usSensor.getMode("Distance");
 		usData = new float[usDistance.sampleSize()];
-		//average = new MeanFilter(usDistance,8);
-		//usData = new float[average.sampleSize()];
 
-		
 		this.lcd = lcd;
 	}
 	
@@ -87,7 +81,6 @@ public class Tester {
 		lcd.clear();
 		while(true) {
 			usDistance.fetchSample(usData, 0);
-//			average.fetchSample(usData, 0);
 			int distance =  (int) (usData[0] * 100.0);
 			if(distance > 50) {
 				distance = 255;
@@ -136,11 +129,12 @@ public class Tester {
 	 * This method allows the conversion of a distance to the total rotation of each
 	 * wheel need to cover that distance.
 	 * 
-	 * @param radius
-	 * @param distance
-	 * @return distance
+	 * @param radius radius of wheel
+	 * @param distance desired distance to move the robot
+	 * @return angle the robot needs to rotate its wheels in order to travel forward by
+	 *         the distance provided
 	 */
-	private static int convertDistance(double radius, double distance) {
+	public static int convertDistance(double radius, double distance) {
 		return (int) ((180.0 * distance) / (Math.PI * radius));
 	}
 
@@ -148,30 +142,13 @@ public class Tester {
 	 * This method allows the conversion of a angle to the total rotation of each
 	 * wheel need to cover that distance.
 	 * 
-	 * @param radius
-	 * @param distance
-	 * @param angle
-	 * @return angle
+	 * @param radius radius of wheel 
+	 * @param width track of robot
+	 * @param angle angle desired to turn the robot by
+	 * @return the angle the robot needs to turn each wheel to rotate
 	 */
-	private static int convertAngle(double radius, double width, double angle) {
+	public static int convertAngle(double radius, double width, double angle) {
 		return convertDistance(radius, Math.PI * width * angle / 360.0);
 	}
-	/*
-			if(distance == 2147483647) {
-			distance = 100;
-		}
-		if (distance >= 255 && filterControl < FILTER_OUT) {
-			// bad value: do not set the distance var, do increment the filter value
-			this.filterControl++;
-		} else if (distance >= 255) {
-			// We have repeated large values, so there must actually be nothing
-			// there: leave the distance alone
-			dist = distance;
-		} else {
-			// distance went below 255: reset filter and leave
-			// distance alone.
-			this.filterControl = 0;
-			dist = distance;
-		}
-	 * */
+	
 }

@@ -13,7 +13,9 @@ import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import java.util.ArrayList;
 
 /**
- * This class implements the ring searcher
+ * This class implements the ring searcher using the color sensor
+ * It is implemented as a thread that collect one ring
+ *
  * @author Jeffrey Leung
  * @author leaakkari
  *
@@ -27,7 +29,6 @@ public class RingSearcher implements Runnable {
 
 	//Sensors
 	private ColorSensorController colorSensor;
-	private UltrasonicSensorController usSensor;
 
 	public static final double SENSOR_LENGTH = 3.3;
 
@@ -52,15 +53,13 @@ public class RingSearcher implements Runnable {
 
 	/**
 	 *  Constructor for ring searcher
-	 * @param colorSensor
-	 * @param gyroSensor
-	 * @param usSensor
-	 * @param leftMotor
-	 * @param rightMotor
+	 * @param colorSensor color sensor that is used
+	 * @param odometer odometer of the robot (singleton)
+	 * @param usSensor usSensor that is used
+	 * @param robot robot controller to control the motors
 	 */
-	public RingSearcher(Odometer odometer,ColorSensorController colorSensor, UltrasonicSensorController usSensor, RobotController robot) {
+	public RingSearcher(Odometer odometer,ColorSensorController colorSensor, RobotController robot) {
 		this.colorSensor = colorSensor;
-		this.usSensor = usSensor;
 		this.robot = robot;
 		this.odometer = odometer;
 		searchState = SearchState.IN_PROGRESS;
@@ -68,6 +67,11 @@ public class RingSearcher implements Runnable {
 
 	}
 
+	/**
+	 * Thread run() method which search for the closest ring
+	 * It performs different operations depending the state in which it is in
+	 * Search is ended if time is passed 4 minutes or the ring is grabbed
+	 */
 	@Override 
 	public void run(){
 		while(searchState == SearchState.IN_PROGRESS) {

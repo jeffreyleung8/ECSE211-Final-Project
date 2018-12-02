@@ -6,6 +6,9 @@ import ca.mcgill.ecse211.WiFiClient.WifiConnection;
 import ca.mcgill.ecse211.enumeration.Team;
 
 /** This class serves to fetch all data from the server JAR
+ *  It also process the data received. 
+ *  For example, it checks the orientation of the tunnel, 
+ *  the position of the ringset relative to the tunnel etc
  * 
  * @author Jeffrey Leung
  * @author Lea Akkary
@@ -68,7 +71,7 @@ public class WiFi {
 	/**
 	 * Gets the color of the team you are in.
 	 * 
-	 * @return Team color enumeration for the team you are in
+	 * @return Team color enumeration for the team you are in (green or red)
 	 */
 	public Team getTeam() {
 		// Return the corresponding team colour for the team number (8)
@@ -83,8 +86,8 @@ public class WiFi {
 
 	/**
 	 * Gets the starting corner of the given team.
-	 * 
-	 * @return starting corner 
+	 * @param team green or red team
+	 * @return starting corner (0,1,2,3)
 	 */
 	public int getStartingCorner(Team team) {
 		// Check which team we are
@@ -99,6 +102,7 @@ public class WiFi {
 	/**BETA DEMO
 	 * Gets the starting corner coordinates of your team.
 	 * coords(x,y)
+	 * @param startingCorner 0,1,2,3
 	 * @return starting corner coordinates
 	 */
 	public int[] getStartingCornerCoords(int startingCorner) {
@@ -126,7 +130,7 @@ public class WiFi {
 
 	/**
 	 * Gets the coordinates of the home zone depending team color
-	 * 
+	 * @param team green or red team
 	 * @return 2-D array containing coordinates of the 4 corners of the home zone
 	 */
 	public int[][] getHomeZone(Team team) {
@@ -172,7 +176,7 @@ public class WiFi {
 
 	/**
 	 * Gets the coordinates of the tunnel.
-	 * 
+	 * @param team team green or red
 	 * @return 2-D array containing coordinates of the 4 corners of the tunnel
 	 */
 	public int[][] getTunnelZone(Team team) {
@@ -266,7 +270,10 @@ public class WiFi {
 		}
 	}
 
-
+	/**
+	 * Determines the size of the tunnel in number of tiles covered
+	 * @return size of the tunnel (1 or 2)
+	 */
 	public int getTunnelSize(Team team) {
 		int tunnelSize = 0;
 		int llx, lly, urx, ury;
@@ -350,6 +357,7 @@ public class WiFi {
 	}
 	/**
 	 * Gets the closest corner of the tunnel to ringset
+	 * @param team team green or red
 	 * 
 	 */
 	public int[] getClosestCornerToRS(Team team) {
@@ -380,6 +388,7 @@ public class WiFi {
 	}
 	/**
 	 * Gets the closest corner of the tunnel to starting corner
+	 * @param team team green or red
 	 * 
 	 */
 	public int[] getClosestCornerToSC(Team team) {
@@ -409,7 +418,7 @@ public class WiFi {
 
 	/**
 	 * Checks if ringSet is in front of the tunnel
-	 * 
+	 * @param team team green or red
 	 */
 	public boolean checkRSPos(Team team) {
 		int[] ringSet = getRingSet(team);
@@ -434,7 +443,7 @@ public class WiFi {
 	}
 	/**
 	 * Checks if tunnel is touching border
-	 * 
+	 * @param team team green or red
 	 */
 	public boolean checkTunnel(Team team) {
 		int[][] tunnelZone = getTunnelZone(team);
@@ -456,9 +465,4 @@ public class WiFi {
 		}
 		return false;
 	}
-
-
-
-
-
 }
